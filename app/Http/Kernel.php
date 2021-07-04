@@ -2,7 +2,9 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\EnsureUserTokenIsValid;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 
 class Kernel extends HttpKernel
 {
@@ -21,6 +23,11 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+    ];
+
+    protected $middlewarePriority = [
+        EnsureUserTokenIsValid::class,
+        InitializeTenancyByRequestData::class
     ];
 
     /**
