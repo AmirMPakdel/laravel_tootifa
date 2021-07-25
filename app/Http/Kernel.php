@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\EnsureStudentTokenIsValid;
 use App\Http\Middleware\EnsureUserTokenIsValid;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
@@ -27,7 +28,8 @@ class Kernel extends HttpKernel
 
     protected $middlewarePriority = [
         EnsureUserTokenIsValid::class,
-        InitializeTenancyByRequestData::class
+        InitializeTenancyByRequestData::class,
+        EnsureStudentTokenIsValid::class
     ];
 
     /**
