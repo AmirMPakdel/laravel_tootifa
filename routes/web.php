@@ -38,52 +38,59 @@ Route::group([
     'namespace'  => 'App\Http\Controllers\API\Admin',
     'middleware' => [ EnsureUserTokenIsValid::class, InitializeTenancyByRequestData::class],
 ], function () {
-    Route::post('/courses/create', '\Courses\CoursesController@createCourse');
-    Route::post('/courses/fetch', '\Courses\CoursesController@fetchCourses');
-    Route::post('/courses/fetch/specific', '\Courses\CoursesController@fetchSpecificCourses');
-    Route::post('/course/load', '\Courses\CoursesController@loadCourse');
-    Route::post('/course/edit/{ep}', '\Courses\CourseEditController@editCourse');
+    Route::post('/courses/create', 'Courses\CoursesController@createCourse');
+    Route::post('/courses/fetch', 'Courses\CoursesController@fetchCourses');
+    Route::post('/courses/fetch/specific', 'Courses\CoursesController@fetchSpecificCourses');
+    Route::post('/course/load', 'Courses\CoursesController@loadCourse');
+    Route::post('/course/edit/{ep}', 'Courses\CourseEditController@editCourse');
 
-    Route::post('/posts/create', '\Posts\PostsController@createPost');
-    Route::post('/posts/fetch', '\Posts\PostsController@fetchPosts');
-    Route::post('/posts/fetch/specific', '\Posts\PostsController@fetchSpecificPosts');
-    Route::post('/post/load', '\Posts\PostsController@loadPost');
-    Route::post('/post/edit/{ep}', '\Posts\PostEditController@editPost');
+    Route::post('/course/students/fetch', 'Courses\CourseStudentController@fetchCourseStudents');
+    Route::post('/course/students/add', 'Courses\CourseStudentController@addCourseStudent');
+    Route::post('/course/students/remove', 'Courses\CourseStudentController@removeCourseStudents');
+    Route::post('/course/students/changeaccess', 'Courses\CourseStudentController@changeCourseStudentsAccess');
+    Route::post('/course/students/importexcel', 'Courses\CourseStudentController@importCourseStudentsExcel');
+    Route::post('/course/students/exportexcel', 'Courses\CourseStudentController@exportCourseStudentsExcel');
 
-    Route::post('/levelonegroups/create', '\GroupsController@createLevelOneGroup');
-    Route::post('/leveltwogroups/create', '\GroupsController@createLevelTwoGroup');
-    Route::post('/levelthreegroups/create', '\GroupsController@createLevelThreeGroup');
-    Route::post('/levelonegroups/edit', '\GroupsController@editLevelOneGroup');
-    Route::post('/leveltwogroups/edit', '\GroupsController@editLevelTwoGroup');
-    Route::post('/levelthreegroups/edit', '\GroupsController@editLevelThreeGroup');
-    Route::post('/levelonegroups/delete', '\GroupsController@deleteLevelOneGroup');
-    Route::post('/leveltwogroups/delete', '\GroupsController@deleteLevelTwoGroup');
-    Route::post('/levelthreegroups/delete', '\GroupsController@deleteLevelThreeGroup');
-    Route::post('/tags/create', '\TagsController@createTag');
-    Route::post('/tags/edit', '\TagsController@editTag');
-    Route::post('/tags/delete', '\TagsController@deleteTag');
+    Route::post('/posts/create', 'Posts\PostsController@createPost');
+    Route::post('/posts/fetch', 'Posts\PostsController@fetchPosts');
+    Route::post('/posts/fetch/specific', 'Posts\PostsController@fetchSpecificPosts');
+    Route::post('/post/load', 'Posts\PostsController@loadPost');
+    Route::post('/post/edit/{ep}', 'Posts\PostEditController@editPost');
 
-    Route::post('/educators/create', '\EducatorsController@createEducator');
-    Route::post('/educators/update', '\EducatorsController@updateEducator');
-    Route::post('/educators/image/edit', '\EducatorsController@editEducatorImage');
-    Route::post('/educators/delete', '\EducatorsController@deleteEducator');
-    Route::post('/educators/fetch', '\EducatorsController@fetchEducators');
+    Route::post('/levelonegroups/create', 'GroupsController@createLevelOneGroup');
+    Route::post('/leveltwogroups/create', 'GroupsController@createLevelTwoGroup');
+    Route::post('/levelthreegroups/create', 'GroupsController@createLevelThreeGroup');
+    Route::post('/levelonegroups/edit', 'GroupsController@editLevelOneGroup');
+    Route::post('/leveltwogroups/edit', 'GroupsController@editLevelTwoGroup');
+    Route::post('/levelthreegroups/edit', 'GroupsController@editLevelThreeGroup');
+    Route::post('/levelonegroups/delete', 'GroupsController@deleteLevelOneGroup');
+    Route::post('/leveltwogroups/delete', 'GroupsController@deleteLevelTwoGroup');
+    Route::post('/levelthreegroups/delete', 'GroupsController@deleteLevelThreeGroup');
+    Route::post('/tags/create', 'TagsController@createTag');
+    Route::post('/tags/edit', 'TagsController@editTag');
+    Route::post('/tags/delete', 'TagsController@deleteTag');
 
-    Route::post('/writers/create', '\WritersController@createWriter');
-    Route::post('/writers/update', '\WritersController@updateWriter');
-    Route::post('/writers/image/edit', '\EducatorsController@editWriterImage');
-    Route::post('/writers/delete', '\WritersController@deleteWriter');
-    Route::post('/writers/fetch', '\WritersController@fetchWriters');
+    Route::post('/educators/create', 'EducatorsController@createEducator');
+    Route::post('/educators/update', 'EducatorsController@updateEducator');
+    Route::post('/educators/image/edit', 'EducatorsController@editEducatorImage');
+    Route::post('/educators/delete', 'EducatorsController@deleteEducator');
+    Route::post('/educators/fetch', 'EducatorsController@fetchEducators');
 
-    Route::post('/mainpage/edit/{ep}', '\MainPage\UserMainPageEditController@editMainPage');
-    Route::post('/mainpage/load', '\MainPage\UserMainPageController@loadMainPage');
+    Route::post('/writers/create', 'WritersController@createWriter');
+    Route::post('/writers/update', 'WritersController@updateWriter');
+    Route::post('/writers/image/edit', 'EducatorsController@editWriterImage');
+    Route::post('/writers/delete', 'WritersController@deleteWriter');
+    Route::post('/writers/fetch', 'WritersController@fetchWriters');
 
-    Route::post('/course/checkedcomments/fetch/{chunk_count}/{page_count}', '\CommentsController@fetchCourseCheckedComments');
-    Route::post('/course/uncheckedcomments/fetch/{chunk_count}/{page_count}', '\CommentsController@fetchCourseUnCheckedComments');
-    Route::post('/course/uncheckedcomments/count', '\CommentsController@getCourseUnCheckedCommentsCount');
-    Route::post('/comment/delete', '\CommentsController@deleteComment');
-    Route::post('/comment/set/checked', '\CommentsController@setCommentChecked');
-    Route::post('/comment/set/valid', '\CommentsController@setCommentValid');
+    Route::post('/mainpage/edit/{ep}', 'MainPage\UserMainPageEditController@editMainPage');
+    Route::post('/mainpage/load', 'MainPage\UserMainPageController@loadMainPage');
+
+    Route::post('/course/checkedcomments/fetch/{chunk_count}/{page_count}', 'CommentsController@fetchCourseCheckedComments');
+    Route::post('/course/uncheckedcomments/fetch/{chunk_count}/{page_count}', 'CommentsController@fetchCourseUnCheckedComments');
+    Route::post('/course/uncheckedcomments/count', 'CommentsController@getCourseUnCheckedCommentsCount');
+    Route::post('/comment/delete', 'CommentsController@deleteComment');
+    Route::post('/comment/set/checked', 'CommentsController@setCommentChecked');
+    Route::post('/comment/set/valid', 'CommentsController@setCommentValid');
 
 
 });

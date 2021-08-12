@@ -29,6 +29,10 @@ class UserMainPageEditController extends BaseController
         switch ($ep){
             case Constant::$EDIT_PARAM_TITLE:
                 return $this->editPropertiesTitle($request);
+            case Constant::$EDIT_PARAM_STORE_OPEN:
+                return $this->editPropertiesStoreOpen($request);
+            case Constant::$EDIT_PARAM_BLOG_OPEN:
+                return $this->editPropertiesBlogOpen($request);
             case Constant::$EDIT_PARAM_CONTENT_HIERARCHY:
                 return $this->editPropertiesContentHierarchy($request);
             case Constant::$EDIT_PARAM_BANNER_TEXT:
@@ -95,6 +99,22 @@ class UserMainPageEditController extends BaseController
     public function editPropertiesTitle(Request $request){
         $properties = MainPageProperties::all()[0];
         $properties->page_title = $request->input("title");
+        $properties->save();
+
+        return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
+    public function editPropertiesStoreOpen(Request $request){
+        $properties = MainPageProperties::all()[0];
+        $properties->store_open = $request->input("store_open");
+        $properties->save();
+
+        return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
+    public function editPropertiesBlogOpen(Request $request){
+        $properties = MainPageProperties::all()[0];
+        $properties->blog_open = $request->input("blog_open");
         $properties->save();
 
         return $this->sendResponse(Constant::$SUCCESS, null);

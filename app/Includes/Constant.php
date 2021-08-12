@@ -147,6 +147,8 @@ class Constant
     public static $EDIT_PARAM_COURSE_HEADING_ADD = "ep_course_heading_add";
     public static $EDIT_PARAM_COURSE_HEADING_UPDATE = "ep_course_heading_update";
     public static $EDIT_PARAM_COURSE_HEADING_DELETE = "ep_course_heading_delete";
+    public static $EDIT_PARAM_STORE_OPEN = "ep_param_store_open";
+    public static $EDIT_PARAM_BLOG_OPEN = "ep_param_blog_open";
     public static $EDIT_PARAM_BANNER_COVER = "ep_banner_cover";
     public static $EDIT_PARAM_BANNER_LINK = "ep_banner_link";
     public static $EDIT_PARAM_BANNER_TEXT = "ep_banner_text";

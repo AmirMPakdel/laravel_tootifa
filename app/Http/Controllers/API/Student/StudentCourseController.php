@@ -2,21 +2,15 @@
 
 
 namespace App\Http\Controllers\API\Student;
+use App\Http\Controllers\API\Admin\Courses\CoursesController;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Models\Comment;
 use App\Models\Course;
 use App\Models\Favorite;
-use App\Models\LevelOneGroup;
-use App\Models\LevelThreeGroup;
-use App\Models\LevelTwoGroup;
 use App\Models\Score;
-use App\Models\Student;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
 class StudentCourseController extends BaseController
 {
@@ -29,8 +23,8 @@ class StudentCourseController extends BaseController
     }
 
     public function registerInCourse($student, $course){
-        $student->courses()->save($course);
-        // $student->courses()->updateExistingPivot($course, ['access' => 0], false);
+        $cc = new CoursesController();
+        $cc->addStudentToCourse($student, $course);
     }
 
     public function fetchCourses(Request $request){

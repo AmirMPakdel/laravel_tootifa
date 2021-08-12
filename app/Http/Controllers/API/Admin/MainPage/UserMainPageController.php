@@ -116,6 +116,8 @@ class UserMainPageController extends BaseController
 
         return [
             'is_banner_on' => $properties->is_banner_on,
+            'store_open' => $properties->store_open,
+            'blog_open' => $properties->blog_open,
             'banner_link' => $properties->banner_link,
             'banner_text' => $properties->banner_text,
             'page_title' => $properties->page_title,
@@ -123,7 +125,7 @@ class UserMainPageController extends BaseController
             'footer_links' => $properties->footer_links,
             'contents' => $contents,
             'course_lists' => $course_lists,
-            'post_lists' => $post_lists
+            'post_lists' => $post_lists,
         ];
     }
 }

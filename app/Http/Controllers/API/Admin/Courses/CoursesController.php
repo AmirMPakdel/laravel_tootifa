@@ -1,10 +1,8 @@
 <?php
 
-
 namespace App\Http\Controllers\API\Admin\Courses;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\API\Admin\GroupsController;
-use App\Http\Controllers\API\Admin\TagsController;
 use App\Includes\Constant;
 use App\Models\Category;
 use App\Models\Course;
@@ -151,7 +149,6 @@ class CoursesController extends BaseController
     }
 
     public function loadCourse(Request $request){
-
         $course = Course::where('id',$request->input('course_id'))->get()->map(function ($course) {
             return $this->buildCourseObject($course);
         })->toArray()[0];
@@ -282,5 +279,15 @@ class CoursesController extends BaseController
         ];
     }
 
+    public function addStudentToCourse($student, $course){
+        $course->students()->attach($student);
+    }
 
+    public function removeStudentFromCourse($student, $course){
+        $course->students()->detach($student);
+    }
+
+    public function setStudentCourseAccess($student, $course, $access){
+        $student->courses()->updateExistingPivot($course, ['access' => $access], false);
+    }
 }
