@@ -160,6 +160,10 @@ Route::group([
     Route::post('/comment/score/update', 'StudentCourseController@updateCommentScore');
 });
 
+Route::get('/api/test', function(){
+    return "Hello test";
+});
+
 
 
 
