@@ -17,6 +17,7 @@ class CreateUProfilesTable extends Migration
             $table->id();
             $table->text('image')->nullable();
             $table->bigInteger('balance')->default(0);
+            $table->integer('user_id')->default(0);
             $table->longText('bio')->nullable();
             $table->timestamps();
         });
