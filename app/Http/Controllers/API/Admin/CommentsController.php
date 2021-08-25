@@ -7,7 +7,7 @@ use App\Includes\Constant;
 use App\Models\Comment;
 use App\Models\Course;
 use Illuminate\Http\Request;
-
+use Exception;
 
 class CommentsController extends BaseController
 {
@@ -29,8 +29,12 @@ class CommentsController extends BaseController
             ];
         });
 
-        $last_items = (collect($comments)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-        return $this->sendResponse(Constant::$SUCCESS, $last_items);
+        try {
+            $last_items = (collect($comments)->sortByDesc('id')->chunk($chunk_count))[$page_count];
+            return $this->sendResponse(Constant::$SUCCESS, $last_items);
+        }catch(Exception $e){
+            return $this->sendResponse(Constant::$NO_DATA, null);
+        };
     }
 
     public function fetchCourseUnCheckedComments(Request $request, $chunk_count, $page_count){
@@ -49,8 +53,12 @@ class CommentsController extends BaseController
             ];
         });
 
-        $last_items = (collect($comments)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-        return $this->sendResponse(Constant::$SUCCESS, $last_items);
+        try {
+            $last_items = (collect($comments)->sortByDesc('id')->chunk($chunk_count))[$page_count];
+            return $this->sendResponse(Constant::$SUCCESS, $last_items);
+        }catch(Exception $e){
+            return $this->sendResponse(Constant::$NO_DATA, null);
+        }
     }
 
     public function getCourseUnCheckedCommentsCount(Request $request){

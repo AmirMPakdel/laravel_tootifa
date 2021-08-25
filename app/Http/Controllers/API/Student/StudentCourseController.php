@@ -11,6 +11,7 @@ use App\Models\Favorite;
 use App\Models\Score;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 class StudentCourseController extends BaseController
 {
@@ -193,8 +194,12 @@ class StudentCourseController extends BaseController
             ];
         });
 
-        $last_items = (collect($comments)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-        return $this->sendResponse(Constant::$SUCCESS, $last_items);
+        try {
+            $last_items = (collect($comments)->sortByDesc('id')->chunk($chunk_count))[$page_count];
+            return $this->sendResponse(Constant::$SUCCESS, $last_items);
+        }catch(Exception $e){
+            return $this->sendResponse(Constant::$NO_DATA, null);
+        }
     }
 
     public function addComment(Request $request){
@@ -270,18 +275,18 @@ class StudentCourseController extends BaseController
                 'is_free' => $content->is_free,
             ];
 
-            switch ($content->type){
+            switch ($content->type) {
                 case Constant::$CONTENT_TYPE_VIDEO:
-                    $c['url'] = $has_access ? $content->content_video->url : null;
+                    $c['url'] = ($has_access || $content->is_free) ? $content->content_video->url : null;
                     $c['size'] = $content->content_video->size;
                     $c['encoding'] = $content->content_video->encoding;
                     break;
                 case Constant::$CONTENT_TYPE_VOICE:
-                    $c['url'] = $has_access ? $content->content_voice->url : null;
+                    $c['url'] = ($has_access || $content->is_free) ? $content->content_voice->url : null;
                     $c['size'] = $content->content_voice->size;
                     break;
                 case Constant::$CONTENT_TYPE_DOCUMENT:
-                    $c['url'] = $has_access ? $content->content_document->url : null;
+                    $c['url'] = ($has_access || $content->is_free) ? $content->content_document->url : null;
                     $c['size'] = $content->content_document->size;
             }
 

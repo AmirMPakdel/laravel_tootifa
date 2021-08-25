@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Includes\Constant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,6 +34,10 @@ class Course extends Model
         'is_comments_open',
         'all_comments_valid',
     ];
+
+    public function scopeValid($query){
+        return $query->where('validation_status', '=', Constant::$VALIDATION_STATUS_VALID);
+    }
 
     public function comments()
     {

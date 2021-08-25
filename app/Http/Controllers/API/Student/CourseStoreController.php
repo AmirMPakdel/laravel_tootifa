@@ -1,65 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\API\Admin\Courses;
+namespace App\Http\Controllers\API\Student;
+
 use App\Http\Controllers\API\BaseController;
-use App\Http\Controllers\API\Admin\GroupsController;
 use App\Includes\Constant;
-use App\Models\Category;
 use App\Models\Course;
 use App\Models\LevelOneGroup;
-use App\Models\LevelThreeGroup;
 use App\Models\LevelTwoGroup;
-use App\Models\Tag;
-use Illuminate\Http\Request;
+use App\Models\LevelThreeGroup;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
-class CoursesController extends BaseController
+
+class CourseStoreController extends BaseController
 {
-    public function createCourse(Request $request){
-        // fetching data
-        $title = $request->input('title');
-        $price = $request->input('price');
-        $groups = (object)$request->input('groups');
-        $tags = (array)$request->input('tags');
-        $category = Category::find($request->input('category_id'));
-
-        // check title
-        if(Course::where('title', $title)->exists())
-            return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
-
-        // check groups hierarchy
-        if(!GroupsController::checkGroupsHierarchy($groups))
-            return $this->sendResponse(Constant::$INVALID_GROUP_HIERARCHY, null);
-
-        // create course
-        $course = new Course();
-        $course->title = $title;
-        $course->price = $price;
-
-        // TODO delete this line
-        $course->validation_status = Constant::$VALIDATION_STATUS_VALID;
-
-        // add it to tags
-        foreach (Tag::find($tags) as $tag)
-            $tag->courses()->save($course);
-
-        // add it to groups
-        $g1 = LevelOneGroup::find($groups->g1);
-        $g2 = LevelTwoGroup::find($groups->g2);
-        $g3 = LevelThreeGroup::find($groups->g3);
-
-        if ($g1) $g1->courses()->save($course);
-        if ($g2) $g2->courses()->save($course);
-        if ($g3) $g3->courses()->save($course);
-
-        // add it to category
-        $category->courses()->save($course);
-
-        return $this->sendResponse(Constant::$SUCCESS,  ['course_id' => $course->id]);
-    }
-
-
-    public function fetchCourses(Request $request, $chunk_count, $page_count){
+    public function fetchCourses(Request $request, $chunk_count, $page_count)
+    {
         $filters = (object)$request->input('filters');
         $sorting_mode = $request->input('sorting_mode');
 
@@ -67,7 +24,7 @@ class CoursesController extends BaseController
         $group = (object)$filters->group;
 
         // which group
-        if(isset($group->level)) {
+        if (isset($group->level)) {
             switch ($group->level) {
                 case 1:
                     $group = LevelOneGroup::find($group->id);
@@ -85,7 +42,7 @@ class CoursesController extends BaseController
 
 
         // which order
-        switch ($sorting_mode){
+        switch ($sorting_mode) {
             case Constant::$SM_HIGHEST_PRICE:
                 $order_by = "price";
                 $order_direction = "desc";
@@ -124,17 +81,17 @@ class CoursesController extends BaseController
         }
 
         $query = [];
-        if($search_phrase)
+        if ($search_phrase)
             array_push($query, ['title', 'like', "%{$search_phrase}%"]);
 
-        if($group)
-            $courses = $group->courses()->where($query)
+        if ($group)
+            $courses = $group->courses()->valid()->where($query)
                 ->orderBy($order_by, $order_direction)
                 ->get()->map(function ($course) {
                     return $this->buildListCourseObject($course);
                 })->toArray();
         else
-            $courses = Course::where($query)->orderBy($order_by, $order_direction)
+            $courses = Course::valid()->where($query)->orderBy($order_by, $order_direction)
                 ->get()->map(function ($course) {
                     return $this->buildListCourseObject($course);
                 })->toArray();
@@ -142,77 +99,53 @@ class CoursesController extends BaseController
         try {
             $last_items = (collect($courses)->sortByDesc('id')->chunk($chunk_count))[$page_count];
             return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return $this->sendResponse(Constant::$NO_DATA, null);
         }
     }
 
-    public function fetchSpecificCourses(Request $request){
-        $ids = (array)$request->input('ids');
-
-        $courses = Course::find($ids)->map(function ($course) {
-            return $this->buildListCourseObject($course);
-        })->toArray();
-
-        return $this->sendResponse(Constant::$SUCCESS, $courses);
-    }
-
-    public function loadCourse(Request $request){
-        $course = Course::where('id',$request->input('course_id'))->get()->map(function ($course) {
-            return $this->buildCourseObject($course);
+    public function loadCourse(Request $request)
+    {
+        $course = Course::where('id', $request->input('course_id'))->get()->map(function ($course) {
+            return $this->buildCourseObject($course, null);
         })->toArray()[0];
 
         return $this->sendResponse(Constant::$SUCCESS, $course);
     }
 
-    public function getLogo(Request $request, $course_id){
-        $course = Course::find($course_id);
-        if($course && $course->logo){
-            $path = storage_path( "app\public\\" . $course->logo);
-            $path = str_replace('/', '\\', $path);
-            $headers = array(
-                'Content-Type' => 'image/png',
-            );
+    public function loadCourseForLoggedIn(Request $request)
+    {
+        $student = $request->input('student');
+        $course = Course::where('id', $request->input('course_id'))->get()->map(function ($course) use ($student) {
+            return $this->buildCourseObject($course, $student);
+        })->toArray()[0];
 
-            return response()->file($path, $headers);
-        }else return null;
+        return $this->sendResponse(Constant::$SUCCESS, $course);
     }
 
-    public function getCover(Request $request, $course_id){
-        $course = Course::find($course_id);
-        if($course && $course->cover){
-            $path = storage_path( "app\public\\" . $course->cover);
-            $path = str_replace('/', '\\', $path);
-            $headers = array(
-                'Content-Type' => 'image/png',
-            );
+    private function buildCourseObject($course, $student)
+    {
+        $registered = false;
+        $has_access = false;
 
-            return response()->file($path, $headers);
-        }else return null;
-    }
+        if ($student) {
+            $registered = DB::table('course_student')
+                ->whereCourseId($course->id)
+                ->whereStudentId($student->id)
+                ->count() > 0;
 
+            $has_access = DB::table('course_student')
+                ->whereCourseId($course->id)
+                ->whereStudentId($student->id)
+                ->whereAccess(1)
+                ->count() > 0;
+        }
 
-    private function buildListCourseObject($course){
-        return [
-            'id' => $course->id,
-            'title' => $course->title,
-            'price' => $course->price,
-            'sells' => $course->sells,
-            'score' => $course->score,
-            'visits_count' => $course->visits_count,
-            'validation_status' => $course->validation_status,
-            'g1' => $course->level_one_group_id,
-            'g2' => $course->level_two_group_id,
-            'g3' => $course->level_three_group_id,
-        ];
-    }
-
-    private function buildCourseObject($course){
-        $tags = $course->tags()->get()->map(function ($tag){
+        $tags = $course->tags()->get()->map(function ($tag) {
             return ['id' => $tag->id, 'title' => $tag->title];
         });
 
-        $educators = $course->educators()->get()->map(function ($educator){
+        $educators = $course->educators()->get()->map(function ($educator) {
             return [
                 'id' => $educator->id,
                 'first_name' => $educator->first_name,
@@ -221,7 +154,7 @@ class CoursesController extends BaseController
             ];
         });
 
-        $headings = $course->course_headings()->get()->map(function ($heading){
+        $headings = $course->course_headings()->get()->map(function ($heading) {
             return ['id' => $heading->id, 'title' => $heading->title];
         });
 
@@ -231,26 +164,26 @@ class CoursesController extends BaseController
             'size' => $course->course_introduction->content_video->size
         ] : null;
 
-        $contents = $course->course_contents()->get()->map(function ($content){
+        $contents = $course->course_contents()->get()->map(function ($content) use ($has_access) {
             $c = [
                 'id' => $content->id,
                 'title' => $content->title,
                 'type' => $content->type,
-                'is_free' => $content->is_free
+                'is_free' => $content->is_free,
             ];
 
-            switch ($content->type){
+            switch ($content->type) {
                 case Constant::$CONTENT_TYPE_VIDEO:
-                    $c['url'] = $content->content_video->url;
+                    $c['url'] = ($has_access || $content->is_free) ? $content->content_video->url : null;
                     $c['size'] = $content->content_video->size;
                     $c['encoding'] = $content->content_video->encoding;
                     break;
                 case Constant::$CONTENT_TYPE_VOICE:
-                    $c['url'] = $content->content_voice->url;
+                    $c['url'] = ($has_access || $content->is_free) ? $content->content_voice->url : null;
                     $c['size'] = $content->content_voice->size;
                     break;
                 case Constant::$CONTENT_TYPE_DOCUMENT:
-                    $c['url'] = $content->content_document->url;
+                    $c['url'] = ($has_access || $content->is_free) ? $content->content_document->url : null;
                     $c['size'] = $content->content_document->size;
             }
 
@@ -258,7 +191,8 @@ class CoursesController extends BaseController
         });
 
         return [
-            'id' => $course->id,
+            'registered' => $registered,
+            'has_access' => $has_access,
             'title' => $course->title,
             'price' => $course->price,
             'sells' => $course->sells,
@@ -272,8 +206,6 @@ class CoursesController extends BaseController
             "has_discount" => $course->has_discount,
             "discount" => $course->discount,
             "holding_status" => $course->holding_status,
-            "validation_status" => $course->validation_status,
-            "validation_status_message" => $course->validation_status_message,
             "release_date" => $course->release_date,
             "subjects" => $course->subjects,
             "short_desc" => $course->short_desc,
@@ -283,21 +215,26 @@ class CoursesController extends BaseController
             "suggested_posts" => $course->suggested_posts,
             "intro_video" => $intro_video,
             "content_hierarchy" => $course->content_hierarchy,
+            "is_comments_open" => $course->is_comments_open,
             "headings" => $headings,
             "contents" => $contents,
             "educators" => $educators
         ];
     }
 
-    public function addStudentToCourse($student, $course){
-        $course->students()->attach($student);
-    }
 
-    public function removeStudentFromCourse($student, $course){
-        $course->students()->detach($student);
-    }
-
-    public function setStudentCourseAccess($student, $course, $access){
-        $student->courses()->updateExistingPivot($course, ['access' => $access], false);
+    private function buildListCourseObject($course)
+    {
+        return [
+            'id' => $course->id,
+            'title' => $course->title,
+            'price' => $course->price,
+            'sells' => $course->sells,
+            'score' => $course->score,
+            'visits_count' => $course->visits_count,
+            'g1' => $course->level_one_group_id,
+            'g2' => $course->level_two_group_id,
+            'g3' => $course->level_three_group_id,
+        ];
     }
 }

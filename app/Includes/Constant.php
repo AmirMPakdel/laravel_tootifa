@@ -31,6 +31,11 @@ class Constant
     public static $GROUP_NOT_EXISTS = 1132;
     public static $RELATED_ENTITIES = 1133;
     public static $COMMENTS_NOT_OPEN = 1134;
+    public static $NO_DATA = 1135;
+    public static $USER_NOT_FOUND = 1136;
+    public static $PASSWORD_RESET_REQUEST_LIMIT_ERROR = 1137;
+    public static $PASSWORD_RESET_VALID_LIMIT_ERROR = 1138;
+    public static $STUDENT_NOT_FOUND = 1139;
 
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
@@ -39,6 +44,9 @@ class Constant
 
     public static $PAYMENT_SUCCEEDED = 1;
     public static $PAYMENT_FAILED = 0;
+
+    public static $PASSWORD_RESET_REQUEST_LIMIT_MIN = 5;
+    public static $PASSWORD_RESET_VALID_LIMIT_MIN = 45;
 
     public static $SATURDAY = "شنبه";
     public static $SUNDAY = "یکشنبه";

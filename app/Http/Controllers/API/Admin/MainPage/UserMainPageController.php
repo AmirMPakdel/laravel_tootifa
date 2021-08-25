@@ -5,13 +5,6 @@ namespace App\Http\Controllers\API\Admin\MainPage;
 
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
-use App\Includes\Helper;
-use App\Models\ContentImage;
-use App\Models\ContentSlider;
-use App\Models\ContentText;
-use App\Models\ContentVideo;
-use App\Models\ContentVoice;
-use App\Models\Course;
 use App\Models\MainContent;
 use App\Models\MainCourseList;
 use App\Models\MainPageProperties;

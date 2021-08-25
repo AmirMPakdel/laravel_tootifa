@@ -117,7 +117,7 @@ class UserRegistrationController extends BaseController
         $user->national_code = $national_code;
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
-        $user->password = Hash::make($user);
+        $user->password = Hash::make($request->input('password'));
 
         $user->token = bin2hex(random_bytes(16));
 

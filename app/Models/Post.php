@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Includes\Constant;
 
 class Post extends Model
 {
@@ -27,6 +28,10 @@ class Post extends Model
         'is_comments_open',
         'all_comments_valid',
     ];
+
+    public function scopeValid($query){
+        return $query->where('validation_status', '=', Constant::$VALIDATION_STATUS_VALID);
+    }
 
     public function comments()
     {

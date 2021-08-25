@@ -15,9 +15,6 @@ use App\Models\MainContent;
 use App\Models\MainCourseList;
 use App\Models\MainPageProperties;
 use App\Models\MainPostList;
-use App\Models\Post;
-use App\Models\PostContent;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 

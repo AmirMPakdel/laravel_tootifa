@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API\Admin\Courses;
+
 use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\API\Admin\Courses\CoursesController;
 use App\Includes\Constant;
@@ -8,13 +9,14 @@ use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-
+use Exception;
 
 class CourseStudentController extends BaseController
 {
-    public function fetchCourseStudents(Request $request){
+    public function fetchCourseStudents(Request $request, $chunk_count, $page_count)
+    {
         $course = Course::find($request->input('course_id'));
-        $students = $course->students->map(function ($student){
+        $students = $course->students->map(function ($student) {
             return [
                 'id' => $student->id,
                 'first_name' => $student->first_name,
@@ -25,14 +27,20 @@ class CourseStudentController extends BaseController
             ];
         });
 
-        return $this->sendResponse(Constant::$SUCCESS, $students);
+        try {
+            $last_items = (collect($students)->sortByDesc('id')->chunk($chunk_count))[$page_count];
+            return $this->sendResponse(Constant::$SUCCESS, $last_items);
+        } catch (Exception $e) {
+            return $this->sendResponse(Constant::$NO_DATA, null);
+        }
     }
 
-    public function importCourseStudentsExcel(Request $request){
+    public function importCourseStudentsExcel(Request $request)
+    {
         $course = Course::find($request->input('course_id'));
 
         $path1 =  $request->file('file')->store('temp');
-        $path=storage_path('app').'/'.$path1;
+        $path = storage_path('app') . '/' . $path1;
 
         Excel::import(
             new CourseStudentsImport($course),
@@ -42,14 +50,16 @@ class CourseStudentController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function exportCourseStudentsExcel(Request $request){
+    public function exportCourseStudentsExcel(Request $request)
+    {
         $course = Course::find($request->input('course_id'));
 
         $export = new CourseStudentsExport($course);
         return Excel::download($export, "لیست دانش آموزان دوره {$course->title}.xlsx");
     }
 
-    public function addCourseStudent(Request $request){
+    public function addCourseStudent(Request $request)
+    {
         $course = Course::find($request->input('course_id'));
         $student = Student::find($request->input('student_id'));
 
@@ -59,7 +69,8 @@ class CourseStudentController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function removeCourseStudents(Request $request){
+    public function removeCourseStudents(Request $request)
+    {
         $course = Course::find($request->input('course_id'));
         $students = Student::find($request->input('student_ids'));
 
@@ -70,7 +81,8 @@ class CourseStudentController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function changeCourseStudentsAccess(Request $request){
+    public function changeCourseStudentsAccess(Request $request)
+    {
         $course = Course::find($request->input('course_id'));
         $students = Student::find($request->input('student_ids'));
 
@@ -81,10 +93,3 @@ class CourseStudentController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 }
-
-
-
-
-
-
-

@@ -112,7 +112,7 @@ class StudentRegistrationController extends BaseController
         $student->national_code = $national_code;
         $student->first_name = $request->input('first_name');
         $student->last_name = $request->input('last_name');
-        $student->password = Hash::make($student);
+        $student->password = Hash::make($request->input('password'));
 
         $student->token = bin2hex(random_bytes(16));
 

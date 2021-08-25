@@ -28,6 +28,9 @@ Route::group([
     Route::post('/user/verificationcode/send', 'UserRegistrationController@sendVerificationCode');
     Route::post('/user/verificationcode/check', 'UserRegistrationController@checkVerificationCode');
     Route::post('/user/register', 'UserRegistrationController@completeRegistration');
+    Route::post('/user/passwordreset/request', 'UserPasswordResetController@requestResetPassword');
+    Route::post('/user/passwordreset/checktoken', 'UserPasswordResetController@checkPasswordResetToken');
+    Route::post('/user/passwordreset/reset', 'UserPasswordResetController@resetPassword');
 });
 
 //********************************************************TENANT*********************************************************
@@ -38,13 +41,15 @@ Route::group([
     'namespace'  => 'App\Http\Controllers\API\Admin',
     'middleware' => [ EnsureUserTokenIsValid::class, InitializeTenancyByRequestData::class],
 ], function () {
+    Route::post('/profile/update', 'UserProfileController@updateUserProfile');
+
     Route::post('/courses/create', 'Courses\CoursesController@createCourse');
-    Route::post('/courses/fetch', 'Courses\CoursesController@fetchCourses');
+    Route::post('/courses/fetch/{chunk_count}/{page_count}', 'Courses\CoursesController@fetchCourses');
     Route::post('/courses/fetch/specific', 'Courses\CoursesController@fetchSpecificCourses');
     Route::post('/course/load', 'Courses\CoursesController@loadCourse');
     Route::post('/course/edit/{ep}', 'Courses\CourseEditController@editCourse');
 
-    Route::post('/course/students/fetch', 'Courses\CourseStudentController@fetchCourseStudents');
+    Route::post('/course/students/fetch/{chunk_count}/{page_count}', 'Courses\CourseStudentController@fetchCourseStudents');
     Route::post('/course/students/add', 'Courses\CourseStudentController@addCourseStudent');
     Route::post('/course/students/remove', 'Courses\CourseStudentController@removeCourseStudents');
     Route::post('/course/students/changeaccess', 'Courses\CourseStudentController@changeCourseStudentsAccess');
@@ -52,7 +57,7 @@ Route::group([
     Route::post('/course/students/exportexcel', 'Courses\CourseStudentController@exportCourseStudentsExcel');
 
     Route::post('/posts/create', 'Posts\PostsController@createPost');
-    Route::post('/posts/fetch', 'Posts\PostsController@fetchPosts');
+    Route::post('/posts/fetch/{chunk_count}/{page_count}', 'Posts\PostsController@fetchPosts');
     Route::post('/posts/fetch/specific', 'Posts\PostsController@fetchSpecificPosts');
     Route::post('/post/load', 'Posts\PostsController@loadPost');
     Route::post('/post/edit/{ep}', 'Posts\PostEditController@editPost');
@@ -126,6 +131,14 @@ Route::group([
     Route::post('/verificationcode/send', 'StudentRegistrationController@sendVerificationCode');
     Route::post('/verificationcode/check', 'StudentRegistrationController@checkVerificationCode');
     Route::post('/register', 'StudentRegistrationController@completeRegistration');
+    Route::post('/passwordreset/request', 'StudentPasswordResetController@requestResetPassword');
+    Route::post('/passwordreset/checktoken', 'StudentPasswordResetController@checkPasswordResetToken');
+    Route::post('/passwordreset/reset', 'StudentPasswordResetController@resetPassword');
+
+    Route::post('/store/fetch/{chunk_count}/{page_count}', 'CourseStoreController@fetchCourses');
+    Route::post('/store/course/load', 'CourseStoreController@loadCourse');
+    Route::post('/blog/fetch/{chunk_count}/{page_count}', 'BlogController@fetchPosts');
+    Route::post('/blog/post/load', 'BlogController@loadPost');
 });
 
 // Tenant students' routes
@@ -158,6 +171,7 @@ Route::group([
     Route::post('/post/comments/remove', 'StudentPostController@removeComment');
     Route::post('/comment/score/get', 'StudentCourseController@getCommentScore');
     Route::post('/comment/score/update', 'StudentCourseController@updateCommentScore');
+    Route::post('/store/course/load', 'CourseStoreController@loadCourseForLoggedIn');
 });
 
 Route::get('/api/test', function(){

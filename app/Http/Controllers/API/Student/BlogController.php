@@ -1,58 +1,21 @@
 <?php
 
-
-namespace App\Http\Controllers\API\Admin\Posts;
+namespace App\Http\Controllers\API\Student;
 
 use App\Http\Controllers\API\BaseController;
-use App\Http\Controllers\API\Admin\GroupsController;
 use App\Includes\Constant;
-use App\Models\LevelOneGroup;
-use App\Models\LevelThreeGroup;
-use App\Models\LevelTwoGroup;
 use App\Models\Post;
-use App\Models\Tag;
-use Illuminate\Http\Request;
+use App\Models\LevelOneGroup;
+use App\Models\LevelTwoGroup;
+use App\Models\LevelThreeGroup;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 
-class PostsController extends BaseController
+class BlogController extends BaseController
 {
-    public function createPost(Request $request)
-    {
-        // fetching data
-        $title = $request->input('title');
-        $groups = (object)$request->input('groups');
-        $tags = (array)$request->input('tags');
-
-        // check title
-        if (Post::where('title', $title)->exists())
-            return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
-
-        // check groups hierarchy
-        if (!GroupsController::checkGroupsHierarchy($groups))
-            return $this->sendResponse(Constant::$INVALID_GROUP_HIERARCHY, null);
-
-        // create post
-        $post = new Post();
-        $post->title = $title;
-
-        // add it to tags
-        foreach (Tag::find($tags) as $tag)
-            $tag->posts()->save($post);
-
-        // add it to groups
-        $g1 = LevelOneGroup::find($groups->g1);
-        $g2 = LevelTwoGroup::find($groups->g2);
-        $g3 = LevelThreeGroup::find($groups->g3);
-
-        if ($g1) $g1->posts()->save($post);
-        if ($g2) $g2->posts()->save($post);
-        if ($g3) $g3->posts()->save($post);
-
-        return $this->sendResponse(Constant::$SUCCESS,  ['post_id' => $post->id]);
-    }
-
-
+    
     public function fetchPosts(Request $request, $chunk_count, $page_count)
     {
         $filters = (object)$request->input('filters');
@@ -107,13 +70,13 @@ class PostsController extends BaseController
             array_push($query, ['title', 'like', "%{$search_phrase}%"]);
 
         if ($group)
-            $posts = $group->posts()->where($query)
+            $posts = $group->posts()->valid()->where($query)
                 ->orderBy($order_by, $order_direction)
                 ->get()->map(function ($post) {
                     return $this->buildListPostObject($post);
                 })->toArray();
         else
-            $posts = Post::where($query)->orderBy($order_by, $order_direction)
+            $posts = Post::valid()->where($query)->orderBy($order_by, $order_direction)
                 ->get()->map(function ($post) {
                     return $this->buildListPostObject($post);
                 })->toArray();
@@ -126,53 +89,12 @@ class PostsController extends BaseController
         }
     }
 
-    public function fetchSpecificPosts(Request $request)
-    {
-        $ids = (array)$request->input('ids');
-
-        $posts = Post::find($ids)->map(function ($post) {
-            return $this->buildListPostObject($post);
-        })->toArray();
-
-        return $this->sendResponse(Constant::$SUCCESS, $posts);
-    }
-
-    public function loadPost(Request $request)
-    {
-
-        $post = Post::where('id', $request->input('post_id'))->get()->map(function ($post) {
+    public function loadPost(Request $request){
+        $post = Post::where('id',$request->input('post_id'))->get()->map(function ($post) {
             return $this->buildPostObject($post);
         })->toArray()[0];
 
         return $this->sendResponse(Constant::$SUCCESS, $post);
-    }
-
-    public function getLogo(Request $request, $post_id)
-    {
-        $post = Post::find($post_id);
-        if ($post && $post->logo) {
-            $path = storage_path("app\public\\" . $post->logo);
-            $path = str_replace('/', '\\', $path);
-            $headers = array(
-                'Content-Type' => 'image/png',
-            );
-
-            return response()->file($path, $headers);
-        } else return null;
-    }
-
-    public function getCover(Request $request, $post_id)
-    {
-        $post = Post::find($post_id);
-        if ($post && $post->cover) {
-            $path = storage_path("app\public\\" . $post->cover);
-            $path = str_replace('/', '\\', $path);
-            $headers = array(
-                'Content-Type' => 'image/png',
-            );
-
-            return response()->file($path, $headers);
-        } else return null;
     }
 
     private function buildListPostObject($post)
@@ -185,7 +107,6 @@ class PostsController extends BaseController
             'g1' => $post->level_one_group_id,
             'g2' => $post->level_two_group_id,
             'g3' => $post->level_three_group_id,
-            'validation_status' => $post->validation_status
         ];
     }
 
