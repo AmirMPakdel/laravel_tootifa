@@ -141,9 +141,13 @@ class UserRegistrationController extends BaseController
 
         // setting key
         $previous = User::find(User::where('id', '<', $user->id)->max('id'));
-        $sum = (int) (hexdec($previous->key) + 1);
-        $new_code = dechex($sum);
-        $user->key = $new_code;
+        if($previous){
+            $sum = (int) (hexdec($previous->key) + 1);
+            $new_code = dechex($sum);
+            $user->key = $new_code;
+        }else
+            $user->key = "1111";
+        
         $user->save();
 
         // generate user main page properties
