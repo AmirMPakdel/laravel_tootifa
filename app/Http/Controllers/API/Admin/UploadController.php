@@ -78,8 +78,7 @@ class UploadController extends BaseController
             $resultStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             if ($resultStatus == 200) {
                 // everything went better than expected
-                $destination = env('FTP_URL') .
-                    ($is_public) ? "/public_files/{$tenant}/{$upload_key}.{$type}" :
+                $destination = ($is_public) ? "/public_files/{$tenant}/{$upload_key}.{$type}" :
                     "/{$tenant}/{$upload_key}.{$type}";
 
                 return ["result" => $result, "url" => $destination];
