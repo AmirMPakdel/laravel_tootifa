@@ -4,7 +4,6 @@ use App\Http\Middleware\EnsureStudentTokenIsValid;
 use App\Http\Middleware\EnsureUserTokenIsValid;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
-use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
