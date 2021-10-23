@@ -202,6 +202,9 @@ Route::get('/api/test', function(){
     return "Hello test";
 });
 
+Route::get('/', function(){
+    return "Nothing";
+});
 
 
 
