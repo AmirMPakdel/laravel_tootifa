@@ -40,7 +40,7 @@ class UploadController extends BaseController
     public function verifyUploadKey(Request $request)
     {
         $upload_transaction = UploadTransaction::where('upload_key', $request->input('upload_key'))->first();
-        if (!$upload_transaction) return $this->sendResponse(Constant::$$INVALID_UPLOAD_KEY, null);
+        if (!$upload_transaction) return $this->sendResponse(Constant::$INVALID_UPLOAD_KEY, null);
 
         $result = [
             'file_type' => $upload_transaction->file_type,

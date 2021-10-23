@@ -38,6 +38,7 @@ class Constant
     public static $STUDENT_NOT_FOUND = 1139;
     public static $DEVICE_LIMIT = 1140;
     public static $LISCENSE_KEY_NOT_FOUND = 1141;
+    public static $INVALID_UPLOAD_KEY = 1142;
     
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
