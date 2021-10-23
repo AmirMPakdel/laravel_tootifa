@@ -4,12 +4,12 @@ namespace App\Http\Controllers\API\Student;
 
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
+use App\Includes\Helper;
 use App\Models\Post;
 use App\Models\LevelOneGroup;
 use App\Models\LevelTwoGroup;
 use App\Models\LevelThreeGroup;
 use Exception;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 
@@ -90,6 +90,9 @@ class BlogController extends BaseController
     }
 
     public function loadPost(Request $request){
+        // set visit 
+        Helper::setPostVisit($request->input('post_id'));
+
         $post = Post::where('id',$request->input('post_id'))->get()->map(function ($post) {
             return $this->buildPostObject($post);
         })->toArray()[0];

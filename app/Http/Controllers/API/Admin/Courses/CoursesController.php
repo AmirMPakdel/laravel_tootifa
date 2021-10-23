@@ -4,11 +4,14 @@ namespace App\Http\Controllers\API\Admin\Courses;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\API\Admin\GroupsController;
 use App\Includes\Constant;
+use App\Includes\Helper;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\CourseRegistrationRecord;
 use App\Models\LevelOneGroup;
 use App\Models\LevelThreeGroup;
 use App\Models\LevelTwoGroup;
+use App\Models\LicenseKey;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Exception;
@@ -289,8 +292,24 @@ class CoursesController extends BaseController
         ];
     }
 
-    public function addStudentToCourse($student, $course){
-        $course->students()->attach($student);
+    public function addStudentToCourse($student, $course, $registration_type){
+        // Register in Course
+        $course->students()->attach($student, ['registration_type' => $registration_type]);
+
+        // Generate License Key
+        $lk = new LicenseKey();
+        $lk->key = tenant()->user->key . Helper::generateKey(10);
+        $lk->student_id = $student->id;
+        $lk->course_id = $course->id;
+        $lk->save();
+
+        // Save record
+        $record = new CourseRegistrationRecord();
+        $record->course_id = $course->id;
+        $record->student_id = $student->id;
+        $record->course_price = $course->price;
+        $record->registration_type = $registration_type;
+        $record->save();
     }
 
     public function removeStudentFromCourse($student, $course){

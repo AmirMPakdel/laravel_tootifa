@@ -56,7 +56,7 @@ class Course extends Model
 
     public function students()
     {
-        return $this->belongsToMany(Student::class)->withPivot("access");
+        return $this->belongsToMany(Student::class)->withPivot("access")->withPivot("registration_type");
     }
 
     public function educators()

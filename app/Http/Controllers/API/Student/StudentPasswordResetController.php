@@ -57,7 +57,7 @@ class StudentPasswordResetController extends BaseController
         if(!$password_reset)
             return $this->sendResponse(Constant::$INVALID_TOKEN, null);
 
-        $student = Student::where('phone_number', $password_reset->phone_number);
+        $student = Student::where('phone_number', $password_reset->phone_number)->first();
         if(!$student)
             return $this->sendResponse(Constant::$STUDENT_NOT_FOUND, null);
         

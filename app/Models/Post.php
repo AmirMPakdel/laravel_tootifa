@@ -53,6 +53,11 @@ class Post extends Model
         return $this->hasMany(PostContent::class);
     }
 
+    public function post_forms()
+    {
+        return $this->hasMany(PostForm::class);
+    }
+
     public function favorites()
     {
         return $this->morphMany(Favorite::class, 'favoritable');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Student;
 
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
+use App\Includes\Helper;
 use App\Models\Course;
 use App\Models\LevelOneGroup;
 use App\Models\LevelTwoGroup;
@@ -106,6 +107,9 @@ class CourseStoreController extends BaseController
 
     public function loadCourse(Request $request)
     {
+        // set visit 
+        Helper::setCourseVisit($request->input('course_id'));
+
         $course = Course::where('id', $request->input('course_id'))->get()->map(function ($course) {
             return $this->buildCourseObject($course, null);
         })->toArray()[0];
@@ -115,6 +119,9 @@ class CourseStoreController extends BaseController
 
     public function loadCourseForLoggedIn(Request $request)
     {
+        // set visit 
+        Helper::setCourseVisit($request->input('course_id'));
+
         $student = $request->input('student');
         $course = Course::where('id', $request->input('course_id'))->get()->map(function ($course) use ($student) {
             return $this->buildCourseObject($course, $student);

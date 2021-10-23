@@ -15,20 +15,21 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'email',
-        'national_code',
-        'phone_number',
-        'phone_verified_at',
-        'email_verified_at',
-        'verification_code',
-        'tenant_id',
-        'password',
-        'token',
-        'u_profile_id'
-    ];
+    // protected $fillable = [
+    //     'first_name',
+    //     'last_name',
+    //     'email',
+    //     'national_code',
+    //     'phone_number',
+    //     'phone_verified_at',
+    //     'email_verified_at',
+    //     'verification_code',
+    //     'tenant_id',
+    //     'password',
+    //     'token',
+    //     'u_profile_id',
+    //     'unicode'
+    // ];
 
     public function tenant()
     {

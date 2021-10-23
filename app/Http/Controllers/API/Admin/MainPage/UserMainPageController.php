@@ -7,6 +7,7 @@ use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Models\MainContent;
 use App\Models\MainCourseList;
+use App\Models\MainForm;
 use App\Models\MainPageProperties;
 use App\Models\MainPostList;
 use Illuminate\Http\Request;
@@ -107,6 +108,19 @@ class UserMainPageController extends BaseController
             ];
         });
 
+        $main_forms = MainForm::all()->map(function ($main_form){
+            return [
+                'title' => $main_form->title,
+                'text' => $main_form->text,
+                'submit_text' => $main_form->submit_text,
+                'has_email_input' => $main_form->has_email_input,
+                'has_name_input' => $main_form->has_name_input,
+                'has_phone_input' => $main_form->has_phone_input,
+                'has_city_input' => $main_form->has_city_input,
+                'has_province_input' => $main_form->has_province_input
+            ];
+        });
+
         return [
             'is_banner_on' => $properties->is_banner_on,
             'store_open' => $properties->store_open,
@@ -119,6 +133,7 @@ class UserMainPageController extends BaseController
             'contents' => $contents,
             'course_lists' => $course_lists,
             'post_lists' => $post_lists,
+            'main_forms' => $main_forms,
         ];
     }
 }

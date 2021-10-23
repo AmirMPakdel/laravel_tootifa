@@ -1,12 +1,26 @@
 <?php
 
-
 namespace App\Includes;
 
-
+use App\Models\ContentDocument;
+use App\Models\ContentImage;
+use App\Models\ContentVideo;
+use App\Models\ContentVoice;
+use App\Models\Course;
+use App\Models\DailyCourseRegistrationReport;
+use App\Models\DailyCourseVisitReport;
+use App\Models\DailyMaintenanceCostReport;
+use App\Models\DailyMainVisitReport;
+use App\Models\DailyPostVisitReport;
+use App\Models\DailySmsCostReport;
+use App\Models\Post;
+use App\Models\SentSmsRecord;
+use App\Models\Tenant;
+use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\Console\Input\Input;
+use Illuminate\Support\Facades\DB;
 
 class Helper
 {
@@ -583,5 +597,195 @@ class Helper
         return $cities[$p_id];
     }
 
+    public static function calculateUsersDailyMaintenanceCost($tenant_id)
+    {
+        $tenant = Tenant::find($tenant_id);
+        $profile = User::find($tenant->user_id)->u_profile;
 
+        $tenant->run(function () use ($profile) {
+            // check for not calculating twice a day
+            $today = Carbon::now()->format('Y-m-d') . '%';
+            if (DailyMaintenanceCostReport::where('created_at', 'like', $today)->exists()) return;
+
+            // get post contents' size
+            $post_videos =  DB::table('content_videos')->where('belongs_to', Constant::$BELONGING_POST)->select('size');
+            $post_images =  DB::table('content_images')->where('belongs_to', Constant::$BELONGING_POST)->select('size');
+            $post_voices =  DB::table('content_voices')->where('belongs_to', Constant::$BELONGING_POST)->select('size');
+            $post_content_sizes = $post_videos->unionAll($post_images)->unionAll($post_voices)->get();
+
+            // get course contents' size
+            $course_videos =  DB::table('content_videos')->where('belongs_to', Constant::$BELONGING_COURSE)->select('size');
+            $course_documents =  DB::table('content_documents')->where('belongs_to', Constant::$BELONGING_COURSE)->select('size');
+            $course_voices =  DB::table('content_voices')->where('belongs_to', Constant::$BELONGING_COURSE)->select('size');
+            $course_content_sizes = $course_videos->unionAll($course_documents)->unionAll($course_voices)->get();
+
+            // get main contents' size
+            $main_videos =  DB::table('content_videos')->where('belongs_to', Constant::$BELONGING_MAIN)->select('size');
+            $main_images =  DB::table('content_images')->where('belongs_to', Constant::$BELONGING_MAIN)->select('size');
+            $main_voices =  DB::table('content_voices')->where('belongs_to', Constant::$BELONGING_MAIN)->select('size');
+            $main_content_sizes = $main_videos->unionAll($main_images)->unionAll($main_voices)->get();
+
+            // calculate report
+            $posts_total_size = array_sum(array_column($post_content_sizes->toArray(), 'size'));
+            $courses_total_size = array_sum(array_column($course_content_sizes->toArray(), 'size'));
+            $main_total_size = array_sum(array_column($main_content_sizes->toArray(), 'size'));
+
+            $videos_total_size = ContentVideo::all()->sum('size');
+            $images_total_size = ContentImage::all()->sum('size');
+            $documents_total_size = ContentDocument::all()->sum('size');
+            $voices_total_size = ContentVoice::all()->sum('size');
+
+            $total_size = $videos_total_size + $images_total_size + $documents_total_size + $voices_total_size;
+
+            $report = new DailyMaintenanceCostReport();
+            $report->total_cost = Helper::calculateMaintenanceCost($total_size);
+            $report->total_size = $total_size;
+            $report->posts_size = $posts_total_size;
+            $report->courses_size = $courses_total_size;
+            $report->main_size = $main_total_size;
+            $report->images_size = $images_total_size;
+            $report->videos_size = $videos_total_size;
+            $report->voices_size = $voices_total_size;
+            $report->documents_size = $documents_total_size;
+            $report->save();
+
+            $profile->m_balance -= $report->total_cost;
+            $profile->save();
+            // Log::debug("{$profile}");
+        });
+    }
+
+    public static function calculateUsersDailySmsCost($tenant_id)
+    {
+        $tenant = Tenant::find($tenant_id);
+        $profile = User::find($tenant->user_id)->u_profile;
+
+        $tenant->run(function () use ($profile) {
+            // Check for not calculating twice a day
+            $today = Carbon::now()->format('Y-m-d') . '%';
+            if (DailySmsCostReport::where('created_at', 'like', $today)->exists()) return;
+
+            // Calculating sent sms types count
+            $sent_sms_type_counts = DB::table('sent_sms_records')
+                ->where('created_at', 'like', $today)
+                ->select('type', DB::raw('count(*) as count'))
+                ->groupBy('type')
+                ->get();
+
+            $total_count = array_sum(array_column($sent_sms_type_counts->toArray(), 'count'));
+            $total_cost = SentSmsRecord::where('created_at', 'like', $today)->sum('cost');
+
+            $report = new DailySmsCostReport();
+            $report->total_count = $total_count;
+            $report->total_cost = $total_cost;
+            $report->desc = json_encode($sent_sms_type_counts);
+            $report->save();
+
+            // Should be done whenever sms is sent
+            // $profile->s_balance -= $report->total_cost;
+            // $profile->save();
+        });
+    }
+
+    public static function generateDailyVisitReports($tenant_id)
+    {
+        $tenant = Tenant::find($tenant_id);
+
+        $tenant->run(function () {
+            $courses = Course::all();
+            $posts = Post::all();
+
+            $mv_report = new DailyMainVisitReport();
+            $mv_report->save();
+
+            foreach ($courses as $course) {
+                $cv_report = new DailyCourseVisitReport();
+                $cv_report->course_id = $course->id;
+                $cv_report->save();
+            }
+
+            foreach ($posts as $post) {
+                $pv_report = new DailyPostVisitReport();
+                $pv_report->post_id = $post->id;
+                $pv_report->save();
+            }
+        });
+    }
+
+    public static function setPostVisit($post_id)
+    {
+        $today = Carbon::now()->format('Y-m-d') . '%';
+        $report = DailyPostVisitReport::where([
+            ['created_at', 'like', $today],
+            ['post_id', '=', $post_id]
+        ])->first();
+
+        if ($report) {
+            $report->count = $report->count + 1;
+            $report->save();
+        }
+    }
+
+    public static function setCourseVisit($course_id)
+    {
+        $today = Carbon::now()->format('Y-m-d') . '%';
+        $report = DailyCourseVisitReport::where([
+            ['created_at', 'like', $today],
+            ['course_id', '=', $course_id]
+        ])->first();
+
+        if ($report) {
+            $report->count = $report->count + 1;
+            $report->save();
+        }
+    }
+
+    public static function setMainVisit()
+    {
+        $today = Carbon::now()->format('Y-m-d') . '%';
+        $report = DailyMainVisitReport::where([
+            ['created_at', 'like', $today],
+        ])->first();
+
+        if ($report) {
+            $report->count = $report->count + 1;
+            $report->save();
+        }
+    }
+
+    // Gets size in KB
+    public static function calculateMaintenanceCost($size)
+    {
+        return ($size / pow(10, 6)) * Constant::$ONE_G_MAITENANCE_COST;
+    }
+
+    public static function crypto_rand_secure($min, $max)
+    {
+        $range = $max - $min;
+        if ($range < 1) return $min; // not so random...
+        $log = ceil(log($range, 2));
+        $bytes = (int) ($log / 8) + 1; // length in bytes
+        $bits = (int) $log + 1; // length in bits
+        $filter = (int) (1 << $bits) - 1; // set all lower bits to 1
+        do {
+            $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+            $rnd = $rnd & $filter; // discard irrelevant bits
+        } while ($rnd > $range);
+        return $min + $rnd;
+    }
+
+    public static function generateKey($length)
+    {
+        $token = "";
+        $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $codeAlphabet .= "abcdefghijklmnopqrstuvwxyz";
+        $codeAlphabet .= "0123456789";
+        $max = strlen($codeAlphabet); // edited
+
+        for ($i = 0; $i < $length; $i++) {
+            $token .= $codeAlphabet[Helper::crypto_rand_secure(0, $max - 1)];
+        }
+
+        return $token;
+    }
 }

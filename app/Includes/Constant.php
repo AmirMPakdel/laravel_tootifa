@@ -36,7 +36,9 @@ class Constant
     public static $PASSWORD_RESET_REQUEST_LIMIT_ERROR = 1137;
     public static $PASSWORD_RESET_VALID_LIMIT_ERROR = 1138;
     public static $STUDENT_NOT_FOUND = 1139;
-
+    public static $DEVICE_LIMIT = 1140;
+    public static $LISCENSE_KEY_NOT_FOUND = 1141;
+    
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
     public static $GENDER_FEMALE = 0;
@@ -44,6 +46,14 @@ class Constant
 
     public static $PAYMENT_SUCCEEDED = 1;
     public static $PAYMENT_FAILED = 0;
+
+    public static $PT_INCREMENTAL = "pt_incremental";
+    public static $PT_ACTIVATION = "pt_activation";
+
+    public static $PRT_SMS = "prt_sms";
+    public static $PRT_MAINTENANCE = "prt_maintenance";
+    public static $PRT_TEST = "prt_test";
+
 
     public static $PASSWORD_RESET_REQUEST_LIMIT_MIN = 5;
     public static $PASSWORD_RESET_VALID_LIMIT_MIN = 45;
@@ -110,6 +120,38 @@ class Constant
     public static $LOGO_SIZE_LIMIT = 900;
     public static $LOGO_SIZE_NAME_LIMIT = 700;
 
+    public static $BELONGING_COURSE = "course";
+    public static $BELONGING_POST = "post";
+    public static $BELONGING_MAIN = "main";
+    public static $BELONGING_LP = "lp";
+
+    public static $SMS_TYPE_REGISTRATION = "st_registration";
+    public static $SMS_TYPE_FORGET_PASS = "st_forget_pass";
+    public static $SMS_TYPE_MESSAGE = "st_message";
+
+    public static $REGISTRATION_TYPE_WEBSITE = "rt_website";
+    public static $REGISTRATION_TYPE_CUSTOM = "rt_custom";
+
+    public static $ONE_G_MAITENANCE_COST = 5000; // TOMAN
+    public static $SMS_COST = 10; // TOMAN
+
+    public static $STR_HAS_ACCESS = "دارد";
+    public static $STR_HAS_NOT_ACCESS = "ندارد";
+
+    public static $STR_CUSTOM = "دستی";
+    public static $STR_WEBSITE = "وبسایت";
+
+    public static $FORM_SUBMIT_TEXT = "ذخیره";
+
+    public static $FORM_ENTITY_TYPE_MAIN = "fet_main";
+    public static $FORM_ENTITY_TYPE_POST = "fet_post";
+    public static $FORM_ENTITY_TYPE_LP = "fet_lp";
+    public static $FORM_ENTITY_TYPE_POPUP = "fet_popup";
+
+    public static $UPLOAD_TYPE_COURSE_VIDEO = "ut_course_video";
+    public static $UPLOAD_TYPE_COURSE_DOCUMENT = "ut_course_document";
+    public static $UPLOAD_TYPE_COURSE_VOICE = "ut_course_voice";
+
     //**************************************************** EDIT PARAMS *************************************************
     public static $EDIT_PARAM_LOGO = "ep_logo";
     public static $EDIT_PARAM_COVER = "ep_cover";
@@ -168,7 +210,12 @@ class Constant
     public static $EDIT_PARAM_POST_LIST_ADD = "ep_content_post_list_add";
     public static $EDIT_PARAM_POST_LIST_UPDATE = "ep_content_post_list_update";
     public static $EDIT_PARAM_POST_LIST_DELETE = "ep_content_post_list_delete";
+    public static $EDIT_PARAM_MAIN_FORM_ADD = "ep_content_main_form_add";
+    public static $EDIT_PARAM_MAIN_FORM_UPDATE = "ep_content_main_form_update";
+    public static $EDIT_PARAM_MAIN_FORM_DELETE = "ep_content_main_form_delete";
+    public static $EDIT_PARAM_POST_FORM_ADD = "ep_content_post_form_add";
+    public static $EDIT_PARAM_POST_FORM_UPDATE = "ep_content_post_form_update";
+    public static $EDIT_PARAM_POST_FORM_DELETE = "ep_content_post_form_delete";
     //******************************************************************************************************************
-
 
 }

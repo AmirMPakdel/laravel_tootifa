@@ -1,13 +1,16 @@
 <?php
+
 namespace App\Http\Controllers\API\Admin\Courses;
 
+use App\Includes\Constant;
 use Maatwebsite\Excel\Concerns\FromArray;
 
 class CourseStudentsExport implements FromArray
 {
     private $course;
 
-    public function __construct($course = null) {
+    public function __construct($course = null)
+    {
         $this->course = $course;
     }
 
@@ -21,6 +24,8 @@ class CourseStudentsExport implements FromArray
             'استان',
             'شهر',
             'ایمیل',
+            'دسترسی',
+            'نوع ثبت نام'
         ];
 
         $data = [$headers];
@@ -34,6 +39,8 @@ class CourseStudentsExport implements FromArray
                 $student->state,
                 $student->city,
                 $student->email,
+                $student->pivot->access ? Constant::$STR_HAS_ACCESS : Constant::$STR_HAS_NOT_ACCESS,
+                ($student->pivot->registration_type == Constant::$REGISTRATION_TYPE_WEBSITE) ? Constant::$STR_WEBSITE : Constant::$STR_CUSTOM,
             ];
 
             array_push($data, $item);

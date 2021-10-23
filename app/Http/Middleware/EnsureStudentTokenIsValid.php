@@ -20,7 +20,19 @@ class EnsureStudentTokenIsValid
      */
     public function handle(Request $request, Closure $next)
     {
-        $student = Student::where('token', $request->input('token'))->first();
+        $token = null;
+        switch ($request->method()) {
+            case 'POST':
+                $token = $request->input('token');
+                break;
+            case 'GET':
+                $token = $request->query('token');
+                break;
+            default:
+                return $this->sendResponse(Constant::$INVALID_REQUEST, null);
+        }
+
+        $student = Student::where('token', $token)->first();
         if (!$student)
             return $this->sendResponse(Constant::$INVALID_TOKEN, null);
 

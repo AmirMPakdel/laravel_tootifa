@@ -31,7 +31,7 @@ class Student extends Model
 
     public function courses()
     {
-        return $this->belongsToMany(Course::class)->withPivot("access");
+        return $this->belongsToMany(Course::class)->withPivot("access")->withPivot("registration_type");
     }
 
     public function student_notifications()

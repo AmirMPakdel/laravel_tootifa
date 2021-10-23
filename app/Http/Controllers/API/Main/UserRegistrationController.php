@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserRegistrationController extends BaseController
 {
@@ -103,8 +104,10 @@ class UserRegistrationController extends BaseController
         // check national code
         $national_code = $request->input('national_code');
 
-        if (User::where('national_code', $national_code)->exists())
-            return $this->sendResponse(Constant::$REPETITIVE_NATIONAL_CODE, null);
+        if (User::where([
+            ['national_code', $national_code],
+            ['id', '<>', $request->input('user_id')]
+        ])->exists()) return $this->sendResponse(Constant::$REPETITIVE_NATIONAL_CODE, null);
 
         // check user id validity
         $user = User::find($request->input('user_id'));
@@ -130,10 +133,18 @@ class UserRegistrationController extends BaseController
         $tenant = new Tenant();
         $tenant->id = $request->input('user_name');
         $user->tenant()->save($tenant);
+        $user->tenant_id = $tenant->id;
 
         // generate profile
         $profile = new UProfile();
         $user->u_profile()->save($profile);
+
+        // setting key
+        $previous = User::find(User::where('id', '<', $user->id)->max('id'));
+        $sum = (int) (hexdec($previous->key) + 1);
+        $new_code = dechex($sum);
+        $user->key = $new_code;
+        $user->save();
 
         // generate user main page properties
         $tenant->run(function () {

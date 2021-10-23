@@ -64,7 +64,7 @@ class CourseStudentController extends BaseController
         $student = Student::find($request->input('student_id'));
 
         $cc = new CoursesController();
-        $cc->addStudentToCourse($student, $course);
+        $cc->addStudentToCourse($student, $course, Constant::$REGISTRATION_TYPE_CUSTOM);
 
         return $this->sendResponse(Constant::$SUCCESS, null);
     }

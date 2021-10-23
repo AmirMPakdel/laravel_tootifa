@@ -1,26 +1,10 @@
 <?php
 
-
 namespace App\Http\Controllers\API\Admin;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
-use App\Models\Category;
-use App\Models\Course;
-use App\Models\LevelOneGroup;
-use App\Models\LevelThreeGroup;
-use App\Models\LevelTwoGroup;
 use App\Models\Tag;
-use App\Models\Tenant;
-use App\Models\UProfile;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\File;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 
 class TagsController extends BaseController
 {

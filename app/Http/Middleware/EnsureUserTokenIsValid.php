@@ -19,11 +19,26 @@ class EnsureUserTokenIsValid
      */
     public function handle(Request $request, Closure $next)
     {
-        $user = User::where('token', $request->input('token'))->first();
+        $token = null;
+        switch ($request->method()) {
+            case 'POST':
+                $token = $request->input('token');
+                $tenant = $request->header('X-TENANT');
+                break;
+            case 'GET':
+                $token = $request->query('token');
+                $tenant = $request->query('tenant');
+                break;
+            default:
+                return $this->sendResponse(Constant::$INVALID_REQUEST, null);
+        }
+    
+        $user = User::where('token', $token)->first();
+
         if (!$user)
             return $this->sendResponse(Constant::$INVALID_TOKEN, null);
 
-        if($user->tenant() == Tenant::find($request->header('X-TENANT')))
+        if($user->tenant() == Tenant::find($tenant))
             return $this->sendResponse(Constant::$INVALID_TOKEN, null);
 
         $request->request->add(['user' => $user]);

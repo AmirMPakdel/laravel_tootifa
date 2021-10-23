@@ -40,6 +40,7 @@ class UserPasswordResetController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
+   // TODO need a cron job to remove all left-alone password resets
    public function checkPasswordResetToken(Request $request){
         $token = $request->input('token');
         $password_reset = UserPasswordReset::where('token', $token)->first();
@@ -57,7 +58,7 @@ class UserPasswordResetController extends BaseController
         if(!$password_reset)
             return $this->sendResponse(Constant::$INVALID_TOKEN, null);
 
-        $user = User::where('phone_number', $password_reset->phone_number);
+        $user = User::where('phone_number', $password_reset->phone_number)->first();
         if(!$user)
             return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
         

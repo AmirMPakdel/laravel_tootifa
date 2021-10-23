@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\Tenant;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +14,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\CalculateUsersDailyMaintenanceCostCommand::class,
+        Commands\CalculateUsersDailySmsCostCommand::class,
+        Commands\GenerateDailyVisitReportsCommand::class
     ];
 
     /**
@@ -24,7 +27,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        foreach(Tenant::all() as $tenant){
+            // TODO make them daily
+            $schedule->command("calculate:maintenance {$tenant->id}")->everyMinute();
+            $schedule->command("calculate:sms {$tenant->id}")->everyMinute();
+            $schedule->command("generate:dr {$tenant->id}")->everyMinute();
+        }
     }
 
     /**

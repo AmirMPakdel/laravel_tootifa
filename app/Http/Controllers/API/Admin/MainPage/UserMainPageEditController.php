@@ -13,6 +13,7 @@ use App\Models\ContentVideo;
 use App\Models\ContentVoice;
 use App\Models\MainContent;
 use App\Models\MainCourseList;
+use App\Models\MainForm;
 use App\Models\MainPageProperties;
 use App\Models\MainPostList;
 use Illuminate\Http\Request;
@@ -88,6 +89,12 @@ class UserMainPageEditController extends BaseController
                 return $this->updateMainPostList($request);
             case Constant::$EDIT_PARAM_POST_LIST_DELETE:
                 return $this->deleteMainPostList($request);
+            case Constant::$EDIT_PARAM_MAIN_FORM_ADD:
+                return $this->addMainForm($request);
+            case Constant::$EDIT_PARAM_MAIN_FORM_UPDATE:
+                return $this->updateMainForm($request);
+            case Constant::$EDIT_PARAM_MAIN_FORM_DELETE:
+                return $this->deleteMainForm($request);
             default:
                 return $this->sendResponse(Constant::$INVALID_EDIT_TYPE, null);
         }
@@ -259,6 +266,7 @@ class UserMainPageEditController extends BaseController
         $content_video = new ContentVideo();
         $content_video->url = $request->input('url');
         $content_video->size = $request->input('size');
+        $content_video->belongs_to = Constant::$BELONGING_MAIN;
         $main_content->content_video()->save($content_video);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $main_content->id]);
@@ -313,6 +321,7 @@ class UserMainPageEditController extends BaseController
         $content_voice = new ContentVoice();
         $content_voice->url = $request->input('url');
         $content_voice->size = $request->input('size');
+        $content_voice->belongs_to = Constant::$BELONGING_MAIN;
         $main_content->content_voice()->save($content_voice);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $main_content->id]);
@@ -367,6 +376,7 @@ class UserMainPageEditController extends BaseController
         $content_image = new ContentImage();
         $content_image->url = $request->input('url');
         $content_image->size = $request->input('size');
+        $content_image->belongs_to = Constant::$BELONGING_MAIN;
         $main_content->content_image()->save($content_image);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $main_content->id]);
@@ -419,6 +429,7 @@ class UserMainPageEditController extends BaseController
 
         $content_text = new ContentText();
         $content_text->text = $request->input('text');
+        $content_text->belongs_to = Constant::$BELONGING_MAIN;
         $main_content->content_text()->save($content_text);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $main_content->id]);
@@ -471,6 +482,7 @@ class UserMainPageEditController extends BaseController
 
         $content_slider = new ContentSlider();
         $content_slider->title = $request->input('title');
+        $content_slider->belongs_to = Constant::$BELONGING_MAIN;
         $content = (array)$request->input("content");
         $main_content->content_slider()->save($content_slider);
 
@@ -479,6 +491,7 @@ class UserMainPageEditController extends BaseController
             $content_image = new ContentImage();
             $content_image->url = $slide->url;
             $content_image->size = $slide->size;
+            $content_image->belongs_to = Constant::$BELONGING_MAIN;
             $content_slider->content_images()->save($content_image);
         }
 
@@ -528,6 +541,51 @@ class UserMainPageEditController extends BaseController
         $slider->delete();
 
         $main_content->delete();
+
+        return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
+    public function addMainForm(Request $request)
+    {
+        if(!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+
+        $main_form = new MainForm();
+        $main_form->title = $request->input('title');
+        $main_form->text = $request->input('text');
+        $main_form->submit_text = $request->input('submit_text');
+        $main_form->has_email_input = $request->input('has_email_input');
+        $main_form->has_name_input = $request->input('has_name_input');
+        $main_form->has_phone_input = $request->input('has_phone_input');
+        $main_form->has_city_input = $request->input('has_city_input');
+        $main_form->has_province_input = $request->input('has_province_input');
+        $main_form->save();
+
+        return $this->sendResponse(Constant::$SUCCESS, ['form_id' => $main_form->id]);
+    }
+
+    public function updateMainForm(Request $request)
+    {
+        $main_form = MainForm::find($request->input('form_id'));
+
+        if(!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+
+        $main_form->title = $request->input('title');
+        $main_form->text = $request->input('text');
+        $main_form->submit_text = $request->input('submit_text');
+        $main_form->has_email_input = $request->input('has_email_input');
+        $main_form->has_name_input = $request->input('has_name_input');
+        $main_form->has_phone_input = $request->input('has_phone_input');
+        $main_form->has_city_input = $request->input('has_city_input');
+        $main_form->has_province_input = $request->input('has_province_input');
+        $main_form->save();
+
+        return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
+    public function deleteMainForm(Request $request)
+    {
+        $main_form = MainForm::find($request->input('form_id'));
+        $main_form->delete();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
     }

@@ -15,17 +15,17 @@ use Exception;
 
 class StudentCourseController extends BaseController
 {
+    // TODO Remove this (JUST FOR TEST)
     public function completeCourseRegistration(Request $request){
-        $courses = Course::find($request->input('course_ids'));
-        foreach ($courses as $course)
-            $this->registerInCourse($request->input('student'), $course);
+        $course = Course::find($request->input('course_id'));
+        $this->registerInCourse($request->input('student'), $course);
 
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
     public function registerInCourse($student, $course){
         $cc = new CoursesController();
-        $cc->addStudentToCourse($student, $course);
+        $cc->addStudentToCourse($student, $course, Constant::$REGISTRATION_TYPE_WEBSITE);
     }
 
     public function fetchCourses(Request $request){
@@ -232,7 +232,7 @@ class StudentCourseController extends BaseController
         ];
     }
 
-    private function buildCourseObject($student, $course){
+    public function buildCourseObject($student, $course){
         $registered = DB::table('course_student')
                 ->whereCourseId($course->id)
                 ->whereStudentId($student->id)

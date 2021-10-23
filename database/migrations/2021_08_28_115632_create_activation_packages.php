@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStudentPasswordReset extends Migration
+class CreateActivationPackages extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateStudentPasswordReset extends Migration
      */
     public function up()
     {
-        Schema::create('student_password_reset', function (Blueprint $table) {
+        Schema::create('activation_packages', function (Blueprint $table) {
             $table->id();
-            $table->string('token')->nullable();
-            $table->string('email')->nullable();
-            $table->string('phone_number')->nullable();
+            $table->string('title')->nullable();
+            $table->string('prt')->nullable();
+            $table->double('price')->default(0)->nullable();
+            $table->integer('days')->default(0)->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateStudentPasswordReset extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('student_password_reset');
+        Schema::dropIfExists('activation_packages');
     }
 }

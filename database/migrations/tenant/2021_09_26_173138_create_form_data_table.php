@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserPasswordReset extends Migration
+class CreateFormDataTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateUserPasswordReset extends Migration
      */
     public function up()
     {
-        Schema::create('user_password_reset', function (Blueprint $table) {
+        Schema::create('form_data', function (Blueprint $table) {
             $table->id();
-            $table->string('token')->nullable();
-            $table->string('email')->nullable();
-            $table->string('phone_number')->nullable();
+            $table->string('form_entity_type')->nullable();
+            $table->integer('form_entity_id')->nullable();
+            $table->json('data')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateUserPasswordReset extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_password_reset');
+        Schema::dropIfExists('form_data');
     }
 }

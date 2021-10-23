@@ -4,6 +4,7 @@ use App\Http\Middleware\EnsureStudentTokenIsValid;
 use App\Http\Middleware\EnsureUserTokenIsValid;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,6 +88,11 @@ Route::group([
     Route::post('/writers/delete', 'WritersController@deleteWriter');
     Route::post('/writers/fetch', 'WritersController@fetchWriters');
 
+    Route::post('/popups/create', 'PopupsController@createPopup');
+    Route::post('/popups/update', 'PopupsController@updatePopup');
+    Route::post('/popups/delete', 'PopupsController@deletePopup');
+    Route::post('/popups/fetch', 'PopupsController@fetchPopups');
+
     Route::post('/mainpage/edit/{ep}', 'MainPage\UserMainPageEditController@editMainPage');
     Route::post('/mainpage/load', 'MainPage\UserMainPageController@loadMainPage');
 
@@ -97,7 +103,11 @@ Route::group([
     Route::post('/comment/set/checked', 'CommentsController@setCommentChecked');
     Route::post('/comment/set/valid', 'CommentsController@setCommentValid');
 
+    Route::get('/product/pay', 'UserTransactionController@payForProduct');
+    Route::get('/product/pay/done', 'UserTransactionController@payForProduct');
 
+    Route::post('/upload/uploadkey', 'UploadController@generateUploadKey');
+    Route::post('/upload/verify', 'UploadController@verifyUploadKey');
 });
 
 // Tenant public routes
@@ -139,6 +149,9 @@ Route::group([
     Route::post('/store/course/load', 'CourseStoreController@loadCourse');
     Route::post('/blog/fetch/{chunk_count}/{page_count}', 'BlogController@fetchPosts');
     Route::post('/blog/post/load', 'BlogController@loadPost');
+
+    Route::post('/main/load', 'MainPageController@loadMainPage');
+    Route::post('/popups/load', 'MainPageController@loadActivePopups');
 });
 
 // Tenant students' routes
@@ -172,6 +185,17 @@ Route::group([
     Route::post('/comment/score/get', 'StudentCourseController@getCommentScore');
     Route::post('/comment/score/update', 'StudentCourseController@updateCommentScore');
     Route::post('/store/course/load', 'CourseStoreController@loadCourseForLoggedIn');
+});
+
+//********************************************************APP*********************************************************
+
+// App routes
+Route::group([
+    'prefix' => 'api/app',
+    'namespace'  => 'App\Http\Controllers\API\Student\App',
+], function () {
+    Route::post('/course/register', 'CoursesController@registerCourseInDevice');
+    Route::post('/courses/load', 'CoursesController@loadCourses');
 });
 
 Route::get('/api/test', function(){

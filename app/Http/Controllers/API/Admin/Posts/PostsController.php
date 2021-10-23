@@ -10,6 +10,7 @@ use App\Models\LevelOneGroup;
 use App\Models\LevelThreeGroup;
 use App\Models\LevelTwoGroup;
 use App\Models\Post;
+use App\Models\PostForm;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Exception;
@@ -49,6 +50,8 @@ class PostsController extends BaseController
         if ($g2) $g2->posts()->save($post);
         if ($g3) $g3->posts()->save($post);
 
+        $post->save();
+        
         return $this->sendResponse(Constant::$SUCCESS,  ['post_id' => $post->id]);
     }
 
@@ -204,6 +207,19 @@ class PostsController extends BaseController
             ];
         });
 
+        $post_forms = $post->post_forms()->map(function ($post_form){
+            return [
+                'title' => $post_form->title,
+                'text' => $post_form->text,
+                'submit_text' => $post_form->submit_text,
+                'has_email_input' => $post_form->has_email_input,
+                'has_name_input' => $post_form->has_name_input,
+                'has_phone_input' => $post_form->has_phone_input,
+                'has_city_input' => $post_form->has_city_input,
+                'has_province_input' => $post_form->has_province_input
+            ];
+        });
+
         $contents = $post->post_contents()->get()->map(function ($content) {
             $c = [
                 'id' => $content->id,
@@ -250,7 +266,8 @@ class PostsController extends BaseController
             "suggested_posts" => $post->suggested_posts,
             "content_hierarchy" => $post->content_hierarchy,
             "contents" => $contents,
-            "writers" => $writers
+            "writers" => $writers,
+            "post_forms" => $post_forms
         ];
     }
 }

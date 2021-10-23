@@ -469,6 +469,7 @@ class CourseEditController extends BaseController
         $content_video->size = $request->input('size');
         $content_video->encoding = $request->input('encoding') ? 1 : 0;
         $content_video->key = $request->input('key');
+        $content_video->belongs_to = Constant::$BELONGING_COURSE;
         $course_content->content_video()->save($content_video);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $course_content->id]);
@@ -529,6 +530,7 @@ class CourseEditController extends BaseController
         $content_voice = new ContentVoice();
         $content_voice->url = $request->input('url');
         $content_voice->size = $request->input('size');
+        $content_voice->belongs_to = Constant::$BELONGING_COURSE;
         $course_content->content_voice()->save($content_voice);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $course_content->id]);
@@ -585,6 +587,7 @@ class CourseEditController extends BaseController
         $content_document = new ContentDocument();
         $content_document->url = $request->input('url');
         $content_document->size = $request->input('size');
+        $content_document->belongs_to = Constant::$BELONGING_COURSE;
         $course_content->content_document()->save($content_document);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $course_content->id]);
@@ -635,6 +638,7 @@ class CourseEditController extends BaseController
         $content_video = new ContentVideo();
         $content_video->url = $request->input('url');
         $content_video->size = $request->input('size');
+        $content_video->belongs_to = Constant::$BELONGING_COURSE;
         $intro->content_video()->save($content_video);
 
         return $this->sendResponse(Constant::$SUCCESS, ['course_introduction_id' => $intro->id]);

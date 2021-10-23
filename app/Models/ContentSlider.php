@@ -19,7 +19,7 @@ class ContentSlider extends Model
     }
 
     public function content_videos(){
-        return $this->morphOne(ContentVideo::class, 'content_videoable');
+        return $this->morphMany(ContentVideo::class, 'content_videoable');
     }
 
     public function content_images(){

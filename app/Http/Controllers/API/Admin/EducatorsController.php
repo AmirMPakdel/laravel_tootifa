@@ -5,24 +5,9 @@ namespace App\Http\Controllers\API\Admin;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Includes\Helper;
-use App\Models\Category;
-use App\Models\Course;
 use App\Models\Educator;
-use App\Models\LevelOneGroup;
-use App\Models\LevelThreeGroup;
-use App\Models\LevelTwoGroup;
-use App\Models\Tag;
-use App\Models\Tenant;
-use App\Models\UProfile;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\File;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
+
 
 class EducatorsController extends BaseController
 {
@@ -31,28 +16,36 @@ class EducatorsController extends BaseController
         $educator->first_name = $request->input("first_name");
         $educator->last_name = $request->input("last_name");
         $educator->bio = $request->input("bio");
+
+        $uk = $request->input('upload_key');
+        if($uk){
+            $uc = new UploadController();
+            $result = $uc->moveFileToFtp($uk, tenant()->id, 1, "png", null);
+            $educator->image = $result['url'];
+        }
+        
         $educator->save();
 
-        if($request->exists('image')){
-            $image = $request->file('image');
+        // if($request->exists('image')){
+        //     $image = $request->file('image');
 
-            $size = $image->getSize() / 1024;
-            if ($size > Constant::$LOGO_SIZE_LIMIT)
-                return $this->sendResponse(
-                    Constant::$FILE_SIZE_LIMIT_EXCEEDED,
-                    ['limit'=>Constant::$LOGO_SIZE_NAME_LIMIT."kb"]
-                );
+        //     $size = $image->getSize() / 1024;
+        //     if ($size > Constant::$LOGO_SIZE_LIMIT)
+        //         return $this->sendResponse(
+        //             Constant::$FILE_SIZE_LIMIT_EXCEEDED,
+        //             ['limit'=>Constant::$LOGO_SIZE_NAME_LIMIT."kb"]
+        //         );
 
-            Helper::uploadFileToDisk(
-                Constant::$FILE_ACTION_CREATE,
-                $educator,
-                'image',
-                'public',
-                'images/educators',
-                '.png',
-                $image
-            );
-        }
+        //     Helper::uploadFileToDisk(
+        //         Constant::$FILE_ACTION_CREATE,
+        //         $educator,
+        //         'image',
+        //         'public',
+        //         'images/educators',
+        //         '.png',
+        //         $image
+        //     );
+        // }
 
         return $this->sendResponse(Constant::$SUCCESS,  ['educator_id' => $educator->id]);
     }

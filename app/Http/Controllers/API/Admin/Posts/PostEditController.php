@@ -2,6 +2,7 @@
 
 
 namespace App\Http\Controllers\API\Admin\Posts;
+
 use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\API\Admin\GroupsController;
 use App\Includes\Constant;
@@ -11,25 +12,24 @@ use App\Models\ContentSlider;
 use App\Models\ContentText;
 use App\Models\ContentVideo;
 use App\Models\ContentVoice;
-use App\Models\Course;
-use App\Models\Educator;
 use App\Models\LevelOneGroup;
 use App\Models\LevelThreeGroup;
 use App\Models\LevelTwoGroup;
 use App\Models\Post;
 use App\Models\PostContent;
+use App\Models\PostForm;
 use App\Models\Tag;
 use App\Models\Writer;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 
 class PostEditController extends BaseController
 {
-    public function editPost(Request $request, $ep){
+    public function editPost(Request $request, $ep)
+    {
         // TODO some preprocessing
 
-        switch ($ep){
+        switch ($ep) {
             case Constant::$EDIT_PARAM_COMMENTS_AVAILABILITY:
                 return $this->editPostCommentsAvailability($request);
             case Constant::$EDIT_PARAM_COMMENTS_VALIDITY:
@@ -80,6 +80,12 @@ class PostEditController extends BaseController
                 return $this->deletePostContentImage($request);
             case Constant::$EDIT_PARAM_CONTENT_HIERARCHY:
                 return $this->editContentHierarchy($request);
+            case Constant::$EDIT_PARAM_POST_FORM_ADD:
+                return $this->addPostForm($request);
+            case Constant::$EDIT_PARAM_POST_FORM_UPDATE:
+                return $this->updatePostForm($request);
+            case Constant::$EDIT_PARAM_POST_FORM_DELETE:
+                return $this->deletePostForm($request);
             default:
                 return $this->sendResponse(Constant::$INVALID_EDIT_TYPE, null);
         }
@@ -91,7 +97,7 @@ class PostEditController extends BaseController
         $action = $request->input('action');
         $file = $request->file('file');
 
-        if($action != Constant::$FILE_ACTION_DELETE) {
+        if ($action != Constant::$FILE_ACTION_DELETE) {
             $size = $file->getSize() / 1024;
             if ($size > Constant::$LOGO_SIZE_LIMIT)
                 return $this->sendResponse(
@@ -119,7 +125,7 @@ class PostEditController extends BaseController
         $action = $request->input('action');
         $file = $request->file('file');
 
-        if($action != Constant::$FILE_ACTION_DELETE) {
+        if ($action != Constant::$FILE_ACTION_DELETE) {
             $size = $file->getSize() / 1024;
             if ($size > Constant::$COVER_SIZE_LIMIT)
                 return $this->sendResponse(
@@ -146,11 +152,11 @@ class PostEditController extends BaseController
         $post = Post::find($request->input('post_id'));
         $title = $request->input('title');
 
-        if(!$title)
+        if (!$title)
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $p = Post::where('title', $title)->first();
-        if($p && $p->id != $post->id)
+        if ($p && $p->id != $post->id)
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
 
         $post->title = $title;
@@ -164,7 +170,7 @@ class PostEditController extends BaseController
         $post = Post::find($request->input('post_id'));
 
         $open = $request->input('open');
-        if(!is_numeric($open)) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!is_numeric($open)) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post->is_comments_open = $open;
         $post->save();
@@ -177,7 +183,7 @@ class PostEditController extends BaseController
         $post = Post::find($request->input('post_id'));
 
         $valid = $request->input('valid');
-        if(!is_numeric($valid)) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!is_numeric($valid)) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post->all_comments_valid = $valid;
         $post->save();
@@ -190,7 +196,7 @@ class PostEditController extends BaseController
         $post = Post::find($request->input('post_id'));
 
         $ids = null;
-        if(is_array($request->input('ids')) && sizeof($request->input('ids')) > 0){
+        if (is_array($request->input('ids')) && sizeof($request->input('ids')) > 0) {
             $ids = $request->input('ids');
             $ids = json_encode($ids);
         }
@@ -206,7 +212,7 @@ class PostEditController extends BaseController
         $post = Post::find($request->input('post_id'));
 
         $ids = null;
-        if(is_array($request->input('ids')) && sizeof($request->input('ids')) > 0){
+        if (is_array($request->input('ids')) && sizeof($request->input('ids')) > 0) {
             $ids = $request->input('ids');
             $ids = json_encode($ids);
         }
@@ -222,11 +228,11 @@ class PostEditController extends BaseController
         $post = Post::find($request->input('post_id'));
         $groups = (object)$request->input('groups');
 
-        if(!$groups)
+        if (!$groups)
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         // check groups hierarchy
-        if(!GroupsController::checkGroupsHierarchy($groups))
+        if (!GroupsController::checkGroupsHierarchy($groups))
             return $this->sendResponse(Constant::$INVALID_GROUP_HIERARCHY, null);
 
         $post->level_one_group()->dissociate();
@@ -252,7 +258,7 @@ class PostEditController extends BaseController
         $post = Post::find($request->input('post_id'));
         $hierarchy = (array)$request->input('hierarchy');
 
-        if(!$hierarchy)
+        if (!$hierarchy)
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         // TODO check it's validity
@@ -268,7 +274,7 @@ class PostEditController extends BaseController
         $post = Post::find($request->input('post_id'));
         $tags = (array)$request->input('tags');
 
-        if(!$request->exists('tags'))
+        if (!$request->exists('tags'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post->tags()->detach();
@@ -283,7 +289,7 @@ class PostEditController extends BaseController
         $post = Post::find($request->input('post_id'));
         $writers = (array)$request->input('writers');
 
-        if(!$request->exists('writers'))
+        if (!$request->exists('writers'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post->writers()->detach();
@@ -297,7 +303,7 @@ class PostEditController extends BaseController
     {
         $post = Post::find($request->input('post_id'));
 
-        if(!$request->exists('url') || !$request->exists('size'))
+        if (!$request->exists('url') || !$request->exists('size'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post_content = new PostContent();
@@ -307,6 +313,7 @@ class PostEditController extends BaseController
         $content_video = new ContentVideo();
         $content_video->url = $request->input('url');
         $content_video->size = $request->input('size');
+        $content_video->belongs_to = Constant::$BELONGING_POST;
         $post_content->content_video()->save($content_video);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $post_content->id]);
@@ -316,7 +323,7 @@ class PostEditController extends BaseController
     {
         $post_content = PostContent::find($request->input('content_id'));
 
-        if(!$request->exists('url') || !$request->exists('size'))
+        if (!$request->exists('url') || !$request->exists('size'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $content_video = $post_content->content_video()->first();
@@ -341,7 +348,8 @@ class PostEditController extends BaseController
     {
         $post = Post::find($request->input('post_id'));
 
-        if(!$request->exists('url') ||
+        if (
+            !$request->exists('url') ||
             !$request->exists('size')
         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
@@ -352,6 +360,7 @@ class PostEditController extends BaseController
         $content_voice = new ContentVoice();
         $content_voice->url = $request->input('url');
         $content_voice->size = $request->input('size');
+        $content_voice->belongs_to = Constant::$BELONGING_POST;
         $post_content->content_voice()->save($content_voice);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $post_content->id]);
@@ -361,7 +370,8 @@ class PostEditController extends BaseController
     {
         $post_content = PostContent::find($request->input('content_id'));
 
-        if(!$request->exists('url') ||
+        if (
+            !$request->exists('url') ||
             !$request->exists('size')
         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
@@ -387,7 +397,8 @@ class PostEditController extends BaseController
     {
         $post = Post::find($request->input('post_id'));
 
-        if(!$request->exists('url') ||
+        if (
+            !$request->exists('url') ||
             !$request->exists('size')
         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
@@ -395,9 +406,10 @@ class PostEditController extends BaseController
         $post_content->type = Constant::$CONTENT_TYPE_IMAGE;
         $post->post_contents()->save($post_content);
 
-        $content_image = new Contentimage();
+        $content_image = new ContentImage();
         $content_image->url = $request->input('url');
         $content_image->size = $request->input('size');
+        $content_image->belongs_to = Constant::$BELONGING_POST;
         $post_content->content_image()->save($content_image);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $post_content->id]);
@@ -407,7 +419,8 @@ class PostEditController extends BaseController
     {
         $post_content = PostContent::find($request->input('content_id'));
 
-        if(!$request->exists('url') ||
+        if (
+            !$request->exists('url') ||
             !$request->exists('size')
         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
@@ -433,7 +446,7 @@ class PostEditController extends BaseController
     {
         $post = Post::find($request->input('post_id'));
 
-        if(!$request->exists('text'))
+        if (!$request->exists('text'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post_content = new PostContent();
@@ -442,6 +455,7 @@ class PostEditController extends BaseController
 
         $content_text = new ContentText();
         $content_text->text = $request->input('text');
+        $content_text->belongs_to = Constant::$BELONGING_POST;
         $post_content->content_text()->save($content_text);
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $post_content->id]);
@@ -451,7 +465,7 @@ class PostEditController extends BaseController
     {
         $post_content = PostContent::find($request->input('content_id'));
 
-        if(!$request->exists('text'))
+        if (!$request->exists('text'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $content_text = $post_content->content_text()->first();
@@ -475,7 +489,7 @@ class PostEditController extends BaseController
     {
         $post = Post::find($request->input('post_id'));
 
-        if(!$request->exists('content') || !$request->exists('title'))
+        if (!$request->exists('content') || !$request->exists('title'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         // TODO check content validity
@@ -486,14 +500,16 @@ class PostEditController extends BaseController
 
         $content_slider = new ContentSlider();
         $content_slider->title = $request->input('title');
+        $content_slider->belongs_to = Constant::$BELONGING_POST;
         $content = (array)$request->input("content");
         $post_content->content_slider()->save($content_slider);
 
-        foreach ($content as $slide){
+        foreach ($content as $slide) {
             $slide = (object)$slide;
             $content_image = new ContentImage();
             $content_image->url = $slide->url;
             $content_image->size = $slide->size;
+            $content_image->belongs_to = Constant::$BELONGING_POST;
             $content_slider->content_images()->save($content_image);
         }
 
@@ -504,7 +520,7 @@ class PostEditController extends BaseController
     {
         $post_content = PostContent::find($request->input('content_id'));
 
-        if(!$request->exists('content') || !$request->exists('title'))
+        if (!$request->exists('content') || !$request->exists('title'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         // TODO check content validity
@@ -515,7 +531,7 @@ class PostEditController extends BaseController
 
         $content_slider->content_images()->delete();
 
-        foreach ($content as $slide){
+        foreach ($content as $slide) {
             $slide = (object)$slide;
             $content_image = new ContentImage();
             $content_image->url = $slide->url;
@@ -541,5 +557,48 @@ class PostEditController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
+    public function addPostForm(Request $request)
+    {
+        $post = Post::find($request->input('post_id'));
+        if(!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
+        $post_form = new PostForm();
+        $post_form->title = $request->input('title');
+        $post_form->text = $request->input('text');
+        $post_form->submit_text = $request->input('submit_text');
+        $post_form->has_email_input = $request->input('has_email_input');
+        $post_form->has_name_input = $request->input('has_name_input');
+        $post_form->has_phone_input = $request->input('has_phone_input');
+        $post_form->has_city_input = $request->input('has_city_input');
+        $post_form->has_province_input = $request->input('has_province_input');
+        $post_form->post_id = $post->id;
+        $post_form->save();
+
+        return $this->sendResponse(Constant::$SUCCESS, ['form_id' => $post_form->id]);
+    }
+
+    public function updatePostForm(Request $request)
+    {
+        $post_form = PostForm::find($request->input('form_id'));
+
+        $post_form->title = $request->input('title');
+        $post_form->text = $request->input('text');
+        $post_form->submit_text = $request->input('submit_text');
+        $post_form->has_email_input = $request->input('has_email_input');
+        $post_form->has_name_input = $request->input('has_name_input');
+        $post_form->has_phone_input = $request->input('has_phone_input');
+        $post_form->has_city_input = $request->input('has_city_input');
+        $post_form->has_province_input = $request->input('has_province_input');
+        $post_form->save();
+
+        return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
+    public function deletePostForm(Request $request)
+    {
+        $post_form = PostForm::find($request->input('form_id'));
+        $post_form->delete();
+
+        return $this->sendResponse(Constant::$SUCCESS, null);
+    }
 }
