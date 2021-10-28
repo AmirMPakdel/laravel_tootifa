@@ -34,7 +34,11 @@ class UploadController extends BaseController
 
         $upload_transaction->save();
 
-        return $this->sendResponse(Constant::$SUCCESS, $upload_transaction->upload_key);
+        $result = [
+            'upload_key' => $upload_transaction->upload_key,
+        ];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function verifyUploadKey(Request $request)

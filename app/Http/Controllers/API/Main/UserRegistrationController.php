@@ -9,10 +9,8 @@ use App\Models\Tenant;
 use App\Models\UProfile;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 
 class UserRegistrationController extends BaseController
 {

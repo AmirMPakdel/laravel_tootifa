@@ -55,6 +55,14 @@ class EducatorsController extends BaseController
         $educator->first_name = $request->input("first_name");
         $educator->last_name = $request->input("last_name");
         $educator->bio = $request->input("bio");
+
+        $uk = $request->input('upload_key');
+        if($uk){
+            $uc = new UploadController();
+            $result = $uc->moveFileToFtp($uk, tenant()->id, 1, "png", null);
+            $educator->image = $result['url'];
+        }
+
         $educator->save();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
@@ -102,6 +110,7 @@ class EducatorsController extends BaseController
                 "id" => $educator->id,
                 "first_name" => $educator->first_name,
                 "last_name" => $educator->last_name,
+                "image" => $educator->image,
                 "bio" => $educator->bio,
             ];
         })->toArray();
