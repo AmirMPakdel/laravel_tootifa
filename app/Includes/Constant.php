@@ -39,7 +39,11 @@ class Constant
     public static $DEVICE_LIMIT = 1140;
     public static $LISCENSE_KEY_NOT_FOUND = 1141;
     public static $INVALID_UPLOAD_KEY = 1142;
-    
+    public static $NOT_REGISTERED_IN_COURSE = 1143;
+    public static $NO_ACCESS_TO_COURSE = 1144;
+    public static $COURSE_NOT_FOUND = 1145;
+    public static $POST_NOT_FOUND = 1146;
+
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
     public static $GENDER_FEMALE = 0;
@@ -152,6 +156,9 @@ class Constant
     public static $UPLOAD_TYPE_COURSE_VIDEO = "ut_course_video";
     public static $UPLOAD_TYPE_COURSE_DOCUMENT = "ut_course_document";
     public static $UPLOAD_TYPE_COURSE_VOICE = "ut_course_voice";
+    public static $UPLOAD_TYPE_COURSE_VIDEO_FREE = "ut_course_video_free";
+    public static $UPLOAD_TYPE_COURSE_DOCUMENT_FREE = "ut_course_document_free";
+    public static $UPLOAD_TYPE_COURSE_VOICE_FREE = "ut_course_voice_free";
 
     //**************************************************** EDIT PARAMS *************************************************
     public static $EDIT_PARAM_LOGO = "ep_logo";

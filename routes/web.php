@@ -184,6 +184,7 @@ Route::group([
     Route::post('/comment/score/get', 'StudentCourseController@getCommentScore');
     Route::post('/comment/score/update', 'StudentCourseController@updateCommentScore');
     Route::post('/store/course/load', 'CourseStoreController@loadCourseForLoggedIn');
+    Route::post('/download/verify', 'DownloadController@verifyForDownload');
 });
 
 //********************************************************APP*********************************************************
