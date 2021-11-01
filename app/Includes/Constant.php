@@ -43,6 +43,8 @@ class Constant
     public static $NO_ACCESS_TO_COURSE = 1144;
     public static $COURSE_NOT_FOUND = 1145;
     public static $POST_NOT_FOUND = 1146;
+    public static $NO_FILE_STATE = 1147;
+    public static $INVALID_OLD_UPLOAD_KEY = 1148;
 
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
@@ -152,6 +154,17 @@ class Constant
     public static $FORM_ENTITY_TYPE_POST = "fet_post";
     public static $FORM_ENTITY_TYPE_LP = "fet_lp";
     public static $FORM_ENTITY_TYPE_POPUP = "fet_popup";
+
+    public static $UPLOAD_TRANSACTION_STATUS_GENERATED = "uts_generated";
+    public static $UPLOAD_TRANSACTION_STATUS_VERIFIED = "uts_verified";
+    public static $UPLOAD_TRANSACTION_STATUS_FTP = "uts_ftp";
+    public static $UPLOAD_TRANSACTION_STATUS_DELETED = "uts_deleted";
+    public static $UPLOAD_TRANSACTION_STATUS_UPDATING = "uts_updating";
+
+    public static $UPDATE_FILE_STATE_NO_CHANGE = "ufs_no_change";
+    public static $UPDATE_FILE_STATE_NEW = "ufs_new";
+    public static $UPDATE_FILE_STATE_REPLACE = "ufs_replace";
+    public static $UPDATE_FILE_STATE_DELETE = "ufs_delete";
 
     public static $UPLOAD_TYPE_COURSE_VIDEO = "ut_course_video";
     public static $UPLOAD_TYPE_COURSE_DOCUMENT = "ut_course_document";
