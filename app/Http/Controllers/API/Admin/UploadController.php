@@ -172,7 +172,7 @@ class UploadController extends BaseController
 
         $fields = [
             'upload_key'         => $upload_key,
-            'tenant '      => $tenant,
+            'tenant'      => $tenant,
         ];
 
         $fields_string = http_build_query($fields);
