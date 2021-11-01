@@ -100,6 +100,8 @@ class UploadController extends BaseController
                 $model[$attr] = $uk;
             }
 
+            Log::debug("tenant in update: " . $tenant);
+
             if ($file_state == Constant::$UPDATE_FILE_STATE_DELETE) {
                 // delete from ftp
                 $this->deleteFileFromFtp($uk, $tenant);
@@ -189,6 +191,7 @@ class UploadController extends BaseController
                 $upload_transaction->status = Constant::$UPLOAD_TRANSACTION_STATUS_DELETED;
                 $upload_transaction->save();
 
+                Log::debug("tenant in delete: " . $tenant);
                 Log::debug($result);
                 return ["result" => $result, "is_deleted" => true];
             } else {
