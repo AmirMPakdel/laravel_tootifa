@@ -9,7 +9,9 @@ use App\Includes\Helper;
 use App\Models\Course;
 use App\Models\UploadTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
+use function Psy\debug;
 
 class UploadController extends BaseController
 {
@@ -187,6 +189,7 @@ class UploadController extends BaseController
                 $upload_transaction->status = Constant::$UPLOAD_TRANSACTION_STATUS_DELETED;
                 $upload_transaction->save();
 
+                Log::debug($result);
                 return ["result" => $result, "is_deleted" => true];
             } else {
                 die('Request failed: HTTP status code: ' . $resultStatus);
