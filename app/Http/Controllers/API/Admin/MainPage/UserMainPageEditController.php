@@ -7,6 +7,7 @@ use App\Http\Controllers\API\Admin\UploadController;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Includes\Helper;
+use App\Includes\UploadManager;
 use App\Models\ContentImage;
 use App\Models\ContentSlider;
 use App\Models\ContentText;
@@ -22,10 +23,11 @@ use Illuminate\Http\Request;
 
 class UserMainPageEditController extends BaseController
 {
-    public function editMainPage(Request $request, $ep){
+    public function editMainPage(Request $request, $ep)
+    {
         // TODO some preprocessing
 
-        switch ($ep){
+        switch ($ep) {
             case Constant::$EDIT_PARAM_TITLE:
                 return $this->editPropertiesTitle($request);
             case Constant::$EDIT_PARAM_STORE_OPEN:
@@ -101,7 +103,8 @@ class UserMainPageEditController extends BaseController
         }
     }
 
-    public function editPropertiesTitle(Request $request){
+    public function editPropertiesTitle(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
         $properties->page_title = $request->input("title");
         $properties->save();
@@ -109,7 +112,8 @@ class UserMainPageEditController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function editPropertiesStoreOpen(Request $request){
+    public function editPropertiesStoreOpen(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
         $properties->store_open = $request->input("store_open");
         $properties->save();
@@ -117,7 +121,8 @@ class UserMainPageEditController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function editPropertiesBlogOpen(Request $request){
+    public function editPropertiesBlogOpen(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
         $properties->blog_open = $request->input("blog_open");
         $properties->save();
@@ -125,7 +130,8 @@ class UserMainPageEditController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function editPropertiesBannerStatus(Request $request){
+    public function editPropertiesBannerStatus(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
         $properties->is_banner_on = $request->input("is_banner_on");
         $properties->save();
@@ -133,7 +139,8 @@ class UserMainPageEditController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function editPropertiesBannerText(Request $request){
+    public function editPropertiesBannerText(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
         $properties->banner_text = $request->input("text");
         $properties->save();
@@ -141,7 +148,8 @@ class UserMainPageEditController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function editPropertiesBannerLink(Request $request){
+    public function editPropertiesBannerLink(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
         $properties->banner_link = $request->input("link");
         $properties->save();
@@ -149,20 +157,28 @@ class UserMainPageEditController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function editPropertiesBannerCover(Request $request){
+    public function editPropertiesBannerCover(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
-        
+
         $file_state = $request->input("file_state");
         if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
-        $uc = new UploadController();
-        $uk = $request->input('upload_key');
-        $result = $uc->updateFileState($file_state, tenant()->id, 1, $properties, "banner_cover", false, $uk);
+        $result = UploadManager::updateFileState(
+            $file_state,
+            tenant()->id,
+            1,
+            $properties,
+            "banner_cover",
+            false,
+            $request->input('upload_key')
+        );
 
         return $this->sendResponse($result, null);
     }
 
-    public function editPropertiesContentHierarchy(Request $request){
+    public function editPropertiesContentHierarchy(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
         $properties->content_hierarchy = json_encode($request->input("hierarchy"));
         $properties->save();
@@ -172,7 +188,8 @@ class UserMainPageEditController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function editPropertiesFooterLinks(Request $request){
+    public function editPropertiesFooterLinks(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
         $properties->footer_links = json_encode($request->input("links"));
         $properties->save();
@@ -182,30 +199,40 @@ class UserMainPageEditController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function editPropertiesPageCover(Request $request){
+    public function editPropertiesPageCover(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
 
         $file_state = $request->input("file_state");
         if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
         $result = $this->uc->updateFileState(
-            $file_state, tenant()->id, 1, 
-            $properties, "page_cover", false, 
+            $file_state,
+            tenant()->id,
+            1,
+            $properties,
+            "page_cover",
+            false,
             $request->input('upload_key')
         );
-        
+
         return $this->sendResponse($result, null);
     }
 
-    public function editPropertiesPageLogo(Request $request){
+    public function editPropertiesPageLogo(Request $request)
+    {
         $properties = MainPageProperties::all()[0];
 
         $file_state = $request->input("file_state");
         if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
         $result = $this->uc->updateFileState(
-            $file_state, tenant()->id, 1, 
-            $properties, "page_logo", false, 
+            $file_state,
+            tenant()->id,
+            1,
+            $properties,
+            "page_logo",
+            false,
             $request->input('upload_key')
         );
 
@@ -214,9 +241,11 @@ class UserMainPageEditController extends BaseController
 
     public function addMainContentVideo(Request $request)
     {
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('link') ||
-            !$request->exists('upload_key'))
+            !$request->exists('upload_key')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content = new MainContent();
@@ -237,10 +266,12 @@ class UserMainPageEditController extends BaseController
     {
         $main_content = MainContent::find($request->input('content_id'));
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('link') ||
             !$request->exists('upload_key') ||
-            !$request->exists('file_state'))
+            !$request->exists('file_state')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content->title = $request->input('title');
@@ -267,10 +298,12 @@ class UserMainPageEditController extends BaseController
 
     public function addMainContentVoice(Request $request)
     {
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('link') ||
             !$request->exists('url') ||
-            !$request->exists('size'))
+            !$request->exists('size')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content = new MainContent();
@@ -292,10 +325,12 @@ class UserMainPageEditController extends BaseController
     {
         $main_content = MainContent::find($request->input('content_id'));
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('link') ||
             !$request->exists('url') ||
-            !$request->exists('size'))
+            !$request->exists('size')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content->title = $request->input('title');
@@ -322,10 +357,12 @@ class UserMainPageEditController extends BaseController
 
     public function addMainContentImage(Request $request)
     {
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('link') ||
             !$request->exists('url') ||
-            !$request->exists('size'))
+            !$request->exists('size')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content = new MainContent();
@@ -347,10 +384,12 @@ class UserMainPageEditController extends BaseController
     {
         $main_content = MainContent::find($request->input('content_id'));
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('link') ||
             !$request->exists('url') ||
-            !$request->exists('size'))
+            !$request->exists('size')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content->title = $request->input('title');
@@ -377,10 +416,12 @@ class UserMainPageEditController extends BaseController
 
     public function addMainContentText(Request $request)
     {
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('link') ||
-            !$request->exists('text'))
-        return $this->sendResponse(Constant::$INVALID_VALUE, null);
+            !$request->exists('text')
+        )
+            return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content = new MainContent();
         $main_content->title = $request->input('title');
@@ -400,9 +441,11 @@ class UserMainPageEditController extends BaseController
     {
         $main_content = MainContent::find($request->input('content_id'));
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('link') ||
-            !$request->exists('text'))
+            !$request->exists('text')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content->title = $request->input('title');
@@ -428,9 +471,11 @@ class UserMainPageEditController extends BaseController
 
     public function addMainContentSlider(Request $request)
     {
-        if(!$request->exists('content') ||
+        if (
+            !$request->exists('content') ||
             !$request->exists('title') ||
-            !$request->exists('link'))
+            !$request->exists('link')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         // TODO check content validity
@@ -447,7 +492,7 @@ class UserMainPageEditController extends BaseController
         $content = (array)$request->input("content");
         $main_content->content_slider()->save($content_slider);
 
-        foreach ($content as $slide){
+        foreach ($content as $slide) {
             $slide = (object)$slide;
             $content_image = new ContentImage();
             $content_image->url = $slide->url;
@@ -463,9 +508,11 @@ class UserMainPageEditController extends BaseController
     {
         $main_content = MainContent::find($request->input('content_id'));
 
-        if(!$request->exists('content') ||
+        if (
+            !$request->exists('content') ||
             !$request->exists('title') ||
-            !$request->exists('link'))
+            !$request->exists('link')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         // TODO check content validity
@@ -480,7 +527,7 @@ class UserMainPageEditController extends BaseController
 
         $content_slider->content_images()->delete();
 
-        foreach ($content as $slide){
+        foreach ($content as $slide) {
             $slide = (object)$slide;
             $content_image = new ContentImage();
             $content_image->url = $slide->url;
@@ -508,7 +555,7 @@ class UserMainPageEditController extends BaseController
 
     public function addMainForm(Request $request)
     {
-        if(!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_form = new MainForm();
         $main_form->title = $request->input('title');
@@ -528,7 +575,7 @@ class UserMainPageEditController extends BaseController
     {
         $main_form = MainForm::find($request->input('form_id'));
 
-        if(!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_form->title = $request->input('title');
         $main_form->text = $request->input('text');
@@ -553,9 +600,11 @@ class UserMainPageEditController extends BaseController
 
     public function addMainCourseList(Request $request)
     {
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('list') ||
-            !$request->exists('default_type'))
+            !$request->exists('default_type')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_course_list = new MainCourseList();
@@ -571,9 +620,11 @@ class UserMainPageEditController extends BaseController
     {
         $main_course_list = MainCourseList::find($request->input('list_id'));
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('list') ||
-            !$request->exists('default_type'))
+            !$request->exists('default_type')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_course_list->title = $request->input('title');
@@ -594,9 +645,11 @@ class UserMainPageEditController extends BaseController
 
     public function addMainPostList(Request $request)
     {
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('list') ||
-            !$request->exists('default_type'))
+            !$request->exists('default_type')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_post_list = new MainPostList();
@@ -612,9 +665,11 @@ class UserMainPageEditController extends BaseController
     {
         $main_post_list = MainPostList::find($request->input('list_id'));
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('list') ||
-            !$request->exists('default_type'))
+            !$request->exists('default_type')
+        )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_post_list->title = $request->input('title');
@@ -632,5 +687,4 @@ class UserMainPageEditController extends BaseController
 
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
-
 }
