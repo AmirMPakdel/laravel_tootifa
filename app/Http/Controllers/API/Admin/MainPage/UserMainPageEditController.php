@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers\API\Admin\MainPage;
 
+use App\Http\Controllers\API\Admin\UploadController;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Includes\Helper;
@@ -150,29 +151,15 @@ class UserMainPageEditController extends BaseController
 
     public function editPropertiesBannerCover(Request $request){
         $properties = MainPageProperties::all()[0];
-        $action = $request->input('action');
-        $file = $request->file('file');
+        
+        $file_state = $request->input("file_state");
+        if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
-        if($action != Constant::$FILE_ACTION_DELETE) {
-            $size = $file->getSize() / 1024;
-            if ($size > Constant::$COVER_SIZE_LIMIT)
-                return $this->sendResponse(
-                    Constant::$FILE_SIZE_LIMIT_EXCEEDED,
-                    ['limit' => Constant::$COVER_SIZE_NAME_LIMIT . "kb"]
-                );
-        }
+        $uc = new UploadController();
+        $uk = $request->input('upload_key');
+        $result = $uc->updateFileState($file_state, tenant()->id, 1, $properties, "banner_cover", false, $uk);
 
-        Helper::uploadFileToDisk(
-            $action,
-            $properties,
-            'banner_cover',
-            'public',
-            'images/banner_covers',
-            '.png',
-            $file
-        );
-
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function editPropertiesContentHierarchy(Request $request){
@@ -197,64 +184,39 @@ class UserMainPageEditController extends BaseController
 
     public function editPropertiesPageCover(Request $request){
         $properties = MainPageProperties::all()[0];
-        $action = $request->input('action');
-        $file = $request->file('file');
 
-        if($action != Constant::$FILE_ACTION_DELETE) {
-            $size = $file->getSize() / 1024;
-            if ($size > Constant::$COVER_SIZE_LIMIT)
-                return $this->sendResponse(
-                    Constant::$FILE_SIZE_LIMIT_EXCEEDED,
-                    ['limit' => Constant::$COVER_SIZE_NAME_LIMIT . "kb"]
-                );
-        }
+        $file_state = $request->input("file_state");
+        if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
-        Helper::uploadFileToDisk(
-            $action,
-            $properties,
-            'page_cover',
-            'public',
-            'images/page_covers',
-            '.png',
-            $file
+        $result = $this->uc->updateFileState(
+            $file_state, tenant()->id, 1, 
+            $properties, "page_cover", false, 
+            $request->input('upload_key')
         );
-
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        
+        return $this->sendResponse($result, null);
     }
 
     public function editPropertiesPageLogo(Request $request){
         $properties = MainPageProperties::all()[0];
-        $action = $request->input('action');
-        $file = $request->file('file');
 
-        if($action != Constant::$FILE_ACTION_DELETE) {
-            $size = $file->getSize() / 1024;
-            if ($size > Constant::$LOGO_SIZE_LIMIT)
-                return $this->sendResponse(
-                    Constant::$FILE_SIZE_LIMIT_EXCEEDED,
-                    ['limit' => Constant::$LOGO_SIZE_NAME_LIMIT . "kb"]
-                );
-        }
+        $file_state = $request->input("file_state");
+        if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
-        Helper::uploadFileToDisk(
-            $action,
-            $properties,
-            'page_logo',
-            'public',
-            'images/page_logos',
-            '.png',
-            $file
+        $result = $this->uc->updateFileState(
+            $file_state, tenant()->id, 1, 
+            $properties, "page_logo", false, 
+            $request->input('upload_key')
         );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function addMainContentVideo(Request $request)
     {
         if(!$request->exists('title') ||
             !$request->exists('link') ||
-            !$request->exists('url') ||
-            !$request->exists('size'))
+            !$request->exists('upload_key'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content = new MainContent();
@@ -264,10 +226,9 @@ class UserMainPageEditController extends BaseController
         $main_content->save();
 
         $content_video = new ContentVideo();
-        $content_video->url = $request->input('url');
-        $content_video->size = $request->input('size');
         $content_video->belongs_to = Constant::$BELONGING_MAIN;
         $main_content->content_video()->save($content_video);
+        $this->uc->saveFile(tenant()->id, 1, $content_video, 'url', true, $request->input('upload_key'));
 
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $main_content->id]);
     }
@@ -278,8 +239,8 @@ class UserMainPageEditController extends BaseController
 
         if(!$request->exists('title') ||
             !$request->exists('link') ||
-            !$request->exists('url') ||
-            !$request->exists('size'))
+            !$request->exists('upload_key') ||
+            !$request->exists('file_state'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content->title = $request->input('title');

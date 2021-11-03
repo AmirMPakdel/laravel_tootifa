@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Admin;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Models\ContentImage;
+use App\Models\ContentVideo;
 use App\Models\LandingPage;
 use Illuminate\Http\Request;
 
@@ -34,11 +35,11 @@ class LandingPageController extends BaseController
         }
 
         if($request->input('video_url')){
-            $content_image = new ContentImage();
-            $content_image->url = $request->input('image_url');
-            $content_image->size = $request->input('image_size');
-            $content_image->belongs_to = Constant::$BELONGING_LP;
-            $landingPage->content_image()->save($content_image);
+            $content_video = new ContentVideo();
+            $content_video->url = $request->input('video_url');
+            $content_video->size = $request->input('video_size');
+            $content_video->belongs_to = Constant::$BELONGING_LP;
+            $landingPage->content_video()->save($content_video);
         }
 
 

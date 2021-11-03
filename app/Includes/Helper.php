@@ -7,7 +7,6 @@ use App\Models\ContentImage;
 use App\Models\ContentVideo;
 use App\Models\ContentVoice;
 use App\Models\Course;
-use App\Models\DailyCourseRegistrationReport;
 use App\Models\DailyCourseVisitReport;
 use App\Models\DailyMaintenanceCostReport;
 use App\Models\DailyMainVisitReport;
@@ -753,10 +752,10 @@ class Helper
         }
     }
 
-    // Gets size in KB
+    // Gets size in Bytes
     public static function calculateMaintenanceCost($size)
     {
-        return ($size / pow(10, 6)) * Constant::$ONE_G_MAITENANCE_COST;
+        return ($size / pow(10, 9)) * Constant::$ONE_G_MAITENANCE_COST;
     }
 
     public static function crypto_rand_secure($min, $max)

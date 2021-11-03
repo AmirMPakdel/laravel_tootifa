@@ -45,6 +45,8 @@ class Constant
     public static $POST_NOT_FOUND = 1146;
     public static $NO_FILE_STATE = 1147;
     public static $INVALID_OLD_UPLOAD_KEY = 1148;
+    public static $CONVERTOR_SERVER_ISSUE_MOVING_FILE = 1149;
+    public static $CONVERTOR_SERVER_ISSUE_DELETING_FILE = 1150;
 
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
