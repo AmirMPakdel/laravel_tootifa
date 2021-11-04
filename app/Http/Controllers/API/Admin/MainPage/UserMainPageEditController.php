@@ -206,7 +206,7 @@ class UserMainPageEditController extends BaseController
         $file_state = $request->input("file_state");
         if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
-        $result = $this->uc->updateFileState(
+        $result = UploadManager::updateFileState(
             $file_state,
             tenant()->id,
             1,
@@ -226,7 +226,7 @@ class UserMainPageEditController extends BaseController
         $file_state = $request->input("file_state");
         if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
-        $result = $this->uc->updateFileState(
+        $result = UploadManager::updateFileState(
             $file_state,
             tenant()->id,
             1,
@@ -252,13 +252,16 @@ class UserMainPageEditController extends BaseController
         $main_content->title = $request->input('title');
         $main_content->link = $request->input('link');
         $main_content->type = Constant::$CONTENT_TYPE_VIDEO;
-        $main_content->save();
 
         $content_video = new ContentVideo();
         $content_video->belongs_to = Constant::$BELONGING_MAIN;
-        $main_content->content_video()->save($content_video);
-        $this->uc->saveFile(tenant()->id, 1, $content_video, 'url', true, $request->input('upload_key'));
+        $result = UploadManager::saveFile(tenant()->id, 1, $content_video, 'url', true, $request->input('upload_key'));
 
+        if ($result == Constant::$SUCCESS){
+            $main_content->save();
+            $main_content->content_video()->save($content_video);
+        }
+        
         return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $main_content->id]);
     }
 
@@ -276,24 +279,35 @@ class UserMainPageEditController extends BaseController
 
         $main_content->title = $request->input('title');
         $main_content->link = $request->input('link');
-        $main_content->save();
-
         $content_video = $main_content->content_video()->first();
-        $content_video->url = $request->input('url');
-        $content_video->size = $request->input('size');
-        $content_video->save();
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        $result = UploadManager::updateFileState(
+            $request->input('file_state'),
+            tenant()->id,
+            1,
+            $content_video,
+            "url",
+            true,
+            $request->input('upload_key')
+        );
+        
+        if ($result == Constant::$SUCCESS) $main_content->save();
+        
+        return $this->sendResponse($result, null);
     }
 
     public function deleteMainContentVideo(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
+        $content_video = $main_content->content_video()->first();
 
-        $main_content->content_video()->delete();
-        $main_content->delete();
+        $result = UploadManager::deleteFile(tenant()->id, $content_video->url);
+        if ($result == Constant::$SUCCESS){
+            $content_video->delete();
+            $main_content->delete();
+        }
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function addMainContentVoice(Request $request)
