@@ -15,48 +15,6 @@ use Illuminate\Http\Request;
 
 class UserMainPageController extends BaseController
 {
-    public function getPageLogo(Request $request){
-        $properties = MainPageProperties::all()[0];
-
-        if($properties->page_logo){
-            $path = storage_path( "app\public\\" . $properties->page_logo);
-            $path = str_replace('/', '\\', $path);
-            $headers = array(
-                'Content-Type' => 'image/png',
-            );
-
-            return response()->file($path, $headers);
-        }else return null;
-    }
-
-    public function getPageCover(Request $request){
-        $properties = MainPageProperties::all()[0];
-
-        if($properties->page_cover){
-            $path = storage_path( "app\public\\" . $properties->page_cover);
-            $path = str_replace('/', '\\', $path);
-            $headers = array(
-                'Content-Type' => 'image/png',
-            );
-
-            return response()->file($path, $headers);
-        }else return null;
-    }
-
-    public function getBannerCover(Request $request){
-        $properties = MainPageProperties::all()[0];
-
-        if($properties->banner_cover){
-            $path = storage_path( "app\public\\" . $properties->banner_cover);
-            $path = str_replace('/', '\\', $path);
-            $headers = array(
-                'Content-Type' => 'image/png',
-            );
-
-            return response()->file($path, $headers);
-        }else return null;
-    }
-
     public function loadMainPage(Request $request){
         $properties = MainPageProperties::all()[0];
         $contents = MainContent::all()->map(function ($content){
@@ -123,6 +81,9 @@ class UserMainPageController extends BaseController
 
         return [
             'is_banner_on' => $properties->is_banner_on,
+            'banner_cover' => $properties->banner_cover,
+            'page_cover' => $properties->page_cover,
+            'page_logo' => $properties->page_logo,
             'store_open' => $properties->store_open,
             'blog_open' => $properties->blog_open,
             'banner_link' => $properties->banner_link,

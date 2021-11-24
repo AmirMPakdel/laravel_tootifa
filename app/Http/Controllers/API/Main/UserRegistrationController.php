@@ -2,6 +2,7 @@
 
 
 namespace App\Http\Controllers\API\Main;
+
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Models\MainPageProperties;
@@ -14,7 +15,8 @@ use Illuminate\Support\Facades\Hash;
 
 class UserRegistrationController extends BaseController
 {
-    public function checkPhoneNumber(Request $request){
+    public function checkPhoneNumber(Request $request)
+    {
         $phone_number = $request->input('phone_number');
 
         // checking phone number
@@ -29,7 +31,8 @@ class UserRegistrationController extends BaseController
             return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function loginWithPassword(Request $request){
+    public function loginWithPassword(Request $request)
+    {
         $phone_number = $request->input('phone_number');
         $password = $request->input('password');
 
@@ -50,7 +53,8 @@ class UserRegistrationController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token, 'username' => $user->username]);
     }
 
-    public function sendVerificationCode(Request $request){
+    public function sendVerificationCode(Request $request)
+    {
         $phone_number = $request->input('phone_number');
 
         // check for verification status
@@ -59,7 +63,7 @@ class UserRegistrationController extends BaseController
             ['phone_verified_at', '<>', null]
         ])->first();
 
-        if($user) return $this->sendResponse(Constant::$USER_ALREADY_VERIFIED, null);
+        if ($user) return $this->sendResponse(Constant::$USER_ALREADY_VERIFIED, null);
 
         // check for in process user
         $user = User::where([
@@ -84,7 +88,8 @@ class UserRegistrationController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function checkVerificationCode(Request $request){
+    public function checkVerificationCode(Request $request)
+    {
         $result = User::where('verification_code', $request->input('code'));
 
         // to prevent a low probable bug
@@ -98,7 +103,8 @@ class UserRegistrationController extends BaseController
             return $this->sendResponse(Constant::$INVALID_VERIFICATION_CODE, null);
     }
 
-    public function completeRegistration(Request $request){
+    public function completeRegistration(Request $request)
+    {
         // check national code
         $national_code = $request->input('national_code');
 
@@ -125,9 +131,11 @@ class UserRegistrationController extends BaseController
         // set student verified
         $user->verification_code = null;
         $user->phone_verified_at = Carbon::now();
-        $user->save();
 
         // generate tenant
+        if (Tenant::find($request->input('user_name')))
+            return $this->sendResponse(Constant::$REPETITIVE_USERNAME, null);
+
         $tenant = new Tenant();
         $tenant->id = $request->input('user_name');
         $user->tenant()->save($tenant);
@@ -136,28 +144,26 @@ class UserRegistrationController extends BaseController
         // generate profile
         $profile = new UProfile();
         $user->u_profile()->save($profile);
+        $user->u_profile_id = $profile->id;
 
         // setting key
         $previous = User::find(User::where('id', '<', $user->id)->max('id'));
-        if($previous){
+        if ($previous) {
             $sum = (int) (hexdec($previous->key) + 1);
             $new_code = dechex($sum);
             $user->key = $new_code;
-        }else
+        } else
             $user->key = "1111";
-        
+
         $user->save();
 
         // generate user main page properties
         $tenant->run(function () {
-            MainPageProperties::create(['page_title'=>"عنوان"]);
+            MainPageProperties::create(['page_title' => "عنوان"]);
         });
 
         // TODO send registration success message via third party sms platform api
 
         return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token]);
-
     }
-
-
 }

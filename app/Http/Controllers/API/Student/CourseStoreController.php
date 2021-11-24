@@ -225,7 +225,9 @@ class CourseStoreController extends BaseController
             "is_comments_open" => $course->is_comments_open,
             "headings" => $headings,
             "contents" => $contents,
-            "educators" => $educators
+            "educators" => $educators,
+            "logo" => $course->logo,
+            "cover" => $course->cover,
         ];
     }
 

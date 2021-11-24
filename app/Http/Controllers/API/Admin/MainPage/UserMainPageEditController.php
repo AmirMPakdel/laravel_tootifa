@@ -171,6 +171,7 @@ class UserMainPageEditController extends BaseController
             $properties,
             "banner_cover",
             false,
+            false,
             $request->input('upload_key')
         );
 
@@ -213,6 +214,7 @@ class UserMainPageEditController extends BaseController
             $properties,
             "page_cover",
             false,
+            false,
             $request->input('upload_key')
         );
 
@@ -233,6 +235,7 @@ class UserMainPageEditController extends BaseController
             $properties,
             "page_logo",
             false,
+            false,
             $request->input('upload_key')
         );
 
@@ -243,7 +246,6 @@ class UserMainPageEditController extends BaseController
     {
         if (
             !$request->exists('title') ||
-            !$request->exists('link') ||
             !$request->exists('upload_key')
         )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
@@ -255,19 +257,20 @@ class UserMainPageEditController extends BaseController
 
         $content_video = new ContentVideo();
         $content_video->belongs_to = Constant::$BELONGING_MAIN;
-        $result = UploadManager::saveFile(tenant()->id, 1, $content_video, 'url', true, $request->input('upload_key'));
+        $result = UploadManager::saveFile(tenant()->id, 1, $content_video, 'url', true, false, $request->input('upload_key'));
 
-        if ($result == Constant::$SUCCESS){
+        if ($result == Constant::$SUCCESS) {
             $main_content->save();
             $main_content->content_video()->save($content_video);
         }
-        
-        return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $main_content->id]);
+
+        return $this->sendResponse($result, ['content_id' => $main_content->id]);
     }
 
     public function updateMainContentVideo(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         if (
             !$request->exists('title') ||
@@ -288,21 +291,24 @@ class UserMainPageEditController extends BaseController
             $content_video,
             "url",
             true,
+            false,
             $request->input('upload_key')
         );
-        
+
         if ($result == Constant::$SUCCESS) $main_content->save();
-        
+
         return $this->sendResponse($result, null);
     }
 
     public function deleteMainContentVideo(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        
         $content_video = $main_content->content_video()->first();
 
         $result = UploadManager::deleteFile(tenant()->id, $content_video->url);
-        if ($result == Constant::$SUCCESS){
+        if ($result == Constant::$SUCCESS) {
             $content_video->delete();
             $main_content->delete();
         }
@@ -314,9 +320,7 @@ class UserMainPageEditController extends BaseController
     {
         if (
             !$request->exists('title') ||
-            !$request->exists('link') ||
-            !$request->exists('url') ||
-            !$request->exists('size')
+            !$request->exists('upload_key')
         )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
@@ -324,58 +328,73 @@ class UserMainPageEditController extends BaseController
         $main_content->title = $request->input('title');
         $main_content->link = $request->input('link');
         $main_content->type = Constant::$CONTENT_TYPE_VOICE;
-        $main_content->save();
 
         $content_voice = new ContentVoice();
-        $content_voice->url = $request->input('url');
-        $content_voice->size = $request->input('size');
         $content_voice->belongs_to = Constant::$BELONGING_MAIN;
-        $main_content->content_voice()->save($content_voice);
+        $result = UploadManager::saveFile(tenant()->id, 1, $content_voice, 'url', true, false, $request->input('upload_key'));
 
-        return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $main_content->id]);
+        if ($result == Constant::$SUCCESS) {
+            $main_content->save();
+            $main_content->content_voice()->save($content_voice);
+        }
+
+        return $this->sendResponse($result, ['content_id' => $main_content->id]);
     }
 
     public function updateMainContentVoice(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
-
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        
         if (
             !$request->exists('title') ||
             !$request->exists('link') ||
-            !$request->exists('url') ||
-            !$request->exists('size')
+            !$request->exists('upload_key') ||
+            !$request->exists('file_state')
         )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content->title = $request->input('title');
         $main_content->link = $request->input('link');
-        $main_content->save();
-
         $content_voice = $main_content->content_voice()->first();
-        $content_voice->url = $request->input('url');
-        $content_voice->size = $request->input('size');
-        $content_voice->save();
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        $result = UploadManager::updateFileState(
+            $request->input('file_state'),
+            tenant()->id,
+            1,
+            $content_voice,
+            "url",
+            true,
+            false,
+            $request->input('upload_key')
+        );
+
+        if ($result == Constant::$SUCCESS) $main_content->save();
+
+        return $this->sendResponse($result, null);
     }
 
     public function deleteMainContentVoice(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        $main_content->content_voice()->delete();
-        $main_content->delete();
+        $content_voice = $main_content->content_voice()->first();
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        $result = UploadManager::deleteFile(tenant()->id, $content_voice->url);
+        if ($result == Constant::$SUCCESS) {
+            $content_voice->delete();
+            $main_content->delete();
+        }
+
+        return $this->sendResponse($result, null);
     }
 
     public function addMainContentImage(Request $request)
     {
         if (
             !$request->exists('title') ||
-            !$request->exists('link') ||
-            !$request->exists('url') ||
-            !$request->exists('size')
+            !$request->exists('upload_key')
         )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
@@ -383,56 +402,72 @@ class UserMainPageEditController extends BaseController
         $main_content->title = $request->input('title');
         $main_content->link = $request->input('link');
         $main_content->type = Constant::$CONTENT_TYPE_IMAGE;
-        $main_content->save();
 
         $content_image = new ContentImage();
-        $content_image->url = $request->input('url');
-        $content_image->size = $request->input('size');
         $content_image->belongs_to = Constant::$BELONGING_MAIN;
-        $main_content->content_image()->save($content_image);
+        $result = UploadManager::saveFile(tenant()->id, 1, $content_image, 'url', true, false, $request->input('upload_key'));
 
-        return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $main_content->id]);
+        if ($result == Constant::$SUCCESS) {
+            $main_content->save();
+            $main_content->content_image()->save($content_image);
+        }
+
+        return $this->sendResponse($result, ['content_id' => $main_content->id]);
     }
 
     public function updateMainContentImage(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         if (
             !$request->exists('title') ||
             !$request->exists('link') ||
-            !$request->exists('url') ||
-            !$request->exists('size')
+            !$request->exists('upload_key') ||
+            !$request->exists('file_state')
         )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $main_content->title = $request->input('title');
         $main_content->link = $request->input('link');
-        $main_content->save();
-
         $content_image = $main_content->content_image()->first();
-        $content_image->url = $request->input('url');
-        $content_image->size = $request->input('size');
-        $content_image->save();
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        $result = UploadManager::updateFileState(
+            $request->input('file_state'),
+            tenant()->id,
+            1,
+            $content_image,
+            "url",
+            true,
+            false,
+            $request->input('upload_key')
+        );
+
+        if ($result == Constant::$SUCCESS) $main_content->save();
+
+        return $this->sendResponse($result, null);
     }
 
     public function deleteMainContentImage(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        $main_content->content_image()->delete();
-        $main_content->delete();
+        $content_image = $main_content->content_image()->first();
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        $result = UploadManager::deleteFile(tenant()->id, $content_image->url);
+        if ($result == Constant::$SUCCESS) {
+            $content_image->delete();
+            $main_content->delete();
+        }
+
+        return $this->sendResponse($result, null);
     }
 
     public function addMainContentText(Request $request)
     {
         if (
             !$request->exists('title') ||
-            !$request->exists('link') ||
             !$request->exists('text')
         )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
@@ -454,6 +489,7 @@ class UserMainPageEditController extends BaseController
     public function updateMainContentText(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         if (
             !$request->exists('title') ||
@@ -476,6 +512,7 @@ class UserMainPageEditController extends BaseController
     public function deleteMainContentText(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         $main_content->content_text()->delete();
         $main_content->delete();
@@ -487,8 +524,7 @@ class UserMainPageEditController extends BaseController
     {
         if (
             !$request->exists('content') ||
-            !$request->exists('title') ||
-            !$request->exists('link')
+            !$request->exists('title')
         )
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
@@ -506,12 +542,16 @@ class UserMainPageEditController extends BaseController
         $content = (array)$request->input("content");
         $main_content->content_slider()->save($content_slider);
 
-        foreach ($content as $slide) {
-            $slide = (object)$slide;
+        foreach ($content as $uk) {
             $content_image = new ContentImage();
-            $content_image->url = $slide->url;
-            $content_image->size = $slide->size;
             $content_image->belongs_to = Constant::$BELONGING_MAIN;
+            $result = UploadManager::saveFile(tenant()->id, 1, $content_image, 'url', true, false, $uk);
+
+            if ($result == Constant::$SUCCESS) {
+                $main_content->save();
+                $main_content->content_image()->save($content_image);
+            }
+
             $content_slider->content_images()->save($content_image);
         }
 
@@ -521,6 +561,7 @@ class UserMainPageEditController extends BaseController
     public function updateMainContentSlider(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         if (
             !$request->exists('content') ||
@@ -557,6 +598,7 @@ class UserMainPageEditController extends BaseController
     public function deleteMainContentSlider(Request $request)
     {
         $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         $slider = $main_content->content_slider;
         $slider->content_images()->delete();
@@ -588,6 +630,7 @@ class UserMainPageEditController extends BaseController
     public function updateMainForm(Request $request)
     {
         $main_form = MainForm::find($request->input('form_id'));
+        if (!$main_form) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         if (!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
@@ -607,6 +650,8 @@ class UserMainPageEditController extends BaseController
     public function deleteMainForm(Request $request)
     {
         $main_form = MainForm::find($request->input('form_id'));
+        if (!$main_form) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+
         $main_form->delete();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
@@ -633,6 +678,7 @@ class UserMainPageEditController extends BaseController
     public function updateMainCourseList(Request $request)
     {
         $main_course_list = MainCourseList::find($request->input('list_id'));
+        if (!$main_course_list) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         if (
             !$request->exists('title') ||
@@ -652,6 +698,8 @@ class UserMainPageEditController extends BaseController
     public function deleteMainCourseList(Request $request)
     {
         $main_course_list = MainCourseList::find($request->input('list_id'));
+        if (!$main_course_list) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        
         $main_course_list->delete();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
@@ -678,6 +726,7 @@ class UserMainPageEditController extends BaseController
     public function updateMainPostList(Request $request)
     {
         $main_post_list = MainPostList::find($request->input('list_id'));
+        if (!$main_post_list) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         if (
             !$request->exists('title') ||
@@ -697,6 +746,8 @@ class UserMainPageEditController extends BaseController
     public function deleteMainPostList(Request $request)
     {
         $main_post_list = MainPostList::find($request->input('list_id'));
+        if (!$main_post_list) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        
         $main_post_list->delete();
 
         return $this->sendResponse(Constant::$SUCCESS, null);

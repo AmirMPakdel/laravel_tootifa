@@ -19,7 +19,7 @@ class EducatorsController extends BaseController
         $educator->last_name = $request->input("last_name");
         $educator->bio = $request->input("bio");
 
-        $result = UploadManager::saveFile(tenant()->id, 1, $educator, 'image', false, $request->input('upload_key'));
+        $result = UploadManager::saveFile(tenant()->id, 1, $educator, 'image', false, false, $request->input('upload_key'));
         if ($result == Constant::$SUCCESS) $educator->save();
 
         return $this->sendResponse($result,  ['educator_id' => $educator->id]);
@@ -43,6 +43,7 @@ class EducatorsController extends BaseController
             1,
             $educator,
             'image',
+            false,
             false,
             $request->input('upload_key')
         );

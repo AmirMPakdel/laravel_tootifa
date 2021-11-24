@@ -87,6 +87,9 @@ class MainPageController extends BaseController
 
         return [
             'is_banner_on' => $properties->is_banner_on,
+            'banner_cover' => $properties->banner_cover,
+            'page_cover' => $properties->page_cover,
+            'page_logo' => $properties->page_logo,
             'store_open' => $properties->store_open,
             'blog_open' => $properties->blog_open,
             'banner_link' => $properties->banner_link,

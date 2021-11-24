@@ -47,6 +47,8 @@ class Constant
     public static $INVALID_OLD_UPLOAD_KEY = 1148;
     public static $CONVERTOR_SERVER_ISSUE_MOVING_FILE = 1149;
     public static $CONVERTOR_SERVER_ISSUE_DELETING_FILE = 1150;
+    public static $CONTENT_NOT_FOUND = 1151;
+    public static $REPETITIVE_USERNAME = 1152;
 
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
@@ -168,6 +170,23 @@ class Constant
     public static $UPDATE_FILE_STATE_REPLACE = "ufs_replace";
     public static $UPDATE_FILE_STATE_DELETE = "ufs_delete";
 
+    public static $GROUP_TYPE_COURSE = "gt_course";
+    public static $GROUP_TYPE_POST = "gt_post";
+
+    // UPLOAD TYPES
+    public static $UPLOAD_TYPE_WRITER_IMAGE = "ut_writer_image";
+    public static $UPLOAD_TYPE_EDUCATOR_IMAGE = "ut_educator_image";
+
+    public static $UPLOAD_TYPE_MAIN_PAGE_LOGO = "ut_main_page_logo";
+    public static $UPLOAD_TYPE_MAIN_PAGE_COVER = "ut_main_page_cover";
+    public static $UPLOAD_TYPE_BANNER_COVER = "ut_banner_cover";
+    public static $UPLOAD_TYPE_MAIN_PAGE_VIDEO = "ut_main_page_video";
+    public static $UPLOAD_TYPE_MAIN_PAGE_VOICE = "ut_main_page_voice";
+    public static $UPLOAD_TYPE_MAIN_PAGE_IMAGE = "ut_main_page_image";
+    public static $UPLOAD_TYPE_MAIN_PAGE_SLIDER_IMAGE = "ut_main_page_slider_image";
+
+    public static $UPLOAD_TYPE_COURSE_LOGO = "ut_course_logo";
+    public static $UPLOAD_TYPE_COURSE_COVER = "ut_course_cover";
     public static $UPLOAD_TYPE_COURSE_VIDEO = "ut_course_video";
     public static $UPLOAD_TYPE_COURSE_DOCUMENT = "ut_course_document";
     public static $UPLOAD_TYPE_COURSE_VOICE = "ut_course_voice";

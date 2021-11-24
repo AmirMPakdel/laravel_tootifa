@@ -4,7 +4,6 @@
 namespace App\Http\Controllers\API\Admin;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
-
 use App\Models\LevelOneGroup;
 use App\Models\LevelThreeGroup;
 use App\Models\LevelTwoGroup;
@@ -15,13 +14,15 @@ class GroupsController extends BaseController
 {
     public function createLevelOneGroup(Request $request){
         $title = $request->input("title");
+        $type = $request->input("type");
 
         // check title
-        if(LevelOneGroup::where('title', $title)->exists())
+        if(LevelOneGroup::type($type)->where('title', $title)->exists())
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
 
         $group = new LevelOneGroup();
         $group->title = $title;
+        $group->type = $type;
         $group->save();
 
         return $this->sendResponse(Constant::$SUCCESS,  ['g1_id' => $group->id]);
@@ -29,10 +30,12 @@ class GroupsController extends BaseController
 
     public function createLevelTwoGroup(Request $request){
         $title = $request->input("title");
+        $type = $request->input("type");
+
         $levelOneGroup = LevelOneGroup::find($request->input("g1_id"));
 
         // check title
-        if(LevelTwoGroup::where('title', $title)->exists())
+        if(LevelTwoGroup::type($type)->where('title', $title)->exists())
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
 
         // check father group
@@ -41,6 +44,7 @@ class GroupsController extends BaseController
 
         $group = new LevelTwoGroup();
         $group->title = $title;
+        $group->type = $type;
         $levelOneGroup->level_two_groups()->save($group);
         $group->save();
 
@@ -49,10 +53,12 @@ class GroupsController extends BaseController
 
     public function createLevelThreeGroup(Request $request){
         $title = $request->input("title");
+        $type = $request->input("type");
+
         $levelTwoGroup = LevelTwoGroup::find($request->input("g2_id"));
 
         // check title
-        if(LevelThreeGroup::where('title', $title)->exists())
+        if(LevelThreeGroup::type($type)->where('title', $title)->exists())
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
 
         // check father group
@@ -61,6 +67,7 @@ class GroupsController extends BaseController
 
         $group = new LevelThreeGroup();
         $group->title = $title;
+        $group->type = $type;
         $levelTwoGroup->level_three_groups()->save($group);
         $group->save();
 
@@ -69,10 +76,11 @@ class GroupsController extends BaseController
 
     public function editLevelOneGroup(Request $request){
         $title = $request->input("title");
+        $type = $request->input("type");
         $group = LevelOneGroup::find($request->input("id"));
 
         // check title
-        if($group->title != $title && LevelOneGroup::where('title', $title)->exists())
+        if($group->title != $title && LevelOneGroup::type($type)->where('title', $title)->exists())
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
 
         $group->title = $title;
@@ -83,10 +91,11 @@ class GroupsController extends BaseController
 
     public function editLevelTwoGroup(Request $request){
         $title = $request->input("title");
+        $type = $request->input("type");
         $group = LevelTwoGroup::find($request->input("id"));
 
         // check title
-        if($group->title != $title && LevelTwoGroup::where('title', $title)->exists())
+        if($group->title != $title && LevelTwoGroup::type($type)->where('title', $title)->exists())
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
 
         $group->title = $title;
@@ -97,10 +106,11 @@ class GroupsController extends BaseController
 
     public function editLevelThreeGroup(Request $request){
         $title = $request->input("title");
+        $type = $request->input("type");
         $group = LevelThreeGroup::find($request->input("id"));
 
         // check title
-        if($group->title != $title && LevelThreeGroup::where('title', $title)->exists())
+        if($group->title != $title && LevelThreeGroup::type($type)->where('title', $title)->exists())
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
 
         $group->title = $title;
@@ -208,7 +218,9 @@ class GroupsController extends BaseController
     }
 
     public function fetchGroups(Request $request){
-        $groups = LevelOneGroup::all()->map(function ($level_one_group){
+        $type = $request->input("type");
+
+        $groups = LevelOneGroup::type($type)->all()->map(function ($level_one_group){
             $level_two_groups = $level_one_group->level_two_groups->map(function ($level_two_group){
                 $level_three_groups = $level_two_group->level_three_groups->map(function ($level_three_group){
                     return [

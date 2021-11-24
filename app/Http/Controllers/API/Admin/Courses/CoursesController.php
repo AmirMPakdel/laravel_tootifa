@@ -22,6 +22,7 @@ class CoursesController extends BaseController
         // fetching data
         $title = $request->input('title');
         $price = $request->input('price');
+        $is_encrypted = $request->input('is_encrypted');
         $groups = (object)$request->input('groups');
         $tags = (array)$request->input('tags');
         $category = Category::find($request->input('category_id'));
@@ -38,8 +39,9 @@ class CoursesController extends BaseController
         $course = new Course();
         $course->title = $title;
         $course->price = $price;
+        $course->is_encrypted = $is_encrypted;
 
-        // TODO delete this line
+        // TODO delete this line (It has to be managed by tootifa admins)
         $course->validation_status = Constant::$VALIDATION_STATUS_VALID;
 
         // add it to tags
@@ -168,32 +170,6 @@ class CoursesController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, $course);
     }
 
-    public function getLogo(Request $request, $course_id){
-        $course = Course::find($course_id);
-        if($course && $course->logo){
-            $path = storage_path( "app\public\\" . $course->logo);
-            $path = str_replace('/', '\\', $path);
-            $headers = array(
-                'Content-Type' => 'image/png',
-            );
-
-            return response()->file($path, $headers);
-        }else return null;
-    }
-
-    public function getCover(Request $request, $course_id){
-        $course = Course::find($course_id);
-        if($course && $course->cover){
-            $path = storage_path( "app\public\\" . $course->cover);
-            $path = str_replace('/', '\\', $path);
-            $headers = array(
-                'Content-Type' => 'image/png',
-            );
-
-            return response()->file($path, $headers);
-        }else return null;
-    }
-
 
     private function buildListCourseObject($course){
         return [
@@ -284,11 +260,14 @@ class CoursesController extends BaseController
             "requirements" => $course->requirements,
             "suggested_courses" => $course->suggested_courses,
             "suggested_posts" => $course->suggested_posts,
+            "is_encrypted" => $course->is_encrypted,
             "intro_video" => $intro_video,
             "content_hierarchy" => $course->content_hierarchy,
             "headings" => $headings,
             "contents" => $contents,
-            "educators" => $educators
+            "educators" => $educators,
+            "logo" => $course->logo,
+            "cover" => $course->cover,
         ];
     }
 

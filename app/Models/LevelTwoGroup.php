@@ -13,6 +13,10 @@ class LevelTwoGroup extends Model
         'title',
     ];
 
+    public function scopeType($query, $value){
+        return $query->where('type', '=', $value);
+    }
+
     public function level_one_group(){
         return $this->belongsTo(LevelOneGroup::class);
     }

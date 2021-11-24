@@ -1,11 +1,12 @@
 <?php
 
-
 namespace App\Http\Controllers\API\Admin\Courses;
+
 use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\API\Admin\GroupsController;
 use App\Includes\Constant;
 use App\Includes\Helper;
+use App\Includes\UploadManager;
 use App\Models\ContentDocument;
 use App\Models\ContentVideo;
 use App\Models\ContentVoice;
@@ -18,17 +19,23 @@ use App\Models\LevelOneGroup;
 use App\Models\LevelThreeGroup;
 use App\Models\LevelTwoGroup;
 use App\Models\Tag;
+use App\Models\UploadTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 
 class CourseEditController extends BaseController
 {
-    public function editCourse(Request $request, $ep){
+    public function editCourse(Request $request, $ep)
+    {
         // TODO some preprocessing
+        $course = Course::find($request->input('course_id'));
+        if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
+
+        $request->request->add(['course' => $course]);
 
         // Whenever edit content server should receive new hierarchy
-        switch ($ep){
+        switch ($ep) {
             case Constant::$EDIT_PARAM_COMMENTS_AVAILABILITY:
                 return $this->editCourseCommentsAvailability($request);
             case Constant::$EDIT_PARAM_COMMENTS_VALIDITY:
@@ -104,70 +111,55 @@ class CourseEditController extends BaseController
 
     public function editCourseLogo(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
-        $action = $request->input('action');
-        $file = $request->file('file');
+        $course = $request->input('course');
+        $file_state = $request->input("file_state");
+        if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
-        if($action != Constant::$FILE_ACTION_DELETE){
-            $size = $file->getSize() / 1024;
-            if ($size > Constant::$LOGO_SIZE_LIMIT)
-                return $this->sendResponse(
-                    Constant::$FILE_SIZE_LIMIT_EXCEEDED,
-                    ['limit'=>Constant::$LOGO_SIZE_NAME_LIMIT."kb"]
-                );
-        }
-
-        Helper::uploadFileToDisk(
-            $action,
+        $result = UploadManager::updateFileState(
+            $file_state,
+            tenant()->id,
+            1,
             $course,
-            'logo',
-            'public',
-            'images/course_logos',
-            '.png',
-            $file
+            "logo",
+            false,
+            false,
+            $request->input('upload_key')
         );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function editCourseCover(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
-        $action = $request->input('action');
-        $file = $request->file('file');
+        $course = $request->input('course');
 
-        if($action != Constant::$FILE_ACTION_DELETE) {
-            $size = $file->getSize() / 1024;
-            if ($size > Constant::$COVER_SIZE_LIMIT)
-                return $this->sendResponse(
-                    Constant::$FILE_SIZE_LIMIT_EXCEEDED,
-                    ['limit' => Constant::$COVER_SIZE_NAME_LIMIT . "kb"]
-                );
-        }
+        $file_state = $request->input("file_state");
+        if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
-        Helper::uploadFileToDisk(
-            $action,
+        $result = UploadManager::updateFileState(
+            $file_state,
+            tenant()->id,
+            1,
             $course,
-            'cover',
-            'public',
-            'images/course_covers',
-            '.png',
-            $file
+            "cover",
+            false,
+            false,
+            $request->input('upload_key')
         );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function editCourseTitle(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
         $title = $request->input('title');
 
-        if(!$title)
+        if (!$title)
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $c = Course::where('title', $title)->first();
-        if($c && $c->id != $course->id)
+        if ($c && $c->id != $course->id)
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
 
         $course->title = $title;
@@ -178,10 +170,10 @@ class CourseEditController extends BaseController
 
     public function editCourseShortDesc(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
         $desc = $request->input('desc');
 
-        if(!$desc) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$desc) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course->short_desc = $desc;
         $course->save();
@@ -191,10 +183,10 @@ class CourseEditController extends BaseController
 
     public function editCourseLongDesc(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
         $desc = $request->input('desc');
 
-        if(!$desc) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$desc) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course->long_desc = $desc;
         $course->save();
@@ -204,10 +196,10 @@ class CourseEditController extends BaseController
 
     public function editCourseReleaseDate(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
         $date = $request->input('date'); // yyyy-mm-dd
 
-        if(!preg_match("/\d{4}\-\d{2}-\d{2}/", $date))
+        if (!preg_match("/\d{4}\-\d{2}-\d{2}/", $date))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $date = explode("-", $date);
@@ -219,10 +211,10 @@ class CourseEditController extends BaseController
 
     public function editCourseCommentsAvailability(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
         $open = $request->input('open');
-        if(!is_numeric($open)) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!is_numeric($open)) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course->is_comments_open = $open;
         $course->save();
@@ -232,10 +224,10 @@ class CourseEditController extends BaseController
 
     public function editCourseCommentsValidity(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
         $valid = $request->input('valid');
-        if(!is_numeric($valid)) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!is_numeric($valid)) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course->all_comments_valid = $valid;
         $course->save();
@@ -245,10 +237,10 @@ class CourseEditController extends BaseController
 
     public function editCourseHoldingStatus(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
         $status = $request->input('status');
-        if(!$status) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$status) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course->holding_status = $status;
         $course->save();
@@ -258,10 +250,10 @@ class CourseEditController extends BaseController
 
     public function editCoursePrice(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
         $price = $request->input('price');
 
-        if(!$price) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$price) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course->price = $price;
         $course->save();
@@ -271,10 +263,10 @@ class CourseEditController extends BaseController
 
     public function editCourseDuration(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
         $duration = $request->input('duration'); // minutes
 
-        if(!$duration) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$duration) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course->duration = $duration;
         $course->save();
@@ -284,12 +276,12 @@ class CourseEditController extends BaseController
 
     public function editCourseDiscount(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
         $has_discount = $request->input('has_discount');
         $discount = null;
 
-        if($has_discount) {
+        if ($has_discount) {
             $discount = (object)$request->input('discount');
 
             if (!isset($discount->value) || !isset($discount->type))
@@ -307,10 +299,10 @@ class CourseEditController extends BaseController
 
     public function editCourseSuggestedCourses(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
         $ids = null;
-        if(is_array($request->input('ids')) && sizeof($request->input('ids')) > 0){
+        if (is_array($request->input('ids')) && sizeof($request->input('ids')) > 0) {
             $ids = $request->input('ids');
             $ids = json_encode($ids);
         }
@@ -323,10 +315,10 @@ class CourseEditController extends BaseController
 
     public function editCourseSuggestedPosts(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
         $ids = null;
-        if(is_array($request->input('ids')) && sizeof($request->input('ids')) > 0){
+        if (is_array($request->input('ids')) && sizeof($request->input('ids')) > 0) {
             $ids = $request->input('ids');
             $ids = json_encode($ids);
         }
@@ -339,10 +331,10 @@ class CourseEditController extends BaseController
 
     public function editCourseSubjects(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
         $subjects = null;
-        if(is_array($request->input('subjects')) && sizeof($request->input('subjects')) > 0){
+        if (is_array($request->input('subjects')) && sizeof($request->input('subjects')) > 0) {
             $subjects = $request->input('subjects');
             $subjects = json_encode($subjects);
         }
@@ -355,10 +347,10 @@ class CourseEditController extends BaseController
 
     public function editCourseRequirements(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
         $requirements = null;
-        if(is_array($request->input('requirements')) && sizeof($request->input('requirements')) > 0){
+        if (is_array($request->input('requirements')) && sizeof($request->input('requirements')) > 0) {
             $requirements = $request->input('requirements');
             $requirements = json_encode($requirements);
         }
@@ -371,14 +363,14 @@ class CourseEditController extends BaseController
 
     public function editCourseGroups(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
         $groups = (object)$request->input('groups');
 
-        if(!$groups)
+        if (!$groups)
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         // check groups hierarchy
-        if(!GroupsController::checkGroupsHierarchy($groups))
+        if (!GroupsController::checkGroupsHierarchy($groups))
             return $this->sendResponse(Constant::$INVALID_GROUP_HIERARCHY, null);
 
         $course->level_one_group()->dissociate();
@@ -401,10 +393,10 @@ class CourseEditController extends BaseController
 
     public function editContentHierarchy(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
         $hierarchy = (array)$request->input('hierarchy');
 
-        if(!$hierarchy)
+        if (!$hierarchy)
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         // TODO check it's validity
@@ -417,10 +409,10 @@ class CourseEditController extends BaseController
 
     public function editCourseTags(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
         $tags = (array)$request->input('tags');
 
-        if(!$request->exists('tags'))
+        if (!$request->exists('tags'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course->tags()->detach();
@@ -433,10 +425,10 @@ class CourseEditController extends BaseController
 
     public function editCourseEducators(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
         $educators = (array)$request->input('educators');
 
-        if(!$request->exists('educators'))
+        if (!$request->exists('educators'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course->educators()->detach();
@@ -448,232 +440,329 @@ class CourseEditController extends BaseController
 
     public function addCourseContentVideo(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('is_free') ||
-            !$request->exists('url') ||
-            !$request->exists('size') ||
-            !$request->exists('encoding') ||
-            !$request->exists('key')
-        ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+            !$request->exists('upload_key')
+        )
+            return $this->sendResponse(Constant::$INVALID_VALUE, null);
+
 
         $course_content = new CourseContent();
         $course_content->title = $request->input('title');
         $course_content->is_free = $request->input('is_free') ? 1 : 0;
         $course_content->type = Constant::$CONTENT_TYPE_VIDEO;
-        $course->course_contents()->save($course_content);
 
         $content_video = new ContentVideo();
-        $content_video->url = $request->input('url');
-        $content_video->size = $request->input('size');
-        $content_video->encoding = $request->input('encoding') ? 1 : 0;
-        $content_video->key = $request->input('key');
         $content_video->belongs_to = Constant::$BELONGING_COURSE;
-        $course_content->content_video()->save($content_video);
+        $result = UploadManager::saveFile(
+            tenant()->id,
+            0,
+            $content_video,
+            'url',
+            true,
+            true,
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $course_content->id]);
+        if ($result == Constant::$SUCCESS) {
+            $course->course_contents()->save($course_content);
+            $course_content->content_video()->save($content_video);
+        }
+
+        return $this->sendResponse($result, ['content_id' => $course_content->id]);
     }
 
     public function updateCourseContentVideo(Request $request)
     {
         $course_content = CourseContent::find($request->input('content_id'));
+        if (!$course_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('is_free') ||
-            !$request->exists('url') ||
-            !$request->exists('size') ||
-            !$request->exists('encoding') ||
-            !$request->exists('key')
+            !$request->exists('upload_key')
         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course_content->title = $request->input('title');
         $course_content->is_free = $request->input('is_free') ? 1 : 0;
-        $course_content->save();
 
         $content_video = $course_content->content_video()->first();
-        $content_video->url = $request->input('url');
-        $content_video->size = $request->input('size');
-        $content_video->encoding = $request->input('encoding') ? 1 : 0;
-        $content_video->key = $request->input('key');
-        $content_video->save();
+        $result = UploadManager::updateFileState(
+            $request->input('file_state'),
+            tenant()->id,
+            0,
+            $content_video,
+            "url",
+            true,
+            true,
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        if ($result == Constant::$SUCCESS) $course_content->save();
+
+        return $this->sendResponse($result, null);
     }
 
     public function deleteCourseContentVideo(Request $request)
     {
         $course_content = CourseContent::find($request->input('content_id'));
+        if (!$course_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        $course_content->content_video()->delete();
-        $course_content->delete();
+        $content_video = $course_content->content_video()->first();
+        $result = UploadManager::deleteFile(tenant()->id, $content_video->url);
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        if ($result == Constant::$SUCCESS) {
+            $content_video->delete();
+            $course_content->delete();
+        }
+
+        return $this->sendResponse($result, null);
     }
 
     public function addCourseContentVoice(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('is_free') ||
-            !$request->exists('url') ||
-            !$request->exists('size')
-        ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+            !$request->exists('upload_key')
+        )
+            return $this->sendResponse(Constant::$INVALID_VALUE, null);
+
 
         $course_content = new CourseContent();
         $course_content->title = $request->input('title');
         $course_content->is_free = $request->input('is_free') ? 1 : 0;
         $course_content->type = Constant::$CONTENT_TYPE_VOICE;
-        $course->course_contents()->save($course_content);
 
         $content_voice = new ContentVoice();
-        $content_voice->url = $request->input('url');
-        $content_voice->size = $request->input('size');
         $content_voice->belongs_to = Constant::$BELONGING_COURSE;
-        $course_content->content_voice()->save($content_voice);
+        $result = UploadManager::saveFile(
+            tenant()->id,
+            0,
+            $content_voice,
+            'url',
+            true,
+            true,
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $course_content->id]);
+        if ($result == Constant::$SUCCESS) {
+            $course->course_contents()->save($course_content);
+            $course_content->content_voice()->save($content_voice);
+        }
+
+        return $this->sendResponse($result, ['content_id' => $course_content->id]);
     }
 
     public function updateCourseContentVoice(Request $request)
     {
         $course_content = CourseContent::find($request->input('content_id'));
+        if (!$course_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('is_free') ||
-            !$request->exists('url') ||
-            !$request->exists('size')
+            !$request->exists('upload_key')
         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course_content->title = $request->input('title');
         $course_content->is_free = $request->input('is_free') ? 1 : 0;
-        $course_content->save();
 
         $content_voice = $course_content->content_voice()->first();
-        $content_voice->url = $request->input('url');
-        $content_voice->size = $request->input('size');
-        $content_voice->save();
+        $result = UploadManager::updateFileState(
+            $request->input('file_state'),
+            tenant()->id,
+            0,
+            $content_voice,
+            "url",
+            true,
+            true,
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        if ($result == Constant::$SUCCESS) $course_content->save();
+
+        return $this->sendResponse($result, null);
     }
 
     public function deleteCourseContentVoice(Request $request)
     {
         $course_content = CourseContent::find($request->input('content_id'));
+        if (!$course_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        $course_content->content_voice()->delete();
-        $course_content->delete();
+        $content_voice = $course_content->content_voice()->first();
+        $result = UploadManager::deleteFile(tenant()->id, $content_voice->url);
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        if ($result == Constant::$SUCCESS) {
+            $content_voice->delete();
+            $course_content->delete();
+        }
+
+        return $this->sendResponse($result, null);
     }
 
     public function addCourseContentDocument(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('is_free') ||
-            !$request->exists('url') ||
-            !$request->exists('size')
-        ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+            !$request->exists('upload_key')
+        )
+            return $this->sendResponse(Constant::$INVALID_VALUE, null);
+
 
         $course_content = new CourseContent();
         $course_content->title = $request->input('title');
         $course_content->is_free = $request->input('is_free') ? 1 : 0;
         $course_content->type = Constant::$CONTENT_TYPE_DOCUMENT;
-        $course->course_contents()->save($course_content);
 
         $content_document = new ContentDocument();
-        $content_document->url = $request->input('url');
-        $content_document->size = $request->input('size');
         $content_document->belongs_to = Constant::$BELONGING_COURSE;
-        $course_content->content_document()->save($content_document);
+        $result = UploadManager::saveFile(
+            tenant()->id,
+            0,
+            $content_document,
+            'url',
+            true,
+            true,
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $course_content->id]);
+        if ($result == Constant::$SUCCESS) {
+            $course->course_contents()->save($course_content);
+            $course_content->content_document()->save($content_document);
+        }
+
+        return $this->sendResponse($result, ['content_id' => $course_content->id]);
     }
 
     public function updateCourseContentDocument(Request $request)
     {
         $course_content = CourseContent::find($request->input('content_id'));
+        if (!$course_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if(!$request->exists('title') ||
+        if (
+            !$request->exists('title') ||
             !$request->exists('is_free') ||
-            !$request->exists('url') ||
-            !$request->exists('size')
+            !$request->exists('upload_key')
         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course_content->title = $request->input('title');
         $course_content->is_free = $request->input('is_free') ? 1 : 0;
-        $course_content->save();
 
         $content_document = $course_content->content_document()->first();
-        $content_document->url = $request->input('url');
-        $content_document->size = $request->input('size');
-        $content_document->save();
+        $result = UploadManager::updateFileState(
+            $request->input('file_state'),
+            tenant()->id,
+            0,
+            $content_document,
+            "url",
+            true,
+            true,
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        if ($result == Constant::$SUCCESS) $course_content->save();
+
+        return $this->sendResponse($result, null);
     }
 
     public function deleteCourseContentDocument(Request $request)
     {
         $course_content = CourseContent::find($request->input('content_id'));
+        if (!$course_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        $course_content->content_document()->delete();
-        $course_content->delete();
+        $content_document = $course_content->content_document()->first();
+        $result = UploadManager::deleteFile(tenant()->id, $content_document->url);
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        if ($result == Constant::$SUCCESS) {
+            $content_document->delete();
+            $course_content->delete();
+        }
+
+        return $this->sendResponse($result, null);
     }
 
     public function addCourseIntroVideo(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
-        if(!$request->exists('url') || !$request->exists('size'))
+        if (!$request->exists('upload_key'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $intro = new CourseIntroduction();
-        $course->course_introduction()->save($intro);
-
         $content_video = new ContentVideo();
-        $content_video->url = $request->input('url');
-        $content_video->size = $request->input('size');
         $content_video->belongs_to = Constant::$BELONGING_COURSE;
-        $intro->content_video()->save($content_video);
 
-        return $this->sendResponse(Constant::$SUCCESS, ['course_introduction_id' => $intro->id]);
+        $result = UploadManager::saveFile(
+            tenant()->id,
+            1,
+            $content_video,
+            'url',
+            true,
+            false,
+            $request->input('upload_key')
+        );
+
+        if ($result == Constant::$SUCCESS) {
+            $course->course_introduction()->save($intro);
+            $intro->content_video()->save($content_video);
+        }
+
+        return $this->sendResponse($result, ['course_introduction_id' => $intro->id]);
     }
 
     public function updateCourseIntroVideo(Request $request)
     {
         $course_introduction = CourseIntroduction::find($request->input('intro_id'));
+        if(!$course_introduction) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if(!$request->exists('url') || !$request->exists('size'))
+        if (!$request->exists('upload_key'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $content_video = $course_introduction->content_video()->first();
-        $content_video->url = $request->input('url');
-        $content_video->size = $request->input('size');
-        $content_video->save();
+        $result = UploadManager::updateFileState(
+            $request->input('file_state'),
+            tenant()->id,
+            1,
+            $content_video,
+            "url",
+            true,
+            false,
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function deleteCourseIntroVideo(Request $request)
     {
         $course_introduction = CourseIntroduction::find($request->input('intro_id'));
+        if(!$course_introduction) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        $course_introduction->content_video()->delete();
-        $course_introduction->delete();
+        $content_video = $course_introduction->content_video()->first();
+        $result = UploadManager::deleteFile(tenant()->id, $content_video->url);
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        if ($result == Constant::$SUCCESS) {
+            $content_video->delete();
+            $course_introduction->delete();
+        }
+
+        return $this->sendResponse($result, null);
     }
 
     public function addCourseHeading(Request $request)
     {
-        $course = Course::find($request->input('course_id'));
+        $course = $request->input('course');
 
-        if(!$request->exists('title'))
+        if (!$request->exists('title'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $heading = new CourseHeading();
@@ -687,7 +776,7 @@ class CourseEditController extends BaseController
     {
         $heading = CourseHeading::find($request->input('heading_id'));
 
-        if(!$request->exists('title'))
+        if (!$request->exists('title'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $heading->title = $request->input('title');

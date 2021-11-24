@@ -32,6 +32,10 @@ class LevelOneGroup extends Model
         return $this->hasMany(Post::class);
     }
 
+    public function scopeType($query, $value){
+        return $query->where('type', '=', $value);
+    }
+
     public static function boot() {
         parent::boot();
 

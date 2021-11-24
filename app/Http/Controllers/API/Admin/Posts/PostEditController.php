@@ -7,6 +7,7 @@ use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\API\Admin\GroupsController;
 use App\Includes\Constant;
 use App\Includes\Helper;
+use App\Includes\UploadManager;
 use App\Models\ContentImage;
 use App\Models\ContentSlider;
 use App\Models\ContentText;
@@ -28,6 +29,10 @@ class PostEditController extends BaseController
     public function editPost(Request $request, $ep)
     {
         // TODO some preprocessing
+        $post = Post::find($request->input('post_id'));
+        if (!$post) return $this->sendResponse(Constant::$POST_NOT_FOUND, null);
+
+        $request->request->add(['$post' => $post]);
 
         switch ($ep) {
             case Constant::$EDIT_PARAM_COMMENTS_AVAILABILITY:
@@ -93,63 +98,47 @@ class PostEditController extends BaseController
 
     public function editPostLogo(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
-        $action = $request->input('action');
-        $file = $request->file('file');
+        $post = $request->input('post');
+        $file_state = $request->input("file_state");
+        if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
-        if ($action != Constant::$FILE_ACTION_DELETE) {
-            $size = $file->getSize() / 1024;
-            if ($size > Constant::$LOGO_SIZE_LIMIT)
-                return $this->sendResponse(
-                    Constant::$FILE_SIZE_LIMIT_EXCEEDED,
-                    ['limit' => Constant::$LOGO_SIZE_NAME_LIMIT . "kb"]
-                );
-        }
-
-        Helper::uploadFileToDisk(
-            $action,
+        $result = UploadManager::updateFileState(
+            $file_state,
+            tenant()->id,
+            1,
             $post,
-            'logo',
-            'public',
-            'images/post_logos',
-            '.png',
-            $file
+            "logo",
+            false,
+            false,
+            $request->input('upload_key')
         );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function editPostCover(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
-        $action = $request->input('action');
-        $file = $request->file('file');
+        $post = $request->input('post');
+        $file_state = $request->input("file_state");
+        if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
-        if ($action != Constant::$FILE_ACTION_DELETE) {
-            $size = $file->getSize() / 1024;
-            if ($size > Constant::$COVER_SIZE_LIMIT)
-                return $this->sendResponse(
-                    Constant::$FILE_SIZE_LIMIT_EXCEEDED,
-                    ['limit' => Constant::$COVER_SIZE_NAME_LIMIT . "kb"]
-                );
-        }
-
-        Helper::uploadFileToDisk(
-            $action,
+        $result = UploadManager::updateFileState(
+            $file_state,
+            tenant()->id,
+            1,
             $post,
-            'cover',
-            'public',
-            'images/post_covers',
-            '.png',
-            $file
+            "cover",
+            false,
+            false,
+            $request->input('upload_key')
         );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function editPostTitle(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
         $title = $request->input('title');
 
         if (!$title)
@@ -167,7 +156,7 @@ class PostEditController extends BaseController
 
     public function editPostCommentsAvailability(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
 
         $open = $request->input('open');
         if (!is_numeric($open)) return $this->sendResponse(Constant::$INVALID_VALUE, null);
@@ -180,7 +169,7 @@ class PostEditController extends BaseController
 
     public function editPostCommentsValidity(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
 
         $valid = $request->input('valid');
         if (!is_numeric($valid)) return $this->sendResponse(Constant::$INVALID_VALUE, null);
@@ -193,7 +182,7 @@ class PostEditController extends BaseController
 
     public function editPostSuggestedCourses(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
 
         $ids = null;
         if (is_array($request->input('ids')) && sizeof($request->input('ids')) > 0) {
@@ -209,7 +198,7 @@ class PostEditController extends BaseController
 
     public function editPostSuggestedPosts(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
 
         $ids = null;
         if (is_array($request->input('ids')) && sizeof($request->input('ids')) > 0) {
@@ -225,7 +214,7 @@ class PostEditController extends BaseController
 
     public function editPostGroups(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
         $groups = (object)$request->input('groups');
 
         if (!$groups)
@@ -255,7 +244,7 @@ class PostEditController extends BaseController
 
     public function editContentHierarchy(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
         $hierarchy = (array)$request->input('hierarchy');
 
         if (!$hierarchy)
@@ -271,7 +260,7 @@ class PostEditController extends BaseController
 
     public function editPostTags(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
         $tags = (array)$request->input('tags');
 
         if (!$request->exists('tags'))
@@ -286,7 +275,7 @@ class PostEditController extends BaseController
 
     public function editPostWriters(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
         $writers = (array)$request->input('writers');
 
         if (!$request->exists('writers'))
@@ -301,150 +290,214 @@ class PostEditController extends BaseController
 
     public function addPostContentVideo(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
 
-        if (!$request->exists('url') || !$request->exists('size'))
+        if (!$request->exists('upload_key'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post_content = new PostContent();
         $post_content->type = Constant::$CONTENT_TYPE_VIDEO;
-        $post->post_contents()->save($post_content);
 
         $content_video = new ContentVideo();
-        $content_video->url = $request->input('url');
-        $content_video->size = $request->input('size');
         $content_video->belongs_to = Constant::$BELONGING_POST;
-        $post_content->content_video()->save($content_video);
+        $result = UploadManager::saveFile(
+            tenant()->id, 
+            1, 
+            $content_video, 
+            'url', 
+            true, 
+            false, 
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $post_content->id]);
+        if ($result == Constant::$SUCCESS) {
+            $post->post_contents()->save($post_content);
+            $post_content->content_video()->save($content_video);
+        }
+
+        return $this->sendResponse($result, ['content_id' => $post_content->id]);
     }
 
     public function updatePostContentVideo(Request $request)
     {
         $post_content = PostContent::find($request->input('content_id'));
+        if (!$post_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if (!$request->exists('url') || !$request->exists('size'))
+        if (!$request->exists('upload_key')) 
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $content_video = $post_content->content_video()->first();
-        $content_video->url = $request->input('url');
-        $content_video->size = $request->input('size');
-        $content_video->save();
+        $result = UploadManager::updateFileState(
+            $request->input('file_state'),
+            tenant()->id,
+            1,
+            $content_video,
+            "url",
+            true,
+            false,
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function deletePostContentVideo(Request $request)
     {
         $post_content = PostContent::find($request->input('content_id'));
+        if (!$post_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        $post_content->content_video()->delete();
-        $post_content->delete();
+        $content_video = $post_content->content_video()->first();
+        $result = UploadManager::deleteFile(tenant()->id, $content_video->url);
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        if ($result == Constant::$SUCCESS) {
+            $content_video->delete();
+            $post_content->delete();
+        }
+
+        return $this->sendResponse($result, null);
     }
 
     public function addPostContentVoice(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
 
-        if (
-            !$request->exists('url') ||
-            !$request->exists('size')
-        ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$request->exists('upload_key'))
+            return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post_content = new PostContent();
         $post_content->type = Constant::$CONTENT_TYPE_VOICE;
-        $post->post_contents()->save($post_content);
 
         $content_voice = new ContentVoice();
-        $content_voice->url = $request->input('url');
-        $content_voice->size = $request->input('size');
         $content_voice->belongs_to = Constant::$BELONGING_POST;
-        $post_content->content_voice()->save($content_voice);
+        $result = UploadManager::saveFile(
+            tenant()->id, 
+            1, 
+            $content_voice, 
+            'url', 
+            true, 
+            false, 
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $post_content->id]);
+        if ($result == Constant::$SUCCESS) {
+            $post->post_contents()->save($post_content);
+            $post_content->content_voice()->save($content_voice);
+        }
+
+        return $this->sendResponse($result, ['content_id' => $post_content->id]);
     }
 
     public function updatePostContentVoice(Request $request)
     {
         $post_content = PostContent::find($request->input('content_id'));
+        if (!$post_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if (
-            !$request->exists('url') ||
-            !$request->exists('size')
-        ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$request->exists('upload_key')) 
+            return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
-        $content_voice = $post_content->content_voice()->first();
-        $content_voice->url = $request->input('url');
-        $content_voice->size = $request->input('size');
-        $content_voice->save();
+        $content_voice = $post_content->content_voiceo()->first();
+        $result = UploadManager::updateFileState(
+            $request->input('file_state'),
+            tenant()->id,
+            1,
+            $content_voice,
+            "url",
+            true,
+            false,
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function deletePostContentVoice(Request $request)
     {
         $post_content = PostContent::find($request->input('content_id'));
+        if (!$post_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        $post_content->content_voice()->delete();
-        $post_content->delete();
+        $content_voice = $post_content->content_voice()->first();
+        $result = UploadManager::deleteFile(tenant()->id, $content_voice->url);
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        if ($result == Constant::$SUCCESS) {
+            $content_voice->delete();
+            $post_content->delete();
+        }
+
+        return $this->sendResponse($result, null);
     }
 
     public function addPostContentImage(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
 
-        if (
-            !$request->exists('url') ||
-            !$request->exists('size')
-        ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$request->exists('upload_key'))
+            return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post_content = new PostContent();
         $post_content->type = Constant::$CONTENT_TYPE_IMAGE;
-        $post->post_contents()->save($post_content);
 
         $content_image = new ContentImage();
-        $content_image->url = $request->input('url');
-        $content_image->size = $request->input('size');
         $content_image->belongs_to = Constant::$BELONGING_POST;
-        $post_content->content_image()->save($content_image);
+        $result = UploadManager::saveFile(
+            tenant()->id, 
+            1, 
+            $content_image, 
+            'url', 
+            true, 
+            false, 
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, ['content_id' => $post_content->id]);
+        if ($result == Constant::$SUCCESS) {
+            $post->post_contents()->save($post_content);
+            $post_content->content_image()->save($content_image);
+        }
+
+        return $this->sendResponse($result, ['content_id' => $post_content->id]);
     }
 
     public function updatePostContentImage(Request $request)
     {
         $post_content = PostContent::find($request->input('content_id'));
+        if (!$post_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if (
-            !$request->exists('url') ||
-            !$request->exists('size')
-        ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$request->exists('upload_key')) 
+            return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $content_image = $post_content->content_image()->first();
-        $content_image->url = $request->input('url');
-        $content_image->size = $request->input('size');
-        $content_image->save();
+        $result = UploadManager::updateFileState(
+            $request->input('file_state'),
+            tenant()->id,
+            1,
+            $content_image,
+            "url",
+            true,
+            false,
+            $request->input('upload_key')
+        );
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        return $this->sendResponse($result, null);
     }
 
     public function deletePostContentImage(Request $request)
     {
         $post_content = PostContent::find($request->input('content_id'));
+        if (!$post_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        $post_content->content_image()->delete();
-        $post_content->delete();
+        $content_image = $post_content->content_image()->first();
+        $result = UploadManager::deleteFile(tenant()->id, $content_image->url);
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        if ($result == Constant::$SUCCESS) {
+            $content_image->delete();
+            $post_content->delete();
+        }
+
+        return $this->sendResponse($result, null);
     }
 
     public function addPostContentText(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
 
         if (!$request->exists('text'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
@@ -487,7 +540,7 @@ class PostEditController extends BaseController
 
     public function addPostContentSlider(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
 
         if (!$request->exists('content') || !$request->exists('title'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
@@ -559,7 +612,7 @@ class PostEditController extends BaseController
 
     public function addPostForm(Request $request)
     {
-        $post = Post::find($request->input('post_id'));
+        $post = $request->input('post');
         if(!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post_form = new PostForm();

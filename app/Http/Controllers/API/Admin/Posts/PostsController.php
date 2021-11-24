@@ -267,7 +267,9 @@ class PostsController extends BaseController
             "content_hierarchy" => $post->content_hierarchy,
             "contents" => $contents,
             "writers" => $writers,
-            "post_forms" => $post_forms
+            "post_forms" => $post_forms,
+            "logo" => $post->logo,
+            "cover" => $post->cover
         ];
     }
 }

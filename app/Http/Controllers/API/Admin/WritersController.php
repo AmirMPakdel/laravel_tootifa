@@ -20,7 +20,7 @@ class WritersController extends BaseController
         $writer->last_name = $request->input("last_name");
         $writer->bio = $request->input("bio");
 
-        $result = UploadManager::saveFile(tenant()->id, 1, $writer, 'image', false, $request->input('upload_key'));
+        $result = UploadManager::saveFile(tenant()->id, 1, $writer, 'image', false, false, $request->input('upload_key'));
         if ($result == Constant::$SUCCESS) $writer->save();
 
         return $this->sendResponse($result, ['writer_id' => $writer->id]);
@@ -44,6 +44,7 @@ class WritersController extends BaseController
             1,
             $writer,
             "image",
+            false,
             false,
             $request->input('upload_key')
         );

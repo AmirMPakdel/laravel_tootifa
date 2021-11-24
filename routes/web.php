@@ -42,8 +42,9 @@ Route::group([
     'middleware' => [ EnsureUserTokenIsValid::class, InitializeTenancyByRequestData::class],
 ], function () {
     Route::post('/profile/update', 'UserProfileController@updateUserProfile');
+    Route::post('/profile/load', 'UserProfileController@loadUserProfile');
 
-    Route::post('/courses/create', 'Courses\CoursesController@createCourse');
+    Route::post('/courses/create', 'Courses\CourjhjsesController@createCourse');
     Route::post('/courses/fetch/{chunk_count}/{page_count}', 'Courses\CoursesController@fetchCourses');
     Route::post('/courses/fetch/specific', 'Courses\CoursesController@fetchSpecificCourses');
     Route::post('/course/load', 'Courses\CoursesController@loadCourse');

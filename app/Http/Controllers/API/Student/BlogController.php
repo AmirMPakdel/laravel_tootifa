@@ -174,7 +174,9 @@ class BlogController extends BaseController
             "suggested_posts" => $post->suggested_posts,
             "content_hierarchy" => $post->content_hierarchy,
             "contents" => $contents,
-            "writers" => $writers
+            "writers" => $writers,
+            "logo" => $post->logo,
+            "cover" => $post->cover
         ];
     }
 }

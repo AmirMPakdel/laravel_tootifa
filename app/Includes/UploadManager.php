@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class UploadManager
 {
-    public static function saveFile($tenant, $is_public, $model, $attr, $set_size, $uk)
+    public static function saveFile($tenant, $is_public, $model, $attr, $set_size, $set_key, $uk)
     {
         $upload_transaction = UploadTransaction::where('upload_key', $uk)->first();
         if (!$upload_transaction) return Constant::$INVALID_UPLOAD_KEY;
@@ -31,13 +31,21 @@ class UploadManager
             } catch (Exception $e) {
                 Log::error("NO SIZE ATTR");
             };
+
+            if ($set_key) try {
+                $model['encoding'] = $upload_transaction->is_encrypted;
+                $model['key'] = $upload_transaction->enc_key;
+            } catch (Exception $e) {
+                Log::error("NO ENCODING ATTR");
+            };
+
             $model->save();
         }
 
         return Constant::$SUCCESS;
     }
 
-    public static function updateFileState($file_state, $tenant, $is_public, $model, $attr, $set_size, $uk)
+    public static function updateFileState($file_state, $tenant, $is_public, $model, $attr, $set_size, $set_key, $uk)
     {
         // Check for upload key
         $upload_transaction = UploadTransaction::where('upload_key', $uk)->first();
@@ -81,6 +89,13 @@ class UploadManager
                 } catch (Exception $e) {
                     Log::error("NO SIZE ATTR");
                 };
+
+                if ($set_key) try {
+                    $model['encoding'] = $upload_transaction->is_encrypted;
+                    $model['key'] = $upload_transaction->enc_key;
+                } catch (Exception $e) {
+                    Log::error("NO ENCODING ATTR");
+                };
             }
 
             if ($file_state == Constant::$UPDATE_FILE_STATE_DELETE) {
@@ -93,6 +108,13 @@ class UploadManager
                     $model['size'] = null;
                 } catch (Exception $e) {
                     Log::error("NO SIZE ATTR");
+                };
+
+                if ($set_key) try {
+                    $model['encoding'] = null;
+                    $model['key'] = null;
+                } catch (Exception $e) {
+                    Log::error("NO ENCODING ATTR");
                 };
             }
 
