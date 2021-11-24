@@ -49,6 +49,7 @@ class Constant
     public static $CONVERTOR_SERVER_ISSUE_DELETING_FILE = 1150;
     public static $CONTENT_NOT_FOUND = 1151;
     public static $REPETITIVE_USERNAME = 1152;
+    public static $TAG_NOT_EXIST = 1153;
 
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";

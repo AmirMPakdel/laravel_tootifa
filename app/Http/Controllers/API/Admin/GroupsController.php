@@ -79,6 +79,8 @@ class GroupsController extends BaseController
         $type = $request->input("type");
         $group = LevelOneGroup::find($request->input("id"));
 
+        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+
         // check title
         if($group->title != $title && LevelOneGroup::type($type)->where('title', $title)->exists())
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
@@ -93,6 +95,8 @@ class GroupsController extends BaseController
         $title = $request->input("title");
         $type = $request->input("type");
         $group = LevelTwoGroup::find($request->input("id"));
+
+        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
 
         // check title
         if($group->title != $title && LevelTwoGroup::type($type)->where('title', $title)->exists())
@@ -109,6 +113,8 @@ class GroupsController extends BaseController
         $type = $request->input("type");
         $group = LevelThreeGroup::find($request->input("id"));
 
+        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+
         // check title
         if($group->title != $title && LevelThreeGroup::type($type)->where('title', $title)->exists())
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
@@ -122,6 +128,8 @@ class GroupsController extends BaseController
     public function deleteLevelOneGroup(Request $request){
         $group = LevelOneGroup::find($request->input("id"));
         $force_delete = $request->input("force_delete");
+
+        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
 
         if(!$force_delete && $group->courses->count() > 0)
             return $this->sendResponse(Constant::$RELATED_ENTITIES, null);
@@ -150,6 +158,8 @@ class GroupsController extends BaseController
         $group = LevelTwoGroup::find($request->input("id"));
         $force_delete = $request->input("force_delete");
 
+        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+
         if(!$force_delete && $group->courses->count() > 0)
             return $this->sendResponse(Constant::$RELATED_ENTITIES, null);
 
@@ -174,6 +184,8 @@ class GroupsController extends BaseController
     public function deleteLevelThreeGroup(Request $request){
         $group = LevelTwoGroup::find($request->input("id"));
         $force_delete = $request->input("force_delete");
+
+        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
 
         if(!$force_delete && $group->courses->count() > 0)
             return $this->sendResponse(Constant::$RELATED_ENTITIES, null);

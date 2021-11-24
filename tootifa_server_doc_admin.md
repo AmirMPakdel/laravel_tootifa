@@ -1,5 +1,5 @@
-NOTE_1: Whenever there is a token input, there could be INVALID_TOKEN error
-NOTE_2: In a llTENANT section routs, X_TENANT header is requiered
+## NOTE_1: Whenever there is a token input, there could be INVALID_TOKEN error
+## NOTE_2: In a llTENANT section routs, X_TENANT header is requiered
 ****************************************************************************************************************************
 
 ---------------------------------------------------------PUBLIC---------------------------------------------------------
@@ -99,8 +99,8 @@ SUCCESS : {"result_code": ####, "data": string(json_object)}
 		"infinit_test_finish_date": date,
 	}
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""creating educator"""
-url: http://tootifa.ir/api/tenant/user/educators/create
+"""CREATING EDUCATOR"""
+url: /educators/create
 input:
     token
     first_name
@@ -116,7 +116,443 @@ output:
         }   
     }
 
+	invalid upload key:  {
+        "result_code": 1142,
+        "data": null
+    } 
+
+	convertor issue moving to ftp:  {
+        "result_code": 1149,
+        "data": null
+    } 
+
     invalid token:  {
         "result_code": 1103,
         "data": null
     } 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""UPDATING EDUCATOR"""
+url: /educators/update
+input:
+	educator_id
+    token
+    first_name
+    last_name
+    bio 
+	file_state
+    upload_key (nullable -> when there is not any image to move it to ftp)
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": null
+    }
+
+	no file state:  {
+        "result_code": 1147,
+        "data": null
+    } 
+
+	invalid upload key:  {
+        "result_code": 1142,
+        "data": null
+    } 
+
+	invalid old upload key:  {
+        "result_code": 1148,
+        "data": null
+    } 
+
+	convertor issue moving to ftp:  {
+        "result_code": 1149,
+        "data": null
+    } 
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    } 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""DELETING EDUCATOR"""
+url: /educators/delete
+input:
+    token
+	educator_id
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": null
+    }
+
+	convertor issue deleting from ftp:  {
+        "result_code": 1150,
+        "data": null
+    } 
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    } 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""CREATING LEVEL ONE GROUP"""
+url: /levelonegroups/create
+input:
+    token
+    title
+    type // "gt_course" or "gt_post"
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": {
+            "g1_id": number
+        }   
+    }
+
+	repetitive title:  {
+        "result_code": 1128,
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    } 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""CREATING LEVEL TWO GROUP"""
+url: /leveltwogroups/create
+
+input:
+    token
+    title
+	g1_id
+    type // "gt_course" or "gt_post"
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": {
+            "g2_id": number
+        }   
+    }
+
+	repetitive title:  {
+        "result_code": 1128,
+        "data": null
+    } 
+
+	group not exist:  {
+        "result_code": 1132,
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    } 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""CREATING LEVEL THREE GROUP"""
+url: /leveltwogroups/create
+input:
+    token
+    title
+	g2_id
+    type // "gt_course" or "gt_post"
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": {
+            "g3_id": number
+        }   
+    }
+
+	repetitive title:  {
+        "result_code": 1128,
+        "data": null
+    } 
+
+	group not exist:  {
+        "result_code": 1132,
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    } 	
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""EDITING LEVEL ONE GROUP"""
+url: /levelonegroups/edit
+input:
+    token
+    title
+	id
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": null   
+    }
+
+	group not exist:  {
+        "result_code": 1132,
+        "data": null
+    } 
+
+	repetitive title:  {
+        "result_code": 1128,
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    }
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""EDITING LEVEL TWO GROUP"""
+url: /leveltwogroups/edit
+input:
+    token
+    title
+	id
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": null  
+    }
+
+	group not exist:  {
+        "result_code": 1132,
+        "data": null
+    } 
+
+	repetitive title:  {
+        "result_code": 1128,
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    } 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""EDITING LEVEL THREE GROUP"""
+url: /levelthreegroups/edit
+input:
+    token
+    title
+	id
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": null
+ 
+    }
+
+	group not exist:  {
+        "result_code": 1132,
+        "data": null
+    } 
+
+	repetitive title:  {
+        "result_code": 1128,
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    } 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""DELETING LEVEL ONE GROUP"""
+url: /levelonegroups/delete
+input:
+    token
+    title
+	id
+	force_delete (0,1)
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": null
+    }
+
+	group not exist:  {
+        "result_code": 1132,
+        "data": null
+    } 
+
+	related entities:  {
+        "result_code": 1133
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    }	
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""DELETING LEVEL TWO GROUP"""
+url: /leveltwogroups/delete
+input:
+    token
+    title
+	id
+	force_delete (0,1)
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": null
+    }
+
+	group not exist:  {
+        "result_code": 1132,
+        "data": null
+    } 
+
+	related entities:  {
+        "result_code": 1133
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    }	
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""DELETING LEVEL THREE GROUP"""
+url: /levelthreegroups/delete
+input:
+    token
+    title
+	id
+	force_delete (0,1)
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": null
+    }
+
+	group not exist:  {
+        "result_code": 1132,
+        "data": null
+    } 
+
+	related entities:  {
+        "result_code": 1133
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    }
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""CREATING TAG"""
+url: /tags/create
+input:
+    token
+    title
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": {
+            "tag_id": number
+        }   
+    }
+
+	repetitive title:  {
+        "result_code": 1128,
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    } 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""EDITING TAG"""
+url: /tags/edit
+input:
+    token
+	id
+    title
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": {
+            "tag_id": number
+        }   
+    }
+
+	tag not exist:  {
+        "result_code": 1153,
+        "data": null
+    } 
+
+	repetitive title:  {
+        "result_code": 1128,
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    } 		
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+"""DELETING TAG"""
+url: /tags/delete
+input:
+    token
+    title
+	id
+	force_delete (0,1)
+
+output:
+    success: {
+        "result_code": 1000,
+        "data": {
+            "tag_id": number
+        }   
+    }
+
+	repetitive title:  {
+        "result_code": 1128,
+        "data": null
+    } 
+
+	tag not exist:  {
+        "result_code": 1153,
+        "data": null
+    } 
+
+	related entities:  {
+        "result_code": 1133
+        "data": null
+    } 
+
+
+    invalid token:  {
+        "result_code": 1103,
+        "data": null
+    } 	
