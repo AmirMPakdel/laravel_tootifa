@@ -1,558 +1,770 @@
-## NOTE_1: Whenever there is a token input, there could be INVALID_TOKEN error
-## NOTE_2: In a llTENANT section routs, X_TENANT header is requiered
-****************************************************************************************************************************
+# Info
 
----------------------------------------------------------PUBLIC---------------------------------------------------------
-prefix -> api/main
+## Notes
 
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-CHECK_PHONE_NUMBER
-/user/checkphonenumber
+    * Whenever there is a token input, there could be INVALID_TOKEN error
 
-input: 
-	phone_number:string
+## Format Description
 
-SUCCESS : {"result_code": ####, "data": null}
-REPETITIVE_PHONE_NUMBER : {"result_code": ####, "data": null}
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-LOGIN_WITH_PASSWORD
-/user/login
+    Format : {Method}{Tenant}{Token}{Prefix}
 
-input: 
-	phone_number:string
-	password:string
+    Method:
+        can be "P" or "G"
+        "P" means its POST method
+        "G" means its GET method
+    
+    Tenant:
+        can be "0" or "1"
+        "0" means no need for X-TENANT in header
+        "1" means it needs X-TENANT in header
 
-SUCCESS : {"result_code": ####, "data": string(json_object)}
-	json_object: {
-		"token":string,
-		"username":string,
-	}
-INVALID_PHONE_NUMBER : {"result_code": ####, "data": null}
-INVALID_PASSWORD : {"result_code": ####, "data": null}
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-SEND_VERIICATION_CODE
-/user/verificationcode/send
+    Token:
+        can be "0" or "1"
+        "0" means no need for token in body
+        "1" means it needs token in body
 
-NOTE: "Verification code is always set to 1111 in test mode, in production mode it would be sent via sms"
+    Prefix:
+        can be "MA" or "?" or "?"
+        "MA" -> "/api/main"
 
-input: 
-	phone_number:string
+    example:
+        P01MA -> its POST method that needs tenant to be specified
+                but no need for token base authentication and path 
+                prefix starts with /api/main/...
 
-SUCCESS : {"result_code": ####, "data": null} 
-USER_ALREADY_VERIFIED : {"result_code": ####, "data": null}
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-CHECK_VERIICATION_CODE
-/user/verificationcode/check
-input: 
-	code:string
+## Prefixes
 
-SUCCESS : {"result_code": ####, "data": string(json_object)}
-	json_object: {
-		"user_id":number,
-	}
-INVALID_VERIFICATION_CODE : {"result_code": ####, "data": null}
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-COMPLETE_REGISTRATION
-/user/register
+    MA -> api/main
+    UTA -> api/tenant/user
+    PTA -> api/tenant/public
+    PSTA -> api/tenant/student/public
+    STA -> api/tenant/student
+    AA -> api/app
 
-input: 
-	national_code:string
-	phone_number:string
-	first_name:string
-	last_name:string
-	password:string
-	user_name:string -> tenant username
-	user_id:integer
+## Input/Output Flags
 
-SUCCESS : {"result_code": ####, "data": string(json_object)}
-	json_object: {
-		"token":string,
-	}
-REPETITIVE_NATIONAL_CODE : {"result_code": ####, "data": null}
-REPETITIVE_USERNAME : {"result_code": ####, "data": null}
-INVALID_ID : {"result_code": ####, "data": null} -> when user_id not exist or incompatible with inserted phone_number
+    flags:
+        nr -> input not required
+        ui -> url input
+        f:### -> format
 
+    example:
+        date:string|nr|f:YYY/MM/DD
 
----------------------------------------------------------TENANT---------------------------------------------------------
-prefix -> api/tenant/user
+# Minfo User Registration
+
+## CHECK PHONE NUMBER
+
+**path**
+
+    /user/checkphonenumber
+
+**format**
+
+    P00MA
+
+**input**
+
+    phone_number:string
+    
+**output**
+
+    SUCCESS:null
+
+    REPETITIVE_PHONE_NUMBER:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"GET USER PROFILE"
-/profile/load POST, returns a json
 
-input: 
-	token:string
+## LOGIN WITH PASSWORD
 
-SUCCESS : {"result_code": ####, "data": string(json_object)}
-	json_object: {
-		"first_name":string,
-		"last_name":string,
-		"email":string,
-		"address":string,
-		"phone_number":string,
-		"email": string #file,
-		"is_email_verified": number,
-		"m_balance": string number,
-		"s_balance": string number,
-		"bio": string ,
-		"holdable_test_count": number,
-		"infinit_test_finish_date": date,
-	}
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""CREATING EDUCATOR"""
-url: /educators/create
-input:
-    token
-    first_name
-    last_name
-    bio 
-    upload_key (nullable -> when there is not any image to move it to ftp)
+**path**
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": {
-            "educator_id": 1
-        }   
+    /user/login
+
+**format**
+
+    P00MA
+
+**input**
+
+    phone_number:string
+    password:string    
+
+**output**
+
+    SUCCESS:
+    {
+        token:string,
+        username:string,
     }
 
-	invalid upload key:  {
-        "result_code": 1142,
-        "data": null
-    } 
+    INVALID_PHONE_NUMBER:null
 
-	convertor issue moving to ftp:  {
-        "result_code": 1149,
-        "data": null
-    } 
+    INVALID_PASSWORD:null
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""UPDATING EDUCATOR"""
-url: /educators/update
-input:
-	educator_id
-    token
-    first_name
-    last_name
-    bio 
-	file_state
-    upload_key (nullable -> when there is not any image to move it to ftp)
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": null
-    }
+## SEND VERIICATION CODE
 
-	no file state:  {
-        "result_code": 1147,
-        "data": null
-    } 
+**path**
 
-	invalid upload key:  {
-        "result_code": 1142,
-        "data": null
-    } 
+    /user/verificationcode/send
 
-	invalid old upload key:  {
-        "result_code": 1148,
-        "data": null
-    } 
+**format**
 
-	convertor issue moving to ftp:  {
-        "result_code": 1149,
-        "data": null
-    } 
+    P00MA
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 
+**input**
+
+    phone_number:string
+
+**output**
+
+    SUCCESS:null
+
+    USER_ALREADY_VERIFIED:null
+
+**notes**
+
+    * Verification code is always set to 1111 in test mode, in production mode it would be sent via sms
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""DELETING EDUCATOR"""
-url: /educators/delete
-input:
-    token
-	educator_id
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": null
+## CHECK VERIICATION CODE
+
+**path**
+
+    /user/verificationcode/check
+
+**format**
+
+    P00MA
+
+**input**
+
+    code:string
+
+**output**
+
+    SUCCESS: 
+    {
+       user_id:number
     }
 
-	convertor issue deleting from ftp:  {
-        "result_code": 1150,
-        "data": null
-    } 
+    INVALID_VERIFICATION_CODE:null
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""CREATING LEVEL ONE GROUP"""
-url: /levelonegroups/create
-input:
-    token
-    title
-    type // "gt_course" or "gt_post"
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": {
-            "g1_id": number
-        }   
-    }
+## CHECK TENANT
 
-	repetitive title:  {
-        "result_code": 1128,
-        "data": null
-    } 
+**path**
 
+    /user/tenant/check/{user_name}
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 
+**format**
+
+    G00MA
+
+**input**
+
+    user_name:string|ui
+
+**output**
+
+    SUCCESS:null
+
+    REPETITIVE_USERNAME : null
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""CREATING LEVEL TWO GROUP"""
-url: /leveltwogroups/create
 
-input:
-    token
-    title
-	g1_id
-    type // "gt_course" or "gt_post"
+## COMPLETE REGISTRATION
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": {
-            "g2_id": number
-        }   
+**path**
+
+    /user/register
+
+**format**
+
+    P00MA
+
+**input**
+
+    national_code:string
+
+    phone_number:string
+
+    first_name:string
+
+    last_name:string
+
+    password:string
+
+    user_name:string 
+    description: it's the generated tenant's id 
+
+    user_id:number
+
+**output**
+
+    SUCCESS: 
+    {
+       token:string
     }
 
-	repetitive title:  {
-        "result_code": 1128,
-        "data": null
-    } 
+    REPETITIVE_NATIONAL_CODE:null
 
-	group not exist:  {
-        "result_code": 1132,
-        "data": null
-    } 
+    REPETITIVE_USERNAME:null
 
+    INVALID_ID:null
+    description: when user_id not exist or incompatible with inserted phone_number
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""CREATING LEVEL THREE GROUP"""
-url: /leveltwogroups/create
-input:
-    token
-    title
-	g2_id
-    type // "gt_course" or "gt_post"
+    
+# Minfo User Panel
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": {
-            "g3_id": number
-        }   
+## GET USER PROFILE
+
+**path**
+
+   /profile/load
+
+**format**
+
+    P11UTA
+
+**output**
+
+    SUCCESS:
+    {
+        first_name:string,
+        last_name:string,
+        email:string,
+        address:string,
+        phone_number:string,
+        email: string,
+        is_email_verified:number,
+        m_balance:number,
+        s_balance:number,
+        bio:string ,
+        holdable_test_count:number,
+        infinit_test_finish_date:date|f:YYY-MM-DD,
     }
 
-	repetitive title:  {
-        "result_code": 1128,
-        "data": null
-    } 
-
-	group not exist:  {
-        "result_code": 1132,
-        "data": null
-    } 
-
-
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 	
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""EDITING LEVEL ONE GROUP"""
-url: /levelonegroups/edit
-input:
-    token
-    title
-	id
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": null   
+## CREATING EDUCATOR
+
+**path**
+
+   /educators/create
+
+**format**
+
+    P11UTA
+
+**input**
+
+    first_name:string
+
+    last_name:string
+
+    bio:string|nr
+
+    upload_key:string|nr
+
+**output**
+
+    SUCCESS:
+    {
+        educator_id:number
     }
 
-	group not exist:  {
-        "result_code": 1132,
-        "data": null
-    } 
+    INVALID_UPLOAD_KEY:null
+    
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
 
-	repetitive title:  {
-        "result_code": 1128,
-        "data": null
-    } 
-
-
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    }
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""EDITING LEVEL TWO GROUP"""
-url: /leveltwogroups/edit
-input:
-    token
-    title
-	id
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": null  
-    }
+## UPDATING EDUCATOR
 
-	group not exist:  {
-        "result_code": 1132,
-        "data": null
-    } 
+**path**
 
-	repetitive title:  {
-        "result_code": 1128,
-        "data": null
-    } 
+   /educators/update
 
+**format**
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 
+    P11UTA
+
+**input**
+
+    educator_id:number 
+
+    first_name:string
+
+    last_name:string
+
+    file_state:string
+    description: find the default states in Constants file
+
+    bio:string|nr
+
+    upload_key:string|nr
+    description: it is required when there is a new file to be moved to ftp
+
+**output**
+
+    SUCCESS:null
+
+    NO_FILE_STATE:null
+
+    INVALID_OLD_UPLOAD_KEY:null
+
+    INVALID_UPLOAD_KEY:null
+    
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""EDITING LEVEL THREE GROUP"""
-url: /levelthreegroups/edit
-input:
-    token
-    title
-	id
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": null
- 
-    }
+## DELETING EDUCATOR
 
-	group not exist:  {
-        "result_code": 1132,
-        "data": null
-    } 
+**path**
 
-	repetitive title:  {
-        "result_code": 1128,
-        "data": null
-    } 
+   /educators/delete
 
+**format**
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 
+    P11UTA
+
+**input**
+
+    educator_id:number 
+
+**output**
+
+    SUCCESS:null
+
+    CONVERTOR_SERVER_ISSUE_DELETING_FILE:null
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""DELETING LEVEL ONE GROUP"""
-url: /levelonegroups/delete
-input:
-    token
-    title
-	id
-	force_delete (0,1)
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": null
-    }
+## CREATING LEVEL ONE GROUP
 
-	group not exist:  {
-        "result_code": 1132,
-        "data": null
+**path**
+
+   /levelonegroups/create
+
+**format**
+
+    P11UTA
+
+**input**
+
+    title:string
+
+    type:string
+    description: find the default types in Constants file
+
+**output**
+
+    SUCCESS:{
+        g1_id:number
     } 
 
-	related entities:  {
-        "result_code": 1133
-        "data": null
-    } 
+    REPETITIVE_TITLE:null
 
-
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    }	
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""DELETING LEVEL TWO GROUP"""
-url: /leveltwogroups/delete
-input:
-    token
-    title
-	id
-	force_delete (0,1)
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": null
-    }
+## EDITING LEVEL ONE GROUP
 
-	group not exist:  {
-        "result_code": 1132,
-        "data": null
-    } 
+**path**
 
-	related entities:  {
-        "result_code": 1133
-        "data": null
-    } 
+   /levelonegroups/edit
 
+**format**
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    }	
+    P11UTA
+
+**input**
+
+    id:number 
+
+    title:string
+
+    type:string
+    description: find the default types in Constants file
+
+**output**
+
+    SUCCESS:null
+
+    REPETITIVE_TITLE:null
+    
+    GROUP_NOT_EXISTS:null
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""DELETING LEVEL THREE GROUP"""
-url: /levelthreegroups/delete
-input:
-    token
-    title
-	id
-	force_delete (0,1)
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": null
-    }
+## DELETING LEVEL ONE GROUP
 
-	group not exist:  {
-        "result_code": 1132,
-        "data": null
-    } 
+**path**
 
-	related entities:  {
-        "result_code": 1133
-        "data": null
-    } 
+   /levelonegroups/delete
 
+**format**
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    }
+    P11UTA
+
+**input**
+
+    id:number 
+
+    force_delete (0,1):number
+
+**output**
+
+    SUCCESS:null
+
+    RELATED_ENTITIES:null
+    
+    GROUP_NOT_EXISTS:null
+    
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""CREATING TAG"""
-url: /tags/create
-input:
-    token
-    title
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": {
-            "tag_id": number
-        }   
-    }
+## CREATING LEVEL TWO GROUP
 
-	repetitive title:  {
-        "result_code": 1128,
-        "data": null
+**path**
+
+    /leveltwogroups/create
+
+**format**
+
+    P11UTA
+
+**input**
+
+    title:string
+
+    g1_id:number
+
+    type:string
+    description: find the default types in Constants file
+
+**output**
+
+    SUCCESS:{
+        g2_id:number
     } 
 
+    REPETITIVE_TITLE:null
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 
+    GROUP_NOT_EXISTS:null
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""EDITING TAG"""
-url: /tags/edit
-input:
-    token
-	id
-    title
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": {
-            "tag_id": number
-        }   
-    }
+## EDITING LEVEL TWO GROUP
 
-	tag not exist:  {
-        "result_code": 1153,
-        "data": null
-    } 
+**path**
 
-	repetitive title:  {
-        "result_code": 1128,
-        "data": null
-    } 
+   /leveltwogroups/edit
 
+**format**
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 		
+    P11UTA
+
+**input**
+
+    id:number 
+
+    title:string
+
+    type:string
+    description: find the default types in Constants file
+
+**output**
+
+    SUCCESS:null
+
+    REPETITIVE_TITLE:null
+    
+    GROUP_NOT_EXISTS:null
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-"""DELETING TAG"""
-url: /tags/delete
-input:
-    token
-    title
-	id
-	force_delete (0,1)
 
-output:
-    success: {
-        "result_code": 1000,
-        "data": {
-            "tag_id": number
-        }   
+## DELETING LEVEL TWO GROUP
+
+**path**
+
+    /leveltwogroups/delete
+
+**format**
+
+    P11UTA
+
+**input**
+
+    id:number 
+
+    force_delete (0,1):number
+
+**output**
+
+    SUCCESS:null
+
+    RELATED_ENTITIES:null
+    
+    GROUP_NOT_EXISTS:null
+    
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## CREATING LEVEL THREE GROUP
+
+**path**
+
+    /levelthreegroups/create
+
+**format**
+
+    P11UTA
+
+**input**
+
+    title:string
+
+    g2_id:number
+
+    type:string
+    description: find the default types in Constants file
+
+**output**
+
+    SUCCESS:{
+        g3_id:number
+    } 
+
+    REPETITIVE_TITLE:null
+
+    GROUP_NOT_EXISTS:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDITING LEVEL THREE GROUP
+
+**path**
+
+   /levelthreegroups/edit
+
+**format**
+
+    P11UTA
+
+**input**
+
+    id:number 
+
+    title:string
+
+    type:string
+    description: find the default types in Constants file
+
+**output**
+
+    SUCCESS:null
+
+    REPETITIVE_TITLE:null
+    
+    GROUP_NOT_EXISTS:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## DELETING LEVEL THREE GROUP
+
+**path**
+
+    /levelthreegroups/delete
+
+**format**
+
+    P11UTA
+
+**input**
+
+    id:number 
+
+    force_delete (0,1):number
+
+**output**
+
+    SUCCESS:null
+
+    RELATED_ENTITIES:null
+    
+    GROUP_NOT_EXISTS:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## CREATING TAG
+
+**path**
+
+   /tags/create
+
+**format**
+
+    P11UTA
+
+**input**
+
+    title:string
+
+**output**
+
+    SUCCESS:{
+        tag_id:number
+    } 
+
+    REPETITIVE_TITLE:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDITING TAG
+
+**path**
+
+   /tags/edit
+
+**format**
+
+    P11UTA
+
+**input**
+
+    id:number 
+
+    title:string
+
+**output**
+
+    SUCCESS:null
+
+    REPETITIVE_TITLE:null
+    
+    TAG_NOT_EXIST:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## DELETING TAG
+
+**path**
+
+   /tags/delete
+
+**format**
+
+    P11UTA
+
+**input**
+
+    id:number 
+
+    force_delete (0,1):number
+
+**output**
+
+    SUCCESS:null
+
+    RELATED_ENTITIES:null
+    
+    TAG_NOT_EXIST:null
+    
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## FETCHING GROUPS
+
+**path**
+
+   /groups/fetch
+
+**format**
+
+    G10PTA
+
+**input**
+
+    type:string 
+
+**output**
+
+    SUCCESS:Array[LevelOneGroup]
+
+**types**
+
+```javascript
+    def LevelOneGroup = {
+        "level": 1,
+        "id": number,
+        "title" : string,
+        "groups": Array[LevelTwoGroup]
     }
 
-	repetitive title:  {
-        "result_code": 1128,
-        "data": null
+    def LevelTwoGroup = { 
+        "level": 2, 
+        "id": number,
+        "title" : string,
+        "groups": Array[LevelThreeGroup]
+    }
+
+    def LevelThreeGroup = { 
+        "level": 3,
+        "id": number,
+        "title" : string,
+    }
+```
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## CREATING COURSE
+
+**path**
+
+   /tags/create
+
+**format**
+
+    P11UTA
+
+**input**
+
+    title:string
+
+    price:number
+
+    is_encrypted:number
+
+    groups:GroupInput
+
+    tags:Array[numbers]
+    decription: It's an array of selected tag id's
+
+    category_id:number
+
+**output**
+
+    SUCCESS:{
+        course_id:number
     } 
 
-	tag not exist:  {
-        "result_code": 1153,
-        "data": null
-    } 
+    REPETITIVE_TITLE:null
 
-	related entities:  {
-        "result_code": 1133
-        "data": null
-    } 
+    INVALID_GROUP_HIERARCHY:null
+    
+**types**
 
+```javascript
+    def GroupInput = {
+        "g1": number|nr,
+        "g2": number|nr,
+        "g3" : number|nr,
+    }
 
-    invalid token:  {
-        "result_code": 1103,
-        "data": null
-    } 	
+    description: "You can't have lower group levels without specializing higher group ids"
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

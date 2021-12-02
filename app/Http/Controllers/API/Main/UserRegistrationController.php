@@ -103,6 +103,13 @@ class UserRegistrationController extends BaseController
             return $this->sendResponse(Constant::$INVALID_VERIFICATION_CODE, null);
     }
 
+    public function checkForTenant($user_name){
+        if (Tenant::find($user_name))
+            return $this->sendResponse(Constant::$REPETITIVE_USERNAME, null);
+        
+        return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
     public function completeRegistration(Request $request)
     {
         // check national code

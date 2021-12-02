@@ -28,6 +28,7 @@ Route::group([
     Route::post('/user/verificationcode/send', 'UserRegistrationController@sendVerificationCode');
     Route::post('/user/verificationcode/check', 'UserRegistrationController@checkVerificationCode');
     Route::post('/user/register', 'UserRegistrationController@completeRegistration');
+    Route::get('/user/tenant/check/{user_name}', 'UserRegistrationController@checkForTenant');
     Route::post('/user/passwordreset/request', 'UserPasswordResetController@requestResetPassword');
     Route::post('/user/passwordreset/checktoken', 'UserPasswordResetController@checkPasswordResetToken');
     Route::post('/user/passwordreset/reset', 'UserPasswordResetController@resetPassword');
