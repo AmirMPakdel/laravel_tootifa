@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API\Admin\Courses;
+
 use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\API\Admin\GroupsController;
 use App\Includes\Constant;
@@ -18,7 +19,8 @@ use Exception;
 
 class CoursesController extends BaseController
 {
-    public function createCourse(Request $request){
+    public function createCourse(Request $request)
+    {
         // fetching data
         $title = $request->input('title');
         $price = $request->input('price');
@@ -28,11 +30,11 @@ class CoursesController extends BaseController
         $category = Category::find($request->input('category_id'));
 
         // check title
-        if(Course::where('title', $title)->exists())
+        if (Course::where('title', $title)->exists())
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
 
         // check groups hierarchy
-        if(!GroupsController::checkGroupsHierarchy($groups))
+        if (!GroupsController::checkGroupsHierarchy($groups))
             return $this->sendResponse(Constant::$INVALID_GROUP_HIERARCHY, null);
 
         // create course
@@ -64,33 +66,12 @@ class CoursesController extends BaseController
     }
 
 
-    public function fetchCourses(Request $request, $chunk_count, $page_count){
-        $filters = (object)$request->input('filters');
+    public function fetchCourses(Request $request, $chunk_count, $page_count)
+    {
         $sorting_mode = $request->input('sorting_mode');
 
-        $search_phrase = $filters->search_phrase;
-        $group = (object)$filters->group;
-
-        // which group
-        if(isset($group->level)) {
-            switch ($group->level) {
-                case 1:
-                    $group = LevelOneGroup::find($group->id);
-                    break;
-                case 2:
-                    $group = LevelTwoGroup::find($group->id);
-                    break;
-                case 3:
-                    $group = LevelThreeGroup::find($group->id);
-                    break;
-                default:
-                    $group = null;
-            }
-        } else $group = null;
-
-
         // which order
-        switch ($sorting_mode){
+        switch ($sorting_mode) {
             case Constant::$SM_HIGHEST_PRICE:
                 $order_by = "price";
                 $order_direction = "desc";
@@ -128,11 +109,34 @@ class CoursesController extends BaseController
                 $order_direction = "desc";
         }
 
+
+        $filters = (object)$request->input('filters');
+
+        $search_phrase = isset($filters) ? $filters->search_phrase : null;
+        $group = isset($filters) ? (object)$filters->group : null;
+
+        // which group
+        if ($group && isset($group->level)) {
+            switch ($group->level) {
+                case 1:
+                    $group = LevelOneGroup::find($group->id);
+                    break;
+                case 2:
+                    $group = LevelTwoGroup::find($group->id);
+                    break;
+                case 3:
+                    $group = LevelThreeGroup::find($group->id);
+                    break;
+                default:
+                    $group = null;
+            }
+        } else $group = null;
+
         $query = [];
-        if($search_phrase)
+        if ($search_phrase)
             array_push($query, ['title', 'like', "%{$search_phrase}%"]);
 
-        if($group)
+        if ($group)
             $courses = $group->courses()->where($query)
                 ->orderBy($order_by, $order_direction)
                 ->get()->map(function ($course) {
@@ -147,12 +151,13 @@ class CoursesController extends BaseController
         try {
             $last_items = (collect($courses)->sortByDesc('id')->chunk($chunk_count))[$page_count];
             return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return $this->sendResponse(Constant::$NO_DATA, null);
         }
     }
 
-    public function fetchSpecificCourses(Request $request){
+    public function fetchSpecificCourses(Request $request)
+    {
         $ids = (array)$request->input('ids');
 
         $courses = Course::find($ids)->map(function ($course) {
@@ -162,8 +167,9 @@ class CoursesController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, $courses);
     }
 
-    public function loadCourse(Request $request){
-        $course = Course::where('id',$request->input('course_id'))->get()->map(function ($course) {
+    public function loadCourse(Request $request)
+    {
+        $course = Course::where('id', $request->input('course_id'))->get()->map(function ($course) {
             return $this->buildCourseObject($course);
         })->toArray()[0];
 
@@ -171,7 +177,8 @@ class CoursesController extends BaseController
     }
 
 
-    private function buildListCourseObject($course){
+    private function buildListCourseObject($course)
+    {
         return [
             'id' => $course->id,
             'title' => $course->title,
@@ -186,12 +193,13 @@ class CoursesController extends BaseController
         ];
     }
 
-    private function buildCourseObject($course){
-        $tags = $course->tags()->get()->map(function ($tag){
+    private function buildCourseObject($course)
+    {
+        $tags = $course->tags()->get()->map(function ($tag) {
             return ['id' => $tag->id, 'title' => $tag->title];
         });
 
-        $educators = $course->educators()->get()->map(function ($educator){
+        $educators = $course->educators()->get()->map(function ($educator) {
             return [
                 'id' => $educator->id,
                 'first_name' => $educator->first_name,
@@ -200,7 +208,7 @@ class CoursesController extends BaseController
             ];
         });
 
-        $headings = $course->course_headings()->get()->map(function ($heading){
+        $headings = $course->course_headings()->get()->map(function ($heading) {
             return ['id' => $heading->id, 'title' => $heading->title];
         });
 
@@ -210,7 +218,7 @@ class CoursesController extends BaseController
             'size' => $course->course_introduction->content_video->size
         ] : null;
 
-        $contents = $course->course_contents()->get()->map(function ($content){
+        $contents = $course->course_contents()->get()->map(function ($content) {
             $c = [
                 'id' => $content->id,
                 'title' => $content->title,
@@ -218,7 +226,7 @@ class CoursesController extends BaseController
                 'is_free' => $content->is_free
             ];
 
-            switch ($content->type){
+            switch ($content->type) {
                 case Constant::$CONTENT_TYPE_VIDEO:
                     $c['url'] = $content->content_video->url;
                     $c['size'] = $content->content_video->size;
@@ -271,7 +279,8 @@ class CoursesController extends BaseController
         ];
     }
 
-    public function addStudentToCourse($student, $course, $registration_type){
+    public function addStudentToCourse($student, $course, $registration_type)
+    {
         // Register in Course
         $course->students()->attach($student, ['registration_type' => $registration_type]);
 
@@ -291,11 +300,13 @@ class CoursesController extends BaseController
         $record->save();
     }
 
-    public function removeStudentFromCourse($student, $course){
+    public function removeStudentFromCourse($student, $course)
+    {
         $course->students()->detach($student);
     }
 
-    public function setStudentCourseAccess($student, $course, $access){
+    public function setStudentCourseAccess($student, $course, $access)
+    {
         $student->courses()->updateExistingPivot($course, ['access' => $access], false);
     }
 }
