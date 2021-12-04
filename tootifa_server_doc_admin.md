@@ -305,7 +305,6 @@
     last_name:string
 
     file_state:enum(ufs_no_change|ufs_new|ufs_replace|ufs_delete)
-    description: find the default states in Constants file
 
     bio:string|nr
 
@@ -902,6 +901,8 @@
 
     NO_DATA:null
 
+    COURSE_NOT_FOUND:null
+
 **types**
 
 ```javascript
@@ -936,6 +937,8 @@
 
     SUCCESS:null
 
+    COURSE_NOT_FOUND:null
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## ADD COURSE STUDENTS
@@ -957,6 +960,8 @@
 **output**
 
     SUCCESS:null
+
+    COURSE_NOT_FOUND:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -982,6 +987,8 @@
 
     SUCCESS:null
 
+    COURSE_NOT_FOUND:null
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## IMPORT COURSE STUDENTS EXCEL
@@ -1005,6 +1012,8 @@
 
     SUCCESS:null
 
+    COURSE_NOT_FOUND:null
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## EXPORT COURSE STUDENTS EXCEL
@@ -1023,7 +1032,9 @@
 
 **output**
 
-    * Starts downloading the excel file containing students information
+    COURSE_NOT_FOUND:null
+
+    SUCEESS: Starts downloading the excel file containing students information
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1039,7 +1050,7 @@
 
 **input**
 
-    ep:string(ep_comments_availability)
+    ep:string(ep_comments_availability)|ui
 
     course_id:number
 
@@ -1050,6 +1061,8 @@
     SUCCESS:null
 
     INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1065,7 +1078,7 @@
 
 **input**
 
-    ep:string(ep_comments_validity)
+    ep:string(ep_comments_validity)|ui
 
     course_id:number
 
@@ -1076,6 +1089,8 @@
     SUCCESS:null
 
     INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1091,7 +1106,7 @@
 
 **input**
 
-    ep:string(ep_cover)
+    ep:string(ep_cover)|ui
 
     course_id:number
 
@@ -1111,6 +1126,8 @@
     CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
 
     CONVERTOR_SERVER_ISSUE_DELETING_FILE:null
+
+    COURSE_NOT_FOUND:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1126,7 +1143,7 @@
 
 **input**
 
-    ep:string(ep_logo)
+    ep:string(ep_logo)|ui
 
     course_id:number
 
@@ -1147,6 +1164,8 @@
 
     CONVERTOR_SERVER_ISSUE_DELETING_FILE:null
 
+    COURSE_NOT_FOUND:null
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## EDIT COURSE DURATION
@@ -1161,7 +1180,7 @@
 
 **input**
 
-    ep:string(ep_duration)
+    ep:string(ep_duration)|ui
 
     course_id:number
 
@@ -1172,6 +1191,8 @@
     SUCCESS:null
 
     INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1187,7 +1208,7 @@
 
 **input**
 
-    ep:string(ep_holding_status)
+    ep:string(ep_holding_status)|ui
 
     course_id:number
 
@@ -1198,6 +1219,8 @@
     SUCCESS:null
 
     INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1213,7 +1236,7 @@
 
 **input**
 
-    ep:string(ep_long_desc)
+    ep:string(ep_long_desc)|ui
 
     course_id:number
 
@@ -1224,6 +1247,8 @@
     SUCCESS:null
 
     INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1239,7 +1264,7 @@
 
 **input**
 
-    ep:string(ep_short_desc)
+    ep:string(ep_short_desc)|ui
 
     course_id:number
 
@@ -1250,6 +1275,8 @@
     SUCCESS:null
 
     INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1265,7 +1292,7 @@
 
 **input**
 
-    ep:string(ep_price)
+    ep:string(ep_price)|ui
 
     course_id:number
 
@@ -1276,6 +1303,8 @@
     SUCCESS:null
 
     INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1291,7 +1320,7 @@
 
 **input**
 
-    ep:string(ep_release_date)
+    ep:string(ep_release_date)|ui
 
     course_id:number
 
@@ -1302,6 +1331,8 @@
     SUCCESS:null
 
     INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1317,7 +1348,9 @@
 
 **input**
 
-    ep:string(ep_title)
+    ep:string(ep_title)|ui
+
+    course_id:number
 
     title:string
 
@@ -1326,6 +1359,904 @@
     SUCCESS:null
 
     REPETITIVE_TITLE:null
+
+    INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE SUGGESTED COURSES
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_suggested_courses)|ui
+
+    course_id:number
+
+    ids:Array(number)
+    decription: It's an array of course ids
+
+**output**
+
+    SUCCESS:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE SUGGESTED POSTS
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_suggested_posts)|ui
+
+    course_id:number
+
+    ids:Array(number)
+    decription: It's an array of post ids
+
+**output**
+
+    SUCCESS:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE SUBJECTS
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_subjects)|ui
+
+    course_id:number
+
+    subjects:Array(string)
+
+**output**
+
+    SUCCESS:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE REQUIREMENT
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_requirement)|ui
+
+    course_id:number
+
+    requirements:Array(string)
+
+**output**
+
+    SUCCESS:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE GROUPS
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_groups)|ui
+
+    course_id:number
+
+    groups:GroupInput
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_VALUE:null
+
+    INVALID_GROUP_HIERARCHY:null
+
+    COURSE_NOT_FOUND:null
+
+**types**
+
+```javascript
+    def GroupInput = {
+        "g1": number,
+        "g2": number,
+        "g3" : number,
+    }
+
+    description: "You can't have lower group levels without specializing higher group ids"
+    description: "set the g#level to null or empty string if it's not necessary" 
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE TAGS
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_tags)|ui
+
+    course_id:number
+
+    tags:Array[numbers]
+    decription: It's an array of selected tag ids
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT VIDEO ADD
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_video_add)|ui
+
+    course_id:number
+
+    title:string
+
+    is_free:number|b
+
+    upload_key:string
+
+**output**
+
+    SUCCESS:{
+        content_id:number
+    }
+
+    INVALID_VALUE:null
+
+    INVALID_UPLOAD_KEY:null
+
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT VIDEO UPDATE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_video_update)|ui
+
+    course_id:number
+
+    content_id:number
+
+    title:string
+
+    is_free:number|b
+
+    file_state:enum(ufs_no_change|ufs_new|ufs_replace|ufs_delete)
+
+    upload_key:string|nr
+    description: it is required when file_state is ufs_new or ufs_replace
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_VALUE:null
+
+    CONTENT_NOT_FOUND:null
+
+    NO_FILE_STATE:null
+
+    INVALID_OLD_UPLOAD_KEY:null
+
+    INVALID_UPLOAD_KEY:null
+
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT VIDEO DELETE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_video_delete)|ui
+
+    course_id:number
+
+    content_id:number
+
+**output**
+
+    SUCCESS:null
+
+    CONTENT_NOT_FOUND:null
+
+    CONVERTOR_SERVER_ISSUE_DELETING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT VOICE ADD
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_voice_add)|ui
+
+    course_id:number
+
+    title:string
+
+    is_free:number|b
+
+    upload_key:string
+
+**output**
+
+    SUCCESS:{
+        content_id:number
+    }
+
+    INVALID_VALUE:null
+
+    INVALID_UPLOAD_KEY:null
+
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT VOICE UPDATE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_voice_update)|ui
+
+    course_id:number
+
+    content_id:number
+
+    title:string
+
+    is_free:number|b
+
+    file_state:enum(ufs_no_change|ufs_new|ufs_replace|ufs_delete)
+
+    upload_key:string|nr
+    description: it is required when file_state is ufs_new or ufs_replace
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_VALUE:null
+
+    CONTENT_NOT_FOUND:null
+
+    NO_FILE_STATE:null
+
+    INVALID_OLD_UPLOAD_KEY:null
+
+    INVALID_UPLOAD_KEY:null
+
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT VOICE DELETE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_voice_delete)|ui
+
+    course_id:number
+
+    content_id:number
+
+**output**
+
+    SUCCESS:null
+
+    CONTENT_NOT_FOUND:null
+
+    CONVERTOR_SERVER_ISSUE_DELETING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT DOCUMENT ADD
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_document_add)|ui
+
+    course_id:number
+
+    title:string
+
+    is_free:number|b
+
+    upload_key:string
+
+**output**
+
+    SUCCESS:{
+        content_id:number
+    }
+
+    INVALID_VALUE:null
+
+    INVALID_UPLOAD_KEY:null
+
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT DOCUMENT UPDATE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_document_update)|ui
+
+    course_id:number
+
+    content_id:number
+
+    title:string
+
+    is_free:number|b
+
+    file_state:enum(ufs_no_change|ufs_new|ufs_replace|ufs_delete)
+
+    upload_key:string|nr
+    description: it is required when file_state is ufs_new or ufs_replace
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_VALUE:null
+
+    CONTENT_NOT_FOUND:null
+
+    NO_FILE_STATE:null
+
+    INVALID_OLD_UPLOAD_KEY:null
+
+    INVALID_UPLOAD_KEY:null
+
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT DOCUMENT DELETE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_document_delete)|ui
+
+    course_id:number
+
+    content_id:number
+
+**output**
+
+    SUCCESS:null
+
+    CONTENT_NOT_FOUND:null
+
+    CONVERTOR_SERVER_ISSUE_DELETING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT DOCUMENT ADD
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_document_add)|ui
+
+    course_id:number
+
+    title:string
+
+    is_free:number|b
+
+    upload_key:string
+
+**output**
+
+    SUCCESS:{
+        content_id:number
+    }
+
+    INVALID_VALUE:null
+
+    INVALID_UPLOAD_KEY:null
+
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT DOCUMENT UPDATE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_document_update)|ui
+
+    course_id:number
+
+    content_id:number
+
+    title:string
+
+    is_free:number|b
+
+    file_state:enum(ufs_no_change|ufs_new|ufs_replace|ufs_delete)
+
+    upload_key:string|nr
+    description: it is required when file_state is ufs_new or ufs_replace
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_VALUE:null
+
+    CONTENT_NOT_FOUND:null
+
+    NO_FILE_STATE:null
+
+    INVALID_OLD_UPLOAD_KEY:null
+
+    INVALID_UPLOAD_KEY:null
+
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT DOCUMENT DELETE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_document_delete)|ui
+
+    course_id:number
+
+    content_id:number
+
+**output**
+
+    SUCCESS:null
+
+    CONTENT_NOT_FOUND:null
+
+    CONVERTOR_SERVER_ISSUE_DELETING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE INTRO VIDEO ADD
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_intro_video_add)|ui
+
+    course_id:number
+
+    upload_key:string
+
+**output**
+
+    SUCCESS:{
+        course_introduction_id:number
+    }
+
+    INVALID_UPLOAD_KEY:null
+
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE INTRO VIDEO UPDATE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_intro_video_update)|ui
+
+    course_id:number
+
+    intro_id:number
+
+    file_state:enum(ufs_no_change|ufs_new|ufs_replace|ufs_delete)
+
+    upload_key:string|nr
+    description: it is required when file_state is ufs_new or ufs_replace
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_VALUE:null
+
+    CONTENT_NOT_FOUND:null
+
+    NO_FILE_STATE:null
+
+    INVALID_UPLOAD_KEY:null
+
+    CONVERTOR_SERVER_ISSUE_MOVING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE INTRO VIDEO DELETE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_intro_video_delete)|ui
+
+    course_id:number
+
+    intro_id:number
+
+**output**
+
+    SUCCESS:null
+
+    CONTENT_NOT_FOUND:null
+
+    CONVERTOR_SERVER_ISSUE_DELETING_FILE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE HEADING ADD
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_course_heading_add)|ui
+
+    course_id:number
+
+    title:string
+
+**output**
+
+    SUCCESS:{
+        heading_id:number
+    }
+
+    INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE HEADING UPDATE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_course_heading_update)|ui
+
+    course_id:number
+
+    heading_id:number
+
+    title:string
+
+**output**
+
+    SUCCESS:null
+
+    CONTENT_NOT_FOUND:null
+
+    INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE HEADING DELETE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_course_heading_delete)|ui
+
+    course_id:number
+
+    heading_id:number
+
+**output**
+
+    SUCCESS:null
+
+    CONTENT_NOT_FOUND:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE CONTENT HIERARCHY
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_hierarchy)|ui
+
+    hierarchy:Array[H_object]
+
+**output**
+
+    SUCCESS:null
+
+    COURSE_NOT_FOUND:null
+
+    INVALID_VALUE:null
+
+**types**
+
+```javascript
+    def H_object = {
+        "heading":number,
+        "contents": Array[number], 
+    }
+
+    description: "heading is equivalent to heading id"
+    description: "contents contain content_ids under the heading"
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT COURSE EDUCATORS
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_course_educators)|ui
+
+    educators:Array[number]
+    decription: It's an array of educator ids
+
+**output**
+
+    SUCCESS:null
+
+    COURSE_NOT_FOUND:null
 
     INVALID_VALUE:null
 

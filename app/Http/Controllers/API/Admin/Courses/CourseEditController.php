@@ -774,6 +774,7 @@ class CourseEditController extends BaseController
     public function updateCourseHeading(Request $request)
     {
         $heading = CourseHeading::find($request->input('heading_id'));
+        if(!$heading) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         if (!$request->exists('title'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
@@ -787,6 +788,8 @@ class CourseEditController extends BaseController
     public function deleteCourseHeading(Request $request)
     {
         $heading = CourseHeading::find($request->input('heading_id'));
+        if(!$heading) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+
         $heading->delete();
 
         return $this->sendResponse(Constant::$SUCCESS, null);

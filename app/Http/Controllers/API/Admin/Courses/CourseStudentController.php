@@ -16,6 +16,8 @@ class CourseStudentController extends BaseController
     public function fetchCourseStudents(Request $request, $chunk_count, $page_count)
     {
         $course = Course::find($request->input('course_id'));
+        if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
+
         $students = $course->students->map(function ($student) {
             return [
                 'id' => $student->id,
@@ -38,6 +40,7 @@ class CourseStudentController extends BaseController
     public function importCourseStudentsExcel(Request $request)
     {
         $course = Course::find($request->input('course_id'));
+        if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
         $path1 =  $request->file('file')->store('temp');
         $path = storage_path('app') . '/' . $path1;
@@ -53,6 +56,7 @@ class CourseStudentController extends BaseController
     public function exportCourseStudentsExcel(Request $request)
     {
         $course = Course::find($request->input('course_id'));
+        if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
         $export = new CourseStudentsExport($course);
         return Excel::download($export, "لیست دانش آموزان دوره {$course->title}.xlsx");
@@ -62,6 +66,7 @@ class CourseStudentController extends BaseController
     {
         $course = Course::find($request->input('course_id'));
         $student = Student::find($request->input('student_id'));
+        if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
         $cc = new CoursesController();
         $cc->addStudentToCourse($student, $course, Constant::$REGISTRATION_TYPE_CUSTOM);
@@ -73,6 +78,7 @@ class CourseStudentController extends BaseController
     {
         $course = Course::find($request->input('course_id'));
         $students = Student::find($request->input('student_ids'));
+        if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
         $cc = new CoursesController();
         foreach ($students as $student)
@@ -85,6 +91,7 @@ class CourseStudentController extends BaseController
     {
         $course = Course::find($request->input('course_id'));
         $students = Student::find($request->input('student_ids'));
+        if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
         $cc = new CoursesController();
         foreach ($students as $student)

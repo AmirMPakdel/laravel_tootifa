@@ -209,8 +209,8 @@ class Constant
     public static $EDIT_PARAM_RELEASE_DATE = "ep_release_date";
     public static $EDIT_PARAM_COMMENTS_AVAILABILITY = "ep_comments_availability";
     public static $EDIT_PARAM_COMMENTS_VALIDITY = "ep_comments_validity";
-    public static $EDIT_PARAM_SUBJECTS = "ep_comments_subjects";
-    public static $EDIT_PARAM_REQUIREMENT = "ep_comments_requirement";
+    public static $EDIT_PARAM_SUBJECTS = "ep_subjects";
+    public static $EDIT_PARAM_REQUIREMENT = "ep_requirement";
     public static $EDIT_PARAM_CONTENT_HIERARCHY = "ep_content_hierarchy";
     public static $EDIT_PARAM_COURSE_EDUCATORS = "ep_course_educators";
     public static $EDIT_PARAM_POST_WRITERS = "ep_post_writers";
