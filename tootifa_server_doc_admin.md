@@ -4,9 +4,9 @@
 
     * Whenever there is a token input, there could be INVALID_TOKEN error
 
-## Format Description
+## RequestType Description
 
-    Format : {Method}{Tenant}{Token}{Prefix}
+    RequestType : {Method}{Tenant}{Token}{Prefix}
 
     Method:
         can be "P" or "G"
@@ -24,8 +24,7 @@
         "1" means it needs token in body
 
     Prefix:
-        can be "MA" or "?" or "?"
-        "MA" -> "/api/main"
+        can be one the values in Prefixes section below
 
     example:
         P01MA -> its POST method that needs tenant to be specified
