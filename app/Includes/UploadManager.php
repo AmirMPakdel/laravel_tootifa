@@ -12,7 +12,7 @@ class UploadManager
     public static function saveFile($tenant, $is_public, $model, $attr, $set_size, $set_key, $uk)
     {
         $upload_transaction = UploadTransaction::where('upload_key', $uk)->first();
-        if (!$upload_transaction) return Constant::$INVALID_UPLOAD_KEY;
+        if ($uk && trim($uk) != "" && !$upload_transaction) return Constant::$INVALID_UPLOAD_KEY;
 
         if ($upload_transaction) {
             $result = UploadManager::moveFileToFtp(
@@ -49,7 +49,8 @@ class UploadManager
     {
         // Check for upload key
         $upload_transaction = UploadTransaction::where('upload_key', $uk)->first();
-        if (!$upload_transaction) return Constant::$INVALID_UPLOAD_KEY;
+        if ($file_state !== Constant::$UPDATE_FILE_STATE_NO_CHANGE &&
+            !$upload_transaction) return Constant::$INVALID_UPLOAD_KEY;
 
         if ($file_state != Constant::$UPDATE_FILE_STATE_NO_CHANGE) {
             // Send invalid uk if it is null or wrong
