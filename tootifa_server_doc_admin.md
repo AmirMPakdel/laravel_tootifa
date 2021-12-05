@@ -347,6 +347,34 @@
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+## FETCH EDUCATORS
+
+**path**
+
+    /educators/fetch
+
+**format**
+
+    P11UTA
+
+**output**
+
+    SUCCESS:Array[EducatorItem]
+
+**types**
+
+```javascript
+    def EducatorItem = {
+        "id":number,
+        "first_name":string,
+        "last_name":string,
+        "bio":string,
+        "image":string,
+    }
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 ## CREATING LEVEL ONE GROUP
 
 **path**
