@@ -28,6 +28,8 @@ class EducatorsController extends BaseController
     public function updateEducator(Request $request)
     {
         $educator = Educator::find($request->input('educator_id'));
+        if(!$educator) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
+
         $educator->first_name = $request->input("first_name");
         $educator->last_name = $request->input("last_name");
         $educator->bio = $request->input("bio");
@@ -55,6 +57,7 @@ class EducatorsController extends BaseController
     public function deleteEducator(Request $request)
     {
         $educator = Educator::find($request->input('educator_id'));
+        if(!$educator) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
 
         $result = UploadManager::deleteFile(tenant()->id, $educator->image);
         if ($result == Constant::$SUCCESS){

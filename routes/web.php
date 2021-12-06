@@ -94,6 +94,11 @@ Route::group([
     Route::post('/popups/delete', 'PopupsController@deletePopup');
     Route::post('/popups/fetch', 'PopupsController@fetchPopups');
 
+    Route::post('/smstypes/create', 'SmsTypesController@createSmsType');
+    Route::post('/smstypes/update', 'SmsTypesController@updateSmsType');
+    Route::post('/smstypes/delete', 'SmsTypesController@deleteSmsType');
+    Route::get('/smstypes/fetch/{all}', 'SmsTypesController@fetchSmsTypes');
+
     Route::post('/mainpage/edit/{ep}', 'MainPage\UserMainPageEditController@editMainPage');
     Route::post('/mainpage/load', 'MainPage\UserMainPageController@loadMainPage');
 

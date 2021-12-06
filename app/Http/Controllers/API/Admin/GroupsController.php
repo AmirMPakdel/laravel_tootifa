@@ -40,7 +40,7 @@ class GroupsController extends BaseController
 
         // check father group
         if(!$levelOneGroup)
-            return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+            return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
 
         $group = new LevelTwoGroup();
         $group->title = $title;
@@ -63,7 +63,7 @@ class GroupsController extends BaseController
 
         // check father group
         if(!$levelTwoGroup)
-            return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+            return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
 
         $group = new LevelThreeGroup();
         $group->title = $title;
@@ -79,7 +79,8 @@ class GroupsController extends BaseController
         $type = $request->input("type");
         $group = LevelOneGroup::find($request->input("id"));
 
-        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+        if(!$group) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
+
 
         // check title
         if($group->title != $title && LevelOneGroup::type($type)->where('title', $title)->exists())
@@ -96,7 +97,7 @@ class GroupsController extends BaseController
         $type = $request->input("type");
         $group = LevelTwoGroup::find($request->input("id"));
 
-        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+        if(!$group) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
 
         // check title
         if($group->title != $title && LevelTwoGroup::type($type)->where('title', $title)->exists())
@@ -113,7 +114,7 @@ class GroupsController extends BaseController
         $type = $request->input("type");
         $group = LevelThreeGroup::find($request->input("id"));
 
-        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+        if(!$group) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
 
         // check title
         if($group->title != $title && LevelThreeGroup::type($type)->where('title', $title)->exists())
@@ -129,7 +130,7 @@ class GroupsController extends BaseController
         $group = LevelOneGroup::find($request->input("id"));
         $force_delete = $request->input("force_delete");
 
-        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+        if(!$group) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
 
         if(!$force_delete && $group->courses->count() > 0)
             return $this->sendResponse(Constant::$RELATED_ENTITIES, null);
@@ -158,7 +159,7 @@ class GroupsController extends BaseController
         $group = LevelTwoGroup::find($request->input("id"));
         $force_delete = $request->input("force_delete");
 
-        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+        if(!$group) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
 
         if(!$force_delete && $group->courses->count() > 0)
             return $this->sendResponse(Constant::$RELATED_ENTITIES, null);
@@ -185,7 +186,7 @@ class GroupsController extends BaseController
         $group = LevelTwoGroup::find($request->input("id"));
         $force_delete = $request->input("force_delete");
 
-        if(!$group) return $this->sendResponse(Constant::$GROUP_NOT_EXISTS, null);
+        if(!$group) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
 
         if(!$force_delete && $group->courses->count() > 0)
             return $this->sendResponse(Constant::$RELATED_ENTITIES, null);

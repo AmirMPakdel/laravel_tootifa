@@ -26,7 +26,7 @@ class TagsController extends BaseController
         $title = $request->input("title");
         $tag = Tag::find($request->input("id"));
 
-        if (!$tag) return $this->sendResponse(Constant::$TAG_NOT_EXIST, null);
+        if(!$tag) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
 
         // check title
         if($tag->title != $title && Tag::where('title', $title)->exists())
@@ -42,7 +42,7 @@ class TagsController extends BaseController
         $tag = Tag::find($request->input("id"));
         $force_delete = $request->input("force_delete");
 
-        if (!$tag) return $this->sendResponse(Constant::$TAG_NOT_EXIST, null);
+        if(!$tag) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
         
         if(!$force_delete && ($tag->courses->count() > 0 || $tag->posts->count() > 0))
             return $this->sendResponse(Constant::$RELATED_ENTITIES, null);

@@ -6,6 +6,7 @@ use App\Includes\Constant;
 use App\Models\UploadTransaction;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use tidy;
 
 class UploadManager
 {
@@ -127,6 +128,8 @@ class UploadManager
 
     public static function deleteFile($tenant, $uk)
     {
+        if(!$uk || trim($uk)) return Constant::$SUCCESS;
+
         $upload_transaction = UploadTransaction::where('upload_key', $uk)->first();
         if (!$upload_transaction) return Constant::$INVALID_UPLOAD_KEY;
 

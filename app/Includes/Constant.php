@@ -15,6 +15,7 @@ class Constant
     public static $INVALID_EMAIL = 1113;
     public static $INVALID_FILE = 1114;
     public static $SERVER_ISSUE = 1115;
+    public static $NOT_DELETABLE = 1116;
     public static $SERVER_NOT_AVAILABLE = 1119;
     public static $INVALID_ID = 1120;
     public static $VIDEO_UNAVAILABLE = 1121;
@@ -28,7 +29,7 @@ class Constant
     public static $FILE_SIZE_LIMIT_EXCEEDED = 1129;
     public static $INVALID_VALUE = 1130;
     public static $INVALID_EDIT_TYPE = 1131;
-    public static $GROUP_NOT_EXISTS = 1132;
+    public static $ENTITY_NOT_FOUND = 1132;
     public static $RELATED_ENTITIES = 1133;
     public static $COMMENTS_NOT_OPEN = 1134;
     public static $NO_DATA = 1135;
@@ -49,7 +50,7 @@ class Constant
     public static $CONVERTOR_SERVER_ISSUE_DELETING_FILE = 1150;
     public static $CONTENT_NOT_FOUND = 1151;
     public static $REPETITIVE_USERNAME = 1152;
-    public static $TAG_NOT_EXIST = 1153;
+    public static $REPETITIVE_SMS_TYPE_NAME = 1153;
 
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
@@ -173,6 +174,11 @@ class Constant
 
     public static $GROUP_TYPE_COURSE = "gt_course";
     public static $GROUP_TYPE_POST = "gt_post";
+
+    public static $SMS_DEFAULT_TYPES = [
+        "send_verification" => "کد فعالسازی: %code",
+        "welcome" => "%name عزیز خوش آمدید",
+    ];
 
     // UPLOAD TYPES
     public static $UPLOAD_TYPE_WRITER_IMAGE = "ut_writer_image";

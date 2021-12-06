@@ -3,8 +3,10 @@
 
 namespace App\Http\Controllers\API\Main;
 
+use App\Http\Controllers\API\Admin\SmsTypesController;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
+use App\Includes\SmsManager;
 use App\Models\MainPageProperties;
 use App\Models\Tenant;
 use App\Models\UProfile;
@@ -164,10 +166,11 @@ class UserRegistrationController extends BaseController
 
         $user->save();
 
-        // generate user main page properties
+        // generate user defaults
         $tenant->run(function () {
             MainPageProperties::create(['page_title' => "عنوان"]);
         });
+        SmsManager::generateDefaultSmsTypes($tenant);
 
         // TODO send registration success message via third party sms platform api
 
