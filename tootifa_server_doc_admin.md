@@ -815,6 +815,9 @@
     tags:Array[numbers]
     decription: It's an array of selected tag ids
 
+    educators:Array[numbers]
+    decription: It's an array of educator ids
+
     category_id:number
 
 **output**

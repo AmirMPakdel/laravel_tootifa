@@ -9,6 +9,7 @@ use App\Includes\Helper;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseRegistrationRecord;
+use App\Models\Educator;
 use App\Models\LevelOneGroup;
 use App\Models\LevelThreeGroup;
 use App\Models\LevelTwoGroup;
@@ -27,6 +28,7 @@ class CoursesController extends BaseController
         $is_encrypted = $request->input('is_encrypted');
         $groups = (object)$request->input('groups');
         $tags = (array)$request->input('tags');
+        $educators = (array)$request->input('educators');
         $category = Category::find($request->input('category_id'));
 
         // check title
@@ -49,6 +51,11 @@ class CoursesController extends BaseController
         // add it to tags
         foreach (Tag::find($tags) as $tag)
             $tag->courses()->save($course);
+
+        // add it to educators
+        foreach (Educator::find($educators) as $educator) 
+            $course->educators()->save($educator);
+
 
         // add it to groups
         $g1 = LevelOneGroup::find($groups->g1);
