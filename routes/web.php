@@ -131,7 +131,7 @@ Route::group([
     Route::get('/usermainpage/logo', 'Admin\MainPage\UserMainPageController@getPageCover');
     Route::get('/usermainpage/cover', 'Admin\MainPage\UserMainPageController@getPageLogo');
     Route::get('/usermainpage/banner_cover', 'Admin\MainPage\UserMainPageController@getBannerCover');
-    Route::get('/groups/fetch', 'Admin\GroupsController@fetchGroups');
+    Route::get('/groups/fetch/{type}', 'Admin\GroupsController@fetchGroups');
     Route::get('/tags/fetch', 'Admin\TagsController@fetchTags');
     Route::get('/categories/fetch', 'Admin\CategoriesController@fetchCategories');
 });

@@ -27,6 +27,7 @@ class SmsManager
                 $st->name = $key;
                 $st->pattern = $value;
                 $st->is_default = 1;
+                $st->validation_status = Constant::$VALIDATION_STATUS_VALID;
                 $st->save();
             }
         });

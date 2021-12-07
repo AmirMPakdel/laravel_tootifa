@@ -230,9 +230,7 @@ class GroupsController extends BaseController
         return true;
     }
 
-    public function fetchGroups(Request $request){
-        $type = $request->input("type");
-
+    public function fetchGroups($type){
         $groups = LevelOneGroup::type($type)->all()->map(function ($level_one_group){
             $level_two_groups = $level_one_group->level_two_groups->map(function ($level_two_group){
                 $level_three_groups = $level_two_group->level_three_groups->map(function ($level_three_group){

@@ -702,7 +702,7 @@
 
 **path**
 
-    /groups/fetch
+    /groups/fetch/{type}
 
 **format**
 
@@ -710,7 +710,7 @@
 
 **input**
 
-    type: enum("gt_course"|"gt_post")
+    type: enum("gt_course"|"gt_post")|ui
 
 **output**
 
@@ -735,6 +735,56 @@
 
     def LevelThreeGroup = {
         "level": 3,
+        "id": number,
+        "title" : string,
+    }
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## FETCHING TAGS
+
+**path**
+
+    /tags/fetch
+
+**format**
+
+    G10PTA
+
+**output**
+
+    SUCCESS:Array[Tag]
+
+**types**
+
+```javascript
+    def Tag = {
+        "id": number,
+        "title" : string,
+    }
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## FETCHING CATEGORIES
+
+**path**
+
+    /categories/fetch
+
+**format**
+
+    G10PTA
+
+**output**
+
+    SUCCESS:Array[Category]
+
+**types**
+
+```javascript
+    def Category = {
         "id": number,
         "title" : string,
     }
