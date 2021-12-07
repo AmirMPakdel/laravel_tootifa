@@ -20,4 +20,6 @@ class CategoriesController extends BaseController
 
         return $this->sendResponse(Constant::$SUCCESS, $categories);
     }
+
+   
 }

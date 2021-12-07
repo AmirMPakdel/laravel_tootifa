@@ -180,6 +180,11 @@ class Constant
         "welcome" => "%name عزیز خوش آمدید",
     ];
 
+    public static $DEFAULT_CATEGORIES = [
+        "کامپیوتر",
+        "کنکور",
+    ];
+
     // UPLOAD TYPES
     public static $UPLOAD_TYPE_WRITER_IMAGE = "ut_writer_image";
     public static $UPLOAD_TYPE_EDUCATOR_IMAGE = "ut_educator_image";
