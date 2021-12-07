@@ -955,6 +955,96 @@
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+## LOAD COURSE
+
+**path**
+
+    /course/load
+
+**format**
+
+    P11UTA
+
+**input**
+
+    course_id:number
+
+**output**
+
+    SUCCESS:CourseItem
+
+**types**
+
+```javascript
+    def CourseItem = {
+        "id":number,
+        "title":string,
+        "price":number,
+        "sells":number,
+        "score":number,
+        "visits_count":number,
+        "validation_status":enum(not_valid|is_checking|valid),
+        "validation_status_message":string,
+        "g1":number,
+        "g2":number,
+        "g3":number,
+        "tags":Array[Tag],
+        "duration":number|f:minutes,
+        "has_discount":number|b,
+        "discount":number|f:percent
+        "holding_status":enum(coming_soon|is_holding|finished),
+        "release_date":string|f:yyyy-mm-dd,
+        "subjects":Array(string),
+        "short_desc":string,
+        "long_desc":string,
+        "requirements":Array(string),
+        "suggested_courses":Array(number),  "decription: It's an array of course ids"
+        "suggested_posts":Array(number),  "decription: It's an array of post ids"
+        "is_encrypted":number|b,
+        "intro_video":IntroVideo,
+        "content_hierarchy":string,
+        "headings":Array[Heading],
+        "contents":Array[Content],
+        "educators":Array[Educator],,
+        "logo":string, "decription: upload_key"
+        "cover":string, "decription: upload_key"
+    }
+
+    def Tag = {
+        "id":number,
+        "title":string,
+    }
+
+    def IntroVideo = {
+        "id":number,
+        "url":string,
+        "size":number,
+    }
+
+    def Heading = {
+        "id":number,
+        "title":string,
+    }
+
+    def Content = {
+        "id":number,
+        "url":string,
+        "title":string,
+        "type":enum("ct_video"|"ct_document"|"ct_voice"),
+        "is_free":number|b,
+        "size":number,
+    }
+
+    def Educator = {
+        "id":number,
+        "first_name":string,
+        "last_name":string,
+        "bio":string,
+    }
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 ## FETCH COURSE STUDENTS
 
 **path**

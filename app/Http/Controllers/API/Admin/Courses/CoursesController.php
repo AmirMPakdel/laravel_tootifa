@@ -237,7 +237,6 @@ class CoursesController extends BaseController
                 case Constant::$CONTENT_TYPE_VIDEO:
                     $c['url'] = $content->content_video->url;
                     $c['size'] = $content->content_video->size;
-                    $c['encoding'] = $content->content_video->encoding;
                     break;
                 case Constant::$CONTENT_TYPE_VOICE:
                     $c['url'] = $content->content_voice->url;
