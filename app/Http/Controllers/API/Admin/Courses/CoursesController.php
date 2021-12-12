@@ -211,7 +211,8 @@ class CoursesController extends BaseController
                 'id' => $educator->id,
                 'first_name' => $educator->first_name,
                 'last_name' => $educator->last_name,
-                'bio' => $educator->bio
+                'bio' => $educator->bio,
+                'image' => $educator->image
             ];
         });
 

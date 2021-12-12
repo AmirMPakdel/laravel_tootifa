@@ -796,7 +796,7 @@
 
 **path**
 
-    /tags/create
+    /courses/create
 
 **format**
 
@@ -1005,7 +1005,7 @@
         "content_hierarchy":string,
         "headings":Array[Heading],
         "contents":Array[Content],
-        "educators":Array[Educator],,
+        "educators":Array[Educator],
         "logo":string, "decription: upload_key"
         "cover":string, "decription: upload_key"
     }
@@ -1040,6 +1040,7 @@
         "first_name":string,
         "last_name":string,
         "bio":string,
+        "image":string,
     }
 ```
 
