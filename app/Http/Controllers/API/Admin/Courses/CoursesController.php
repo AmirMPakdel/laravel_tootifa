@@ -36,8 +36,11 @@ class CoursesController extends BaseController
             return $this->sendResponse(Constant::$REPETITIVE_TITLE, null);
 
         // check groups hierarchy
-        if (!GroupsController::checkGroupsHierarchy($groups))
-            return $this->sendResponse(Constant::$INVALID_GROUP_HIERARCHY, null);
+        if (isset($groups->g1) && isset($groups->g2) && isset($groups->g3)) {
+            if (!GroupsController::checkGroupsHierarchy($groups))
+                return $this->sendResponse(Constant::$INVALID_GROUP_HIERARCHY, null);
+        }
+
 
         // create course
         $course = new Course();
@@ -53,7 +56,7 @@ class CoursesController extends BaseController
             $tag->courses()->save($course);
 
         // add it to educators
-        foreach (Educator::find($educators) as $educator) 
+        foreach (Educator::find($educators) as $educator)
             $course->educators()->save($educator);
 
 

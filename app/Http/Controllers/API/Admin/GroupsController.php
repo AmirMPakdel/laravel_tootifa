@@ -207,14 +207,13 @@ class GroupsController extends BaseController
     }
 
     public static function checkGroupsHierarchy($groups){
-        if($groups->g1 != null){
+        if(isset($groups->g1) && $groups->g1 != null){
             $g1 = LevelOneGroup::find($groups->g1);
-            if($groups->g2 != null){
+            if(isset($groups->g2) && $groups->g2 != null){
                 $g2 = LevelTwoGroup::find($groups->g2);
                 if (!$g1->level_two_groups->contains($groups->g2))
                     return false;
-                else if($groups->g3 != null){
-                    $g3 = LevelThreeGroup::find($groups->g3);
+                else if(isset($groups->g3) && $groups->g3 != null){
                     if (!$g2->level_three_groups->contains($groups->g3))
                         return false;
                 }
