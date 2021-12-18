@@ -61,9 +61,9 @@ class CoursesController extends BaseController
 
 
         // add it to groups
-        //$g1 = LevelOneGroup::find($groups->g1);
-        //$g2 = LevelTwoGroup::find($groups->g2);
-        //$g3 = LevelThreeGroup::find($groups->g3);
+        $g1 = LevelOneGroup::find($groups->g1);
+        $g2 = LevelTwoGroup::find($groups->g2);
+        $g3 = LevelThreeGroup::find($groups->g3);
 
         if ($g1) $g1->courses()->save($course);
         if ($g2) $g2->courses()->save($course);
