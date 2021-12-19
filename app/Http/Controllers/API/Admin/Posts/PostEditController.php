@@ -28,7 +28,10 @@ class PostEditController extends BaseController
 {
     public function editPost(Request $request, $ep)
     {
-        // TODO some preprocessing
+        // check for maintenance balance
+        if ($request->input('user')->u_profile->m_balance < 0)
+            return $this->sendResponse(Constant::$NEGETIVE_MAINTANANCE_BALANCE, null);
+
         $post = Post::find($request->input('post_id'));
         if (!$post) return $this->sendResponse(Constant::$POST_NOT_FOUND, null);
 
@@ -301,12 +304,12 @@ class PostEditController extends BaseController
         $content_video = new ContentVideo();
         $content_video->belongs_to = Constant::$BELONGING_POST;
         $result = UploadManager::saveFile(
-            tenant()->id, 
-            1, 
-            $content_video, 
-            'url', 
-            true, 
-            false, 
+            tenant()->id,
+            1,
+            $content_video,
+            'url',
+            true,
+            false,
             $request->input('upload_key')
         );
 
@@ -323,7 +326,7 @@ class PostEditController extends BaseController
         $post_content = PostContent::find($request->input('content_id'));
         if (!$post_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if (!$request->exists('upload_key')) 
+        if (!$request->exists('upload_key'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $content_video = $post_content->content_video()->first();
@@ -370,12 +373,12 @@ class PostEditController extends BaseController
         $content_voice = new ContentVoice();
         $content_voice->belongs_to = Constant::$BELONGING_POST;
         $result = UploadManager::saveFile(
-            tenant()->id, 
-            1, 
-            $content_voice, 
-            'url', 
-            true, 
-            false, 
+            tenant()->id,
+            1,
+            $content_voice,
+            'url',
+            true,
+            false,
             $request->input('upload_key')
         );
 
@@ -392,7 +395,7 @@ class PostEditController extends BaseController
         $post_content = PostContent::find($request->input('content_id'));
         if (!$post_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if (!$request->exists('upload_key')) 
+        if (!$request->exists('upload_key'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $content_voice = $post_content->content_voiceo()->first();
@@ -439,12 +442,12 @@ class PostEditController extends BaseController
         $content_image = new ContentImage();
         $content_image->belongs_to = Constant::$BELONGING_POST;
         $result = UploadManager::saveFile(
-            tenant()->id, 
-            1, 
-            $content_image, 
-            'url', 
-            true, 
-            false, 
+            tenant()->id,
+            1,
+            $content_image,
+            'url',
+            true,
+            false,
             $request->input('upload_key')
         );
 
@@ -461,7 +464,7 @@ class PostEditController extends BaseController
         $post_content = PostContent::find($request->input('content_id'));
         if (!$post_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if (!$request->exists('upload_key')) 
+        if (!$request->exists('upload_key'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $content_image = $post_content->content_image()->first();
@@ -613,7 +616,7 @@ class PostEditController extends BaseController
     public function addPostForm(Request $request)
     {
         $post = $request->input('post');
-        if(!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $post_form = new PostForm();
         $post_form->title = $request->input('title');

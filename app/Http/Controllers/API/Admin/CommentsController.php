@@ -16,10 +16,12 @@ class CommentsController extends BaseController
         $valid = $request->input("valid");
         $course = Course::find($request->input("course_id"));
 
-        $comments = $course->comments->where([
+        $paginator = $course->comments()->where([
             ['valid', $valid],
             ['checked', 1],
-        ])->get()->map(function ($comment){
+        ])->orderBy('id', "desc")->paginate($chunk_count, ['*'], 'page', $page_count);
+        
+        $comments = $paginator->map(function ($comment){
             return [
                 'id' => $comment->id,
                 'content' => $comment->content,
@@ -29,21 +31,21 @@ class CommentsController extends BaseController
             ];
         });
 
-        try {
-            $last_items = (collect($comments)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-            return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        }catch(Exception $e){
-            return $this->sendResponse(Constant::$NO_DATA, null);
-        };
+        if (sizeof($comments) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
+        $result = ["total_size" => $paginator->total(), "list" => $comments];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function fetchCourseUnCheckedComments(Request $request, $chunk_count, $page_count){
         // TODO test
         $course = Course::find($request->input("course_id"));
 
-        $comments = $course->comments()->where([
+        $paginator = $course->comments->where([
             ['checked', 0],
-        ])->get()->map(function ($comment){
+        ])->orderBy('id', "desc")->paginate($chunk_count, ['*'], 'page', $page_count);
+        
+        $comments = $paginator->map(function ($comment){
             return [
                 'id' => $comment->id,
                 'content' => $comment->content,
@@ -53,12 +55,10 @@ class CommentsController extends BaseController
             ];
         });
 
-        try {
-            $last_items = (collect($comments)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-            return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        }catch(Exception $e){
-            return $this->sendResponse(Constant::$NO_DATA, null);
-        }
+        if (sizeof($comments) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
+        $result = ["total_size" => $paginator->total(), "list" => $comments];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function getCourseUnCheckedCommentsCount(Request $request){

@@ -110,9 +110,11 @@ class StudentPostController extends BaseController
         $post = Post::find($request->input("post_id"));
         $student = $request->input('student');
 
-        $comments = $post->comments()->where([
+        $paginator = $post->comments()->where([
             ['valid', 1],
-        ])->get()->map(function ($comment) use ($student){
+        ])->orderBy('id', "desc")->paginate($chunk_count, ['*'], 'page', $page_count);
+        
+        $comments = $paginator->map(function ($comment) use ($student){
             return [
                 'id' => $comment->id,
                 'content' => $comment->content,
@@ -123,12 +125,10 @@ class StudentPostController extends BaseController
             ];
         });
 
-        try {
-            $last_items = (collect($comments)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-            return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        }catch(Exception $e){
-            return $this->sendResponse(Constant::$NO_DATA, null);
-        }
+        if (sizeof($comments) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
+        $result = ["total_size" => $paginator->total(), "list" => $comments];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function addComment(Request $request){

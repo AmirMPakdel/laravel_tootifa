@@ -25,7 +25,9 @@ class UserMainPageEditController extends BaseController
 {
     public function editMainPage(Request $request, $ep)
     {
-        // TODO some preprocessing
+        // check for maintenance balance
+        if ($request->input('user')->u_profile->m_balance < 0)
+            return $this->sendResponse(Constant::$NEGETIVE_MAINTANANCE_BALANCE, null);
 
         switch ($ep) {
             case Constant::$EDIT_PARAM_TITLE:

@@ -92,14 +92,11 @@ class StudentCourseController extends BaseController
         }
 
         // calculate course total score
-        $scores = Score::where([
+        $course->score = Score::where([
             ['scorable_id' , $request->input('course_id')],
             ['scorable_type' , "App\Models\Course"],
-        ])->get();
+        ])->avg('score');
 
-        $sum = 0;
-        foreach ($scores as $s) $sum += $s->score;
-        $course->score = $sum / sizeof($scores);
         $course->save();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
@@ -126,14 +123,11 @@ class StudentCourseController extends BaseController
         }
 
         // calculate course total score
-        $scores = Score::where([
+        $comment->score = Score::where([
             ['scorable_id' , $request->input('comment_id')],
             ['scorable_type' , "App\Models\Comment"],
-        ])->get();
-
-        $sum = 0;
-        foreach ($scores as $s) $sum += $s->score;
-        $comment->score = $sum / sizeof($scores);
+        ])->avg('score');
+      
         $comment->save();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
@@ -181,9 +175,11 @@ class StudentCourseController extends BaseController
         $course = Course::find($request->input("course_id"));
         $student = $request->input('student');
 
-        $comments = $course->comments()->where([
+        $paginator = $course->comments()->where([
             ['valid', 1],
-        ])->get()->map(function ($comment) use ($student){
+        ])->orderBy('id', "desc")->paginate($chunk_count, ['*'], 'page', $page_count);
+        
+        $comments = $paginator->map(function ($comment) use ($student){
             return [
                 'id' => $comment->id,
                 'content' => $comment->content,
@@ -194,12 +190,10 @@ class StudentCourseController extends BaseController
             ];
         });
 
-        try {
-            $last_items = (collect($comments)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-            return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        }catch(Exception $e){
-            return $this->sendResponse(Constant::$NO_DATA, null);
-        }
+        if (sizeof($comments) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
+        $result = ["total_size" => $paginator->total(), "list" => $comments];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function addComment(Request $request){
@@ -294,6 +288,7 @@ class StudentCourseController extends BaseController
         });
 
         return [
+            'id' => $course->id,
             'registered' => $registered,
             'has_access' => $has_access,
             'title' => $course->title,
@@ -319,9 +314,12 @@ class StudentCourseController extends BaseController
             "intro_video" => $intro_video,
             "content_hierarchy" => $course->content_hierarchy,
             "is_comments_open" => $course->is_comments_open,
+            "is_encrypted" => $course->is_encrypted,
             "headings" => $headings,
             "contents" => $contents,
-            "educators" => $educators
+            "educators" => $educators,
+            "logo" => $course->logo,
+            "cover" => $course->cover
         ];
     }
 

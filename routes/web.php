@@ -32,6 +32,7 @@ Route::group([
     Route::post('/user/passwordreset/request', 'UserPasswordResetController@requestResetPassword');
     Route::post('/user/passwordreset/checktoken', 'UserPasswordResetController@checkPasswordResetToken');
     Route::post('/user/passwordreset/reset', 'UserPasswordResetController@resetPassword');
+    Route::post('/user/course/validation/check', 'MinfoRequestsController@requestForValidationCheck')->middleware('token_verified');
 });
 
 //********************************************************TENANT*********************************************************
@@ -204,6 +205,10 @@ Route::group([
     Route::post('/course/register', 'CoursesController@registerCourseInDevice');
     Route::post('/courses/load', 'CoursesController@loadCourses');
 });
+
+
+//********************************************************TEST*********************************************************
+
 
 Route::get('/api/test', function(){
     return "Hello test";

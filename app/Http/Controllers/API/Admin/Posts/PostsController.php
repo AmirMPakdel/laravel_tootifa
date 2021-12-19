@@ -10,10 +10,8 @@ use App\Models\LevelOneGroup;
 use App\Models\LevelThreeGroup;
 use App\Models\LevelTwoGroup;
 use App\Models\Post;
-use App\Models\PostForm;
 use App\Models\Tag;
 use Illuminate\Http\Request;
-use Exception;
 
 
 class PostsController extends BaseController
@@ -24,6 +22,10 @@ class PostsController extends BaseController
         $title = $request->input('title');
         $groups = (object)$request->input('groups');
         $tags = (array)$request->input('tags');
+
+        // check for maintenance balance
+        if ($request->input('user')->u_profile->m_balance < 0)
+            return $this->sendResponse(Constant::$NEGETIVE_MAINTANANCE_BALANCE, null);
 
         // check title
         if (Post::where('title', $title)->exists())
@@ -51,7 +53,7 @@ class PostsController extends BaseController
         if ($g3) $g3->posts()->save($post);
 
         $post->save();
-        
+
         return $this->sendResponse(Constant::$SUCCESS,  ['post_id' => $post->id]);
     }
 
@@ -109,24 +111,22 @@ class PostsController extends BaseController
         if ($search_phrase)
             array_push($query, ['title', 'like', "%{$search_phrase}%"]);
 
-        if ($group)
-            $posts = $group->posts()->where($query)
-                ->orderBy($order_by, $order_direction)
-                ->get()->map(function ($post) {
-                    return $this->buildListPostObject($post);
-                })->toArray();
-        else
-            $posts = Post::where($query)->orderBy($order_by, $order_direction)
-                ->get()->map(function ($post) {
-                    return $this->buildListPostObject($post);
-                })->toArray();
-
-        try {
-            $last_items = (collect($posts)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-            return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        } catch (Exception $e) {
-            return $this->sendResponse(Constant::$NO_DATA, null);
+        if ($group) {
+            $paginator = $group->posts()->where($query)->orderBy($order_by, $order_direction)
+                ->paginate($chunk_count, ['*'], 'page', $page_count);
+        } else {
+            $paginator = Post::where($query)->orderBy($order_by, $order_direction)
+                ->paginate($chunk_count, ['*'], 'page', $page_count);
         }
+
+        $posts = $paginator->map(function ($post) {
+            return $this->buildListPostObject($post);
+        });
+
+        if (sizeof($posts) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
+        $result = ["total_size" => $paginator->total(), "list" => $posts];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function fetchSpecificPosts(Request $request)
@@ -207,7 +207,7 @@ class PostsController extends BaseController
             ];
         });
 
-        $post_forms = $post->post_forms()->map(function ($post_form){
+        $post_forms = $post->post_forms()->map(function ($post_form) {
             return [
                 'title' => $post_form->title,
                 'text' => $post_form->text,

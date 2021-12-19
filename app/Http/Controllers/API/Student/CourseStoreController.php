@@ -85,24 +85,22 @@ class CourseStoreController extends BaseController
         if ($search_phrase)
             array_push($query, ['title', 'like', "%{$search_phrase}%"]);
 
-        if ($group)
-            $courses = $group->courses()->valid()->where($query)
-                ->orderBy($order_by, $order_direction)
-                ->get()->map(function ($course) {
-                    return $this->buildListCourseObject($course);
-                })->toArray();
-        else
-            $courses = Course::valid()->where($query)->orderBy($order_by, $order_direction)
-                ->get()->map(function ($course) {
-                    return $this->buildListCourseObject($course);
-                })->toArray();
-
-        try {
-            $last_items = (collect($courses)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-            return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        } catch (Exception $e) {
-            return $this->sendResponse(Constant::$NO_DATA, null);
+        if ($group) {
+            $paginator = $group->courses()->where($query)->orderBy($order_by, $order_direction)
+                ->paginate($chunk_count, ['*'], 'page', $page_count);
+        } else {
+            $paginator = Course::where($query)->orderBy($order_by, $order_direction)
+                ->paginate($chunk_count, ['*'], 'page', $page_count);
         }
+
+        $courses = $paginator->map(function ($course) {
+            return $this->buildListCourseObject($course);
+        });
+
+        if (sizeof($courses) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
+        $result = ["total_size" => $paginator->total(), "list" => $courses];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function loadCourse(Request $request)
@@ -223,6 +221,7 @@ class CourseStoreController extends BaseController
             "intro_video" => $intro_video,
             "content_hierarchy" => $course->content_hierarchy,
             "is_comments_open" => $course->is_comments_open,
+            "is_encrypted" => $course->is_encrypted,
             "headings" => $headings,
             "contents" => $contents,
             "educators" => $educators,

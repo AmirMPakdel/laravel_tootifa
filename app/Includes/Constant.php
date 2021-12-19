@@ -11,6 +11,7 @@ class Constant
     public static $REPETITIVE_NATIONAL_CODE = 1107;
     public static $REPETITIVE_PHONE_NUMBER = 1108;
     public static $INVALID_VERIFICATION_CODE = 1109;
+    public static $DEVICE_NOT_FOUND = 1110;
     public static $INVALID_REQUEST = 1112;
     public static $INVALID_EMAIL = 1113;
     public static $INVALID_FILE = 1114;
@@ -51,6 +52,7 @@ class Constant
     public static $CONTENT_NOT_FOUND = 1151;
     public static $REPETITIVE_USERNAME = 1152;
     public static $REPETITIVE_SMS_TYPE_NAME = 1153;
+    public static $NEGETIVE_MAINTANANCE_BALANCE = 1154;
 
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";

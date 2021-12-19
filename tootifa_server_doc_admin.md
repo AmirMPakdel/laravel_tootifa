@@ -222,6 +222,10 @@
 
 # Minfo User Panel
 
+    Note1: These results are possible in all edit course routes in this section:
+            1. NEGETIVE_MAINTANANCE_BALANCE
+            2. COURSE_NOT_FOUND
+            
 ## GET USER PROFILE
 
 **path**
@@ -841,8 +845,28 @@
 
     description: "You can't have lower group levels without specializing higher group ids"
     description: "set the g#level to null or empty string if it's not necessary"
-
+    
 ```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## REQUEST COURSE VALIDATION CHECK
+
+**path**
+
+    /user/course/validation/check
+
+**format**
+
+    P11MA
+
+**input**
+
+    course_id:number
+
+**output**
+
+    SUCCESS:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -875,18 +899,22 @@
     description: by what fraction devide the whole items (at least 1)
 
     page_count:string|ui
-    description: which fraction of items to return (starts from 0)
+    description: which fraction of items to return (starts from 1)
 
 **output**
 
-    SUCCESS:Array[CourseItem]
+    SUCCESS:Data
 
     NO_DATA:null
-
 
 **types**
 
 ```javascript
+    def Data = {
+        "total_size":number,
+        "list":Array[CourseItem]
+    }
+
     def Filter = {
         "searching_phrase":string,
         "group":Group
@@ -921,7 +949,7 @@
 
 **path**
 
-    /courses/fetch/{chunk_count}/{page_count}
+    /courses/fetch/specific
 
 **format**
 
@@ -1064,11 +1092,11 @@
     description: by what fraction devide the whole items (at least 1)
 
     page_count:string|ui
-    description: which fraction of items to return (starts from 0)
+    description: which fraction of items to return (starts from 1)
 
 **output**
 
-    SUCCESS:Array[Student]
+    SUCCESS:Data
 
     NO_DATA:null
 
@@ -1077,6 +1105,11 @@
 **types**
 
 ```javascript
+    def Data = {
+        "total_size":number,
+        "list":Array[Student]
+    }
+
     def Student = {
         "id":number,
         "first_name":string,

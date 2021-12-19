@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 class BlogController extends BaseController
 {
-    
+
     public function fetchPosts(Request $request, $chunk_count, $page_count)
     {
         $filters = (object)$request->input('filters');
@@ -69,31 +69,30 @@ class BlogController extends BaseController
         if ($search_phrase)
             array_push($query, ['title', 'like', "%{$search_phrase}%"]);
 
-        if ($group)
-            $posts = $group->posts()->valid()->where($query)
-                ->orderBy($order_by, $order_direction)
-                ->get()->map(function ($post) {
-                    return $this->buildListPostObject($post);
-                })->toArray();
-        else
-            $posts = Post::valid()->where($query)->orderBy($order_by, $order_direction)
-                ->get()->map(function ($post) {
-                    return $this->buildListPostObject($post);
-                })->toArray();
-
-        try {
-            $last_items = (collect($posts)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-            return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        } catch (Exception $e) {
-            return $this->sendResponse(Constant::$NO_DATA, null);
+        if ($group) {
+            $paginator = $group->posts()->where($query)->orderBy($order_by, $order_direction)
+                ->paginate($chunk_count, ['*'], 'page', $page_count);
+        } else {
+            $paginator = Post::where($query)->orderBy($order_by, $order_direction)
+                ->paginate($chunk_count, ['*'], 'page', $page_count);
         }
+
+        $posts = $paginator->map(function ($post) {
+            return $this->buildListPostObject($post);
+        });
+
+        if (sizeof($posts) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
+        $result = ["total_size" => $paginator->total(), "list" => $posts];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
-    public function loadPost(Request $request){
+    public function loadPost(Request $request)
+    {
         // set visit 
         Helper::setPostVisit($request->input('post_id'));
 
-        $post = Post::where('id',$request->input('post_id'))->get()->map(function ($post) {
+        $post = Post::where('id', $request->input('post_id'))->get()->map(function ($post) {
             return $this->buildPostObject($post);
         })->toArray()[0];
 

@@ -18,7 +18,10 @@ class CourseStudentController extends BaseController
         $course = Course::find($request->input('course_id'));
         if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
-        $students = $course->students->map(function ($student) {
+        $paginator = $course->students()
+            ->orderBy('last_name', "asc")->paginate($chunk_count, ['*'], 'page', $page_count);
+
+        $students = $paginator->map(function ($student) {
             return [
                 'id' => $student->id,
                 'first_name' => $student->first_name,
@@ -29,12 +32,10 @@ class CourseStudentController extends BaseController
             ];
         });
 
-        try {
-            $last_items = (collect($students)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-            return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        } catch (Exception $e) {
-            return $this->sendResponse(Constant::$NO_DATA, null);
-        }
+        if (sizeof($students) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
+        $result = ["total_size" => $paginator->total(), "list" => $students];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function importCourseStudentsExcel(Request $request)

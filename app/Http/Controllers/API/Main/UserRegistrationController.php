@@ -3,8 +3,6 @@
 
 namespace App\Http\Controllers\API\Main;
 
-use App\Http\Controllers\API\Admin\CategoriesController;
-use App\Http\Controllers\API\Admin\SmsTypesController;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Includes\SmsManager;

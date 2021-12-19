@@ -15,8 +15,8 @@ use App\Models\LevelThreeGroup;
 use App\Models\LevelTwoGroup;
 use App\Models\LicenseKey;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Exception;
 
 class CoursesController extends BaseController
 {
@@ -30,6 +30,10 @@ class CoursesController extends BaseController
         $tags = (array)$request->input('tags');
         $educators = (array)$request->input('educators');
         $category = Category::find($request->input('category_id'));
+
+        // check for maintenance balance
+        if($request->input('user')->u_profile->m_balance < 0)
+            return $this->sendResponse(Constant::$NEGETIVE_MAINTANANCE_BALANCE, null);
 
         // check title
         if (Course::where('title', $title)->exists())
@@ -74,7 +78,6 @@ class CoursesController extends BaseController
 
         return $this->sendResponse(Constant::$SUCCESS,  ['course_id' => $course->id]);
     }
-
 
     public function fetchCourses(Request $request, $chunk_count, $page_count)
     {
@@ -123,6 +126,7 @@ class CoursesController extends BaseController
         $filters = (object)$request->input('filters');
 
         $search_phrase = isset($filters) ? $filters->search_phrase : null;
+        $validation_status = isset($filters) ? $filters->validation_status : null;
         $group = isset($filters) ? (object)$filters->group : null;
 
         // which group
@@ -146,24 +150,25 @@ class CoursesController extends BaseController
         if ($search_phrase)
             array_push($query, ['title', 'like', "%{$search_phrase}%"]);
 
-        if ($group)
-            $courses = $group->courses()->where($query)
-                ->orderBy($order_by, $order_direction)
-                ->get()->map(function ($course) {
-                    return $this->buildListCourseObject($course);
-                })->toArray();
-        else
-            $courses = Course::where($query)->orderBy($order_by, $order_direction)
-                ->get()->map(function ($course) {
-                    return $this->buildListCourseObject($course);
-                })->toArray();
+        if($validation_status)
+            array_push($query, ['validation_status', $validation_status]);
 
-        try {
-            $last_items = (collect($courses)->sortByDesc('id')->chunk($chunk_count))[$page_count];
-            return $this->sendResponse(Constant::$SUCCESS, $last_items);
-        } catch (Exception $e) {
-            return $this->sendResponse(Constant::$NO_DATA, null);
+        if ($group) {
+            $paginator = $group->courses()->where($query)->orderBy($order_by, $order_direction)
+                ->paginate($chunk_count, ['*'], 'page', $page_count);
+        } else {
+            $paginator = Course::where($query)->orderBy($order_by, $order_direction)
+                ->paginate($chunk_count, ['*'], 'page', $page_count);
         }
+
+        $courses = $paginator->map(function ($course) {
+            return $this->buildListCourseObject($course);
+        });
+
+        if (sizeof($courses) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
+        $result = ["total_size" => $paginator->total(), "list" => $courses];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function fetchSpecificCourses(Request $request)
@@ -319,4 +324,6 @@ class CoursesController extends BaseController
     {
         $student->courses()->updateExistingPivot($course, ['access' => $access], false);
     }
+
+
 }

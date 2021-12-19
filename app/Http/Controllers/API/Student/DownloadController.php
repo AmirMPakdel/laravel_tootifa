@@ -14,7 +14,7 @@ class DownloadController extends BaseController
     public function verifyForDownloadCourseItem(Request $request)
     {
         $course = Course::find($request->input('course_id'));
-        if(!$course)return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
+        if(!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
         $student = $request->input('student');
         $upload_transaction = UploadTransaction::where('upload_key', $request->input('upload_key'))->first();

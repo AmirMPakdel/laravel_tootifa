@@ -27,7 +27,10 @@ class CourseEditController extends BaseController
 {
     public function editCourse(Request $request, $ep)
     {
-        // TODO some preprocessing
+        // check for maintenance balance
+        if($request->input('user')->u_profile->m_balance < 0)
+            return $this->sendResponse(Constant::$NEGETIVE_MAINTANANCE_BALANCE, null);
+
         $course = Course::find($request->input('course_id'));
         if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
