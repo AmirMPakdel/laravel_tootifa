@@ -73,6 +73,7 @@
 
     SUCCESS:{
         user_info:UserInfo,
+        student_id:number,
         course:Course
     }
 
@@ -81,6 +82,8 @@
     LISCENSE_KEY_NOT_FOUND:null
 
     DEVICE_LIMIT:null
+
+    COURSE_NOT_VALID:null
 
 **types**
 
@@ -106,8 +109,8 @@
         "headings":Array[Heading],
         "contents":Array[Content],
         "content_hierarchy":string,
-        "logo":string, "decription: upload_key"
-        "cover":string, "decription: upload_key"
+        "logo":string, "decription: upload_key.file_type"
+        "cover":string, "decription: upload_key.file_type"
     }
 
     def Heading = {
@@ -172,7 +175,7 @@
     description: "Each key in keys array corresponds with it's respective course in courses array which have the same indexes"
 
     description: "Instead of a respective course, there could be one of the error codes bewlow:"
-                 "USER_NOT_FOUND|LISCENSE_KEY_NOT_FOUND|DEVICE_NOT_FOUND"
+                 "USER_NOT_FOUND|LISCENSE_KEY_NOT_FOUND|DEVICE_NOT_FOUND|COURSE_NOT_VALID"
 
 ```
 

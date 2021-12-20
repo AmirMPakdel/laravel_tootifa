@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\LicenseKey;
 use App\Models\Student;
 use App\Models\Tenant;
+use App\Models\UploadTransaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,9 +32,13 @@ class CoursesController extends BaseController
             $licenseKey = LicenseKey::where('key', $lk)->first();
             if($licenseKey == null) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
 
+            $complete_course = Course::find($licenseKey->course_id);
+            if($complete_course->validation_status != Constant::$VALIDATION_STATUS_VALID)
+                return $this->sendResponse(Constant::$COURSE_NOT_VALID, null);
+
             $course = $this->buildCourseObject(
                 Student::find($licenseKey->student_id),
-                Course::find($licenseKey->course_id)
+                $complete_course
             );
 
             $content = [
@@ -99,9 +104,13 @@ class CoursesController extends BaseController
                 $licenseKey = LicenseKey::where('key', $key->lk)->first();
                 if($licenseKey == null) return Constant::$LISCENSE_KEY_NOT_FOUND;
 
+                $complete_course = Course::find($licenseKey->course_id);
+                if($complete_course->validation_status != Constant::$VALIDATION_STATUS_VALID)
+                    return $this->sendResponse(Constant::$COURSE_NOT_VALID, null);
+
                 $course = $this->buildCourseObject(
                     Student::find($licenseKey->student_id),
-                    Course::find($licenseKey->course_id)
+                    $complete_course
                 );
 
                 $d1 = json_decode($licenseKey->device_one);
@@ -162,6 +171,19 @@ class CoursesController extends BaseController
             return $c;
         });
 
+        $logo = null;
+        $cover = null;
+
+        if($course->logo) {
+            $logo_file_type = UploadTransaction::where('upload_key', $course->logo)->first()->file_type;
+            $logo = $course->logo . "." . $logo_file_type;
+        }
+
+        if($course->cover) {
+            $cover_file_type = UploadTransaction::where('upload_key', $course->cover)->first()->file_type;
+            $cover = $course->cover . "." . $cover_file_type;
+        }
+
         return [
             'id' => $course->id,
             'has_access' => $has_access,
@@ -170,8 +192,8 @@ class CoursesController extends BaseController
             "headings" => $headings,
             "contents" => $contents,
             "content_hierarchy" => $course->content_hierarchy,
-            "logo" => $course->logo,
-            "cover" => $course->cover
+            "logo" => $logo,
+            "cover" => $cover
         ];
     }
 }
