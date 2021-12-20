@@ -48,6 +48,10 @@ class DownloadController extends BaseController
                 return $this->sendResponse(Constant::$NO_ACCESS_TO_COURSE, null);
         }
 
-        return $this->sendResponse(Constant::$SUCCESS, null);
+        $result = [
+            'file_type' => $upload_transaction->file_type
+        ];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 }
