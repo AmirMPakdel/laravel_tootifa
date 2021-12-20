@@ -53,7 +53,8 @@ class Constant
     public static $REPETITIVE_USERNAME = 1152;
     public static $REPETITIVE_SMS_TYPE_NAME = 1153;
     public static $NEGETIVE_MAINTANANCE_BALANCE = 1154;
-
+    public static $INVALID_USER_NAME = 1155;
+    
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
     public static $GENDER_FEMALE = 0;

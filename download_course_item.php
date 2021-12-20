@@ -1,26 +1,41 @@
 <?php 
 
+
 // fetching inputs
 $username = $_GET['username'];
 $student_id = $_GET['student_id'];
 $upload_key = $_GET['upload_key'];
 
 // verifying download
-$url = "https://tootifa.ir/api/tenant/student/public/download/verify";
+$url = "http://tootifa.ir/api/tenant/student/public/download/verify";
 
 $postRequest = array(
     'student_id' => $student_id,
     'upload_key' => $upload_key 
 );
 
-curl_setopt($cURLConnection, CURLOPT_POSTFIELDS, $postRequest);
-curl_setopt($cURLConnection, CURLOPT_RETURNTRANSFER, true);
+$ch = curl_init(); 
+curl_setopt($ch, CURLOPT_URL, $url ); 
+curl_setopt($ch, CURLOPT_POST, 1 ); 
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postRequest); 
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     "X-TENANT: $username"
 ));
+$postResult = curl_exec($ch); 
 
-$apiResponse = curl_exec($cURLConnection);
-curl_close($cURLConnection);
 
-header('Content-Type: application/json; charset=utf-8');
-echo json_encode($apiResponse);
+if (curl_errno($ch)) { 
+   print curl_error($ch); 
+} 
+
+echo "5";
+
+curl_close($ch); 
+
+// header('Content-Type: application/json; charset=utf-8');
+$r = array($postResult)['result_code'];
+$t = 5;
+

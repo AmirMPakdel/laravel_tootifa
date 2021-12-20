@@ -549,7 +549,7 @@ class CourseEditController extends BaseController
             $content_voice,
             'url',
             true,
-            true,
+            false,
             $request->input('upload_key')
         );
 
@@ -583,7 +583,7 @@ class CourseEditController extends BaseController
             $content_voice,
             "url",
             true,
-            true,
+            false,
             $request->input('upload_key')
         );
 
@@ -633,7 +633,7 @@ class CourseEditController extends BaseController
             $content_document,
             'url',
             true,
-            true,
+            false,
             $request->input('upload_key')
         );
 
@@ -667,7 +667,7 @@ class CourseEditController extends BaseController
             $content_document,
             "url",
             true,
-            true,
+            false,
             $request->input('upload_key')
         );
 
