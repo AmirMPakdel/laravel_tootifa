@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Student;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Models\Course;
+use App\Models\Student;
 use App\Models\UploadTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,8 +17,11 @@ class DownloadController extends BaseController
         $course = Course::find($request->input('course_id'));
         if(!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
-        $student = $request->input('student');
+        $student = Student::find($request->input('student_id'));
+        if(!$student) return $this->sendResponse(Constant::$STUDENT_NOT_FOUND, null);
+        
         $upload_transaction = UploadTransaction::where('upload_key', $request->input('upload_key'))->first();
+        if(!$upload_transaction) return $this->sendResponse(Constant::$INVALID_UPLOAD_KEY, null);
 
         $free_types = [
             Constant::$UPLOAD_TYPE_COURSE_DOCUMENT_FREE,

@@ -38,6 +38,7 @@ class CoursesController extends BaseController
 
             $content = [
                 'user_info' => $user_info,
+                'student_id' => $licenseKey->student_id,
                 'course' => $course
             ];
 

@@ -159,6 +159,8 @@ Route::group([
 
     Route::post('/main/load', 'MainPageController@loadMainPage');
     Route::post('/popups/load', 'MainPageController@loadActivePopups');
+
+    Route::post('/download/verify', 'DownloadController@verifyForDownloadCourseItem');
 });
 
 // Tenant students' routes
@@ -192,7 +194,6 @@ Route::group([
     Route::post('/comment/score/get', 'StudentCourseController@getCommentScore');
     Route::post('/comment/score/update', 'StudentCourseController@updateCommentScore');
     Route::post('/store/course/load', 'CourseStoreController@loadCourseForLoggedIn');
-    Route::post('/download/verify', 'DownloadController@verifyForDownloadCourseItem');
 });
 
 //********************************************************APP*********************************************************
