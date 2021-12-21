@@ -108,7 +108,7 @@
         "is_encrypted":number|b,
         "headings":Array[Heading],
         "contents":Array[Content],
-        "content_hierarchy":string,
+        "content_hierarchy":Array(HierarchyObj),
         "logo":string, "decription: upload_key.file_type"
         "cover":string, "decription: upload_key.file_type"
     }
@@ -125,6 +125,11 @@
         "type":enum("ct_video"|"ct_document"|"ct_voice"),
         "is_free":number|b,
         "size":number,
+    }
+
+    def HierarchyObj = {
+        'heading_id':number
+        'content_ids':Array(number)
     }
 ```
 
