@@ -20,9 +20,9 @@ class UploadController extends BaseController
         $upload_transaction->file_size = $request->input('file_size');
         $upload_transaction->old_upload_key = $request->input('old_upload_key');
 
-        $course_id = $request->input('course_id');
-        if (0/*$course_id*/) { //fix later - bad condition
-            $course = Course::find($course_id);
+        if (in_array($upload_transaction->upload_type, Constant::getCourseItemsUploadTypes())) {
+            $course = Course::find($request->input('course_id'));
+            if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
             $upload_transaction->is_public = 0;
             $upload_transaction->is_encrypted = $course->is_encrypted;
             if ($course->is_encrypted) $upload_transaction->enc_key = Helper::generateKey(16);

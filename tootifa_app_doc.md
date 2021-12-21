@@ -96,7 +96,7 @@
     }
 
     def UserInfo = {
-        "user_id": string,
+        "username": string,
         "domain": string,
         "title" : string,
     }
@@ -156,7 +156,7 @@
 
 ```javascript
     def Key = {
-        "user_id": string,
+        "username": string,
         "lk": string,
     }
 

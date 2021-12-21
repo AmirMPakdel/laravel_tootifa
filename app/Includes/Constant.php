@@ -55,7 +55,7 @@ class Constant
     public static $NEGETIVE_MAINTANANCE_BALANCE = 1154;
     public static $INVALID_USER_NAME = 1155;
     public static $COURSE_NOT_VALID = 1116;
-    
+
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
     public static $GENDER_FEMALE = 0;
@@ -209,6 +209,27 @@ class Constant
     public static $UPLOAD_TYPE_COURSE_VIDEO_FREE = "ut_course_video_free";
     public static $UPLOAD_TYPE_COURSE_DOCUMENT_FREE = "ut_course_document_free";
     public static $UPLOAD_TYPE_COURSE_VOICE_FREE = "ut_course_voice_free";
+
+    public static function getFreeUploadTypes()
+    {
+        return [
+            Constant::$UPLOAD_TYPE_COURSE_DOCUMENT_FREE,
+            Constant::$UPLOAD_TYPE_COURSE_VIDEO_FREE,
+            Constant::$UPLOAD_TYPE_COURSE_VOICE_FREE
+        ];
+    }
+
+    public static function getCourseItemsUploadTypes()
+    {
+        return [
+            Constant::$UPLOAD_TYPE_COURSE_DOCUMENT_FREE,
+            Constant::$UPLOAD_TYPE_COURSE_VIDEO_FREE,
+            Constant::$UPLOAD_TYPE_COURSE_VOICE_FREE,
+            Constant::$UPLOAD_TYPE_COURSE_DOCUMENT,
+            Constant::$UPLOAD_TYPE_COURSE_VIDEO,
+            Constant::$UPLOAD_TYPE_COURSE_VOICE
+        ];
+    }
 
     //**************************************************** EDIT PARAMS *************************************************
     public static $EDIT_PARAM_LOGO = "ep_logo";

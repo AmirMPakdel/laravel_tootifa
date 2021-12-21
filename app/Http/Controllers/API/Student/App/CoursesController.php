@@ -23,7 +23,7 @@ class CoursesController extends BaseController
         if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
 
         $user_info = [
-            'user_id' => $tenant->id,
+            'username' => $tenant->id,
             'domain' => 'foo',
             'title' => 'bar',
         ];
@@ -38,7 +38,8 @@ class CoursesController extends BaseController
 
             $course = $this->buildCourseObject(
                 Student::find($licenseKey->student_id),
-                $complete_course
+                $complete_course,
+                $user_info['username']
             );
 
             $content = [
@@ -94,7 +95,7 @@ class CoursesController extends BaseController
         $courses = [];
 
         foreach($keys as $key){
-            $tenant = Tenant::find($key->user_id);
+            $tenant = Tenant::find($key->username);
             if($tenant == null) {
                 array_push($courses, Constant::$USER_NOT_FOUND);
                 continue;
@@ -110,7 +111,8 @@ class CoursesController extends BaseController
 
                 $course = $this->buildCourseObject(
                     Student::find($licenseKey->student_id),
-                    $complete_course
+                    $complete_course,
+                    $key->username
                 );
 
                 $d1 = json_decode($licenseKey->device_one);
@@ -134,7 +136,7 @@ class CoursesController extends BaseController
     }
 
 
-    public function buildCourseObject($student, $course){
+    public function buildCourseObject($student, $course, $username){
         $has_access = DB::table('course_student')
                 ->whereCourseId($course->id)
                 ->whereStudentId($student->id)
@@ -172,16 +174,11 @@ class CoursesController extends BaseController
         });
 
         $logo = null;
-        $cover = null;
-
         if($course->logo) {
             $logo_file_type = UploadTransaction::where('upload_key', $course->logo)->first()->file_type;
-            $logo = $course->logo . "." . $logo_file_type;
-        }
-
-        if($course->cover) {
-            $cover_file_type = UploadTransaction::where('upload_key', $course->cover)->first()->file_type;
-            $cover = $course->cover . "." . $cover_file_type;
+            $logo = env("FTP_SERVER_URL") . "//public_files/" 
+                   . $username . "/" 
+                   . $course->logo . "." . $logo_file_type;
         }
 
         return [
@@ -193,7 +190,6 @@ class CoursesController extends BaseController
             "contents" => $contents,
             "content_hierarchy" => $course->content_hierarchy,
             "logo" => $logo,
-            "cover" => $cover
         ];
     }
 }

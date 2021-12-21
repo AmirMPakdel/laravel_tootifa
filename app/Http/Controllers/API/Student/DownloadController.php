@@ -23,13 +23,9 @@ class DownloadController extends BaseController
         $upload_transaction = UploadTransaction::where('upload_key', $request->input('upload_key'))->first();
         if(!$upload_transaction) return $this->sendResponse(Constant::$INVALID_UPLOAD_KEY, null);
 
-        $free_types = [
-            Constant::$UPLOAD_TYPE_COURSE_DOCUMENT_FREE,
-            Constant::$UPLOAD_TYPE_COURSE_VIDEO_FREE,
-            Constant::$UPLOAD_TYPE_COURSE_VOICE_FREE
-        ];
+        
 
-        if (!in_array($upload_transaction->upload_type, $free_types)) {
+        if (!in_array($upload_transaction->upload_type, Constant::getCourseFreeUploadTypes())) {
             $registered = DB::table('course_student')
                 ->whereCourseId($course->id)
                 ->whereStudentId($student->id)
