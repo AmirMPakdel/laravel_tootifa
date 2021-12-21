@@ -210,7 +210,7 @@ class Constant
     public static $UPLOAD_TYPE_COURSE_DOCUMENT_FREE = "ut_course_document_free";
     public static $UPLOAD_TYPE_COURSE_VOICE_FREE = "ut_course_voice_free";
 
-    public static function getFreeUploadTypes()
+    public static function getCourseFreeUploadTypes()
     {
         return [
             Constant::$UPLOAD_TYPE_COURSE_DOCUMENT_FREE,
