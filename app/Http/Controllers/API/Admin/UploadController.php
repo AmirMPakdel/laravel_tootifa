@@ -21,7 +21,7 @@ class UploadController extends BaseController
         $upload_transaction->old_upload_key = $request->input('old_upload_key');
 
         $course_id = $request->input('course_id');
-        if ($course_id) {
+        if (0/*$course_id*/) { //fix later - bad condition
             $course = Course::find($course_id);
             $upload_transaction->is_public = 0;
             $upload_transaction->is_encrypted = $course->is_encrypted;
