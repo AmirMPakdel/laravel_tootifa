@@ -21,11 +21,14 @@ class UploadController extends BaseController
         $upload_transaction->old_upload_key = $request->input('old_upload_key');
 
         if (in_array($upload_transaction->upload_type, Constant::getCourseItemsUploadTypes())) {
-            $course = Course::find($request->input('course_id'));
-            if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
-            $upload_transaction->is_public = 0;
-            $upload_transaction->is_encrypted = $course->is_encrypted;
-            if ($course->is_encrypted) $upload_transaction->enc_key = Helper::generateKey(16);
+            $upload_transaction->is_public = 1;
+            if (in_array($upload_transaction->upload_type, Constant::getCourseEncryptUploadTypes())){
+                $course = Course::find($request->input('course_id'));
+                if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
+                
+                $upload_transaction->is_encrypted = $course->is_encrypted;
+                if ($course->is_encrypted) $upload_transaction->enc_key = Helper::generateKey(16);
+            }
         } else {
             $upload_transaction->is_public = 1;
             $upload_transaction->is_encrypted = 0;

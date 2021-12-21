@@ -231,6 +231,14 @@ class Constant
         ];
     }
 
+    public static function getCourseEncryptUploadTypes()
+    {
+        return [
+            Constant::$UPLOAD_TYPE_COURSE_VIDEO_FREE,
+            Constant::$UPLOAD_TYPE_COURSE_VIDEO,
+        ];
+    }
+
     //**************************************************** EDIT PARAMS *************************************************
     public static $EDIT_PARAM_LOGO = "ep_logo";
     public static $EDIT_PARAM_COVER = "ep_cover";
