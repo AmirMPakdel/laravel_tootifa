@@ -204,6 +204,7 @@ class Constant
     public static $UPLOAD_TYPE_COURSE_LOGO = "ut_course_logo";
     public static $UPLOAD_TYPE_COURSE_COVER = "ut_course_cover";
     public static $UPLOAD_TYPE_COURSE_VIDEO = "ut_course_video";
+    public static $UPLOAD_TYPE_COURSE_VIDEO_INTRODUCTION = "ut_course_video_introduction";
     public static $UPLOAD_TYPE_COURSE_DOCUMENT = "ut_course_document";
     public static $UPLOAD_TYPE_COURSE_VOICE = "ut_course_voice";
     public static $UPLOAD_TYPE_COURSE_VIDEO_FREE = "ut_course_video_free";
@@ -234,7 +235,6 @@ class Constant
     public static function getCourseEncryptUploadTypes()
     {
         return [
-            Constant::$UPLOAD_TYPE_COURSE_VIDEO_FREE,
             Constant::$UPLOAD_TYPE_COURSE_VIDEO,
         ];
     }
