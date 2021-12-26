@@ -91,7 +91,7 @@
     def DeviceInfo = {
         "imei": string,
         "model": string,
-        "android_version" : number,
+        "android_version" : string,
         "android_api_level" : number,
     }
 

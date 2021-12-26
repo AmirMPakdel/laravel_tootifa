@@ -40,7 +40,7 @@ class CoursesController extends BaseController
     public function registerCourseInDevice(Request $request){
         $lk = $request->input('lk');
         $old_lk = $request->input('old_lk');
-        $deviceInfo = json_decode($request->input('device_info'));
+        $deviceInfo = $request->input('device_info');
         $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
 
         if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
@@ -107,7 +107,7 @@ class CoursesController extends BaseController
             }
 
             // to prevent two different lk's connected to one course in one device
-            if($old_licenseKey != null){
+            if($old_licenseKey != null && $old_licenseKey != $licenseKey){
                 $d1 = json_decode($old_licenseKey->device_one);
                 $d2 = json_decode($old_licenseKey->device_two);
 
