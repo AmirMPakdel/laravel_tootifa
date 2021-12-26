@@ -82,7 +82,7 @@ class CoursesController extends BaseController
 
             if($d1 && $d2){
 
-                if($d1->imei != $deviceInfo->imei && $d2->imei != $deviceInfo->ime)
+                if($d1->imei != $deviceInfo->imei && $d2->imei != $deviceInfo->imei)
                    return $this->sendResponse(Constant::$DEVICE_LIMIT, null);
 
             }elseif(!$d1 && !$d2){
