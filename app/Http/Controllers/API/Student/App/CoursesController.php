@@ -77,8 +77,11 @@ class CoursesController extends BaseController
                 'course' => $course
             ];
 
-            $d1 = (object)$licenseKey->device_one;
-            $d2 = (object)$licenseKey->device_two;
+            $d1 = $licenseKey->device_one;
+            $d2 = $licenseKey->device_two;
+
+            if($d1) $d1 = (object)$d1;
+            if($d2) $d2 = (object)$d2;
 
             if($d1 && $d2){
 
