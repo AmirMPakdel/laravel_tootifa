@@ -40,7 +40,7 @@ class CoursesController extends BaseController
     public function registerCourseInDevice(Request $request){
         $lk = $request->input('lk');
         $old_lk = $request->input('old_lk');
-        $deviceInfo = json_decode($request->input('device_info'));
+        $deviceInfo = $request->input('device_info');
         $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
 
         if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
@@ -77,8 +77,8 @@ class CoursesController extends BaseController
                 'course' => $course
             ];
 
-            $d1 = json_decode($licenseKey->device_one);
-            $d2 = json_decode($licenseKey->device_two);
+            $d1 = (object)json_decode($licenseKey->device_one, true);
+            $d2 = (object)json_decode($licenseKey->device_two, true);
 
             if($d1 && $d2){
 
