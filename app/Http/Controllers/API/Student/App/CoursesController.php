@@ -40,7 +40,7 @@ class CoursesController extends BaseController
     public function registerCourseInDevice(Request $request){
         $lk = $request->input('lk');
         $old_lk = $request->input('old_lk');
-        $deviceInfo = $request->input('device_info');
+        $deviceInfo = json_decode($request->input('device_info'));
         $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
 
         if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
@@ -77,33 +77,30 @@ class CoursesController extends BaseController
                 'course' => $course
             ];
 
-            $d1 = $licenseKey->device_one;
-            $d2 = $licenseKey->device_two;
-
-            if($d1) $d1 = (object)$d1;
-            if($d2) $d2 = (object)$d2;
+            $d1 = json_decode($licenseKey->device_one);
+            $d2 = json_decode($licenseKey->device_two);
 
             if($d1 && $d2){
 
-                if($d1->imei != $deviceInfo->imei && $d2->imei != $deviceInfo->imei)
+                if($d1->imei != $deviceInfo->imei && $d2->imei != $deviceInfo->ime)
                    return $this->sendResponse(Constant::$DEVICE_LIMIT, null);
 
             }elseif(!$d1 && !$d2){
 
-                $licenseKey->device_one = $deviceInfo;
+                $licenseKey->device_one = json_encode($deviceInfo);
                 $licenseKey->save();
 
             }elseif($d1 && !$d2){
 
-                if($d1->imei != "123456"){
-                    $licenseKey->device_two = $deviceInfo;
+                if($d1->imei != $deviceInfo->imei){
+                    $licenseKey->device_two = json_encode($deviceInfo);
                     $licenseKey->save();
                 }
         
             }elseif(!$d1 && $d2){
 
                 if($d2->imei != $deviceInfo->imei){
-                    $licenseKey->device_one = $deviceInfo;
+                    $licenseKey->device_one = json_encode($deviceInfo);
                     $licenseKey->save();
                 }
 
@@ -111,8 +108,8 @@ class CoursesController extends BaseController
 
             // to prevent two different lk's connected to one course in one device
             if($old_licenseKey != null && $old_licenseKey != $licenseKey){
-                $d1 = (object)$old_licenseKey->device_one;
-                $d2 = (object)$old_licenseKey->device_two;
+                $d1 = json_decode($old_licenseKey->device_one);
+                $d2 = json_decode($old_licenseKey->device_two);
 
                 if($d1->imei == $deviceInfo->imei)
                     $old_licenseKey->device_one = null;
