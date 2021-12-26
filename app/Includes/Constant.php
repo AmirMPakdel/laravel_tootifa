@@ -55,6 +55,7 @@ class Constant
     public static $NEGETIVE_MAINTANANCE_BALANCE = 1154;
     public static $INVALID_USER_NAME = 1155;
     public static $COURSE_NOT_VALID = 1116;
+    public static $OLD_LISCENSE_KEY_NOT_FOUND = 1117;
 
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";

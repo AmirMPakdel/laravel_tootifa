@@ -20,9 +20,8 @@ $NO_ACCESS_TO_COURSE = 1144;
 // fetching inputs
 $username = $_GET['username'];
 $student_id = $_GET['student_id'];
-$course_id  = $_GET['course_id'];
+$course_id = $_GET['course_id'];
 $upload_key = $_GET['upload_key'];
-
 
 // checking if inputs are set
 if (!$username || !$student_id || !$course_id || !$upload_key) {
@@ -77,31 +76,84 @@ if ($result_code != $SUCCESS) {
 }
 
 $type = $data['file_type'];
-$filepath = "http://dltest.tootifa.ir/course_media/$username/$upload_key.$type";
+$filepath = "./course_media/$username/$upload_key.$type";
 
-header('Content-Description: File Transfer');
-header('Content-Type: application/octet-stream');
-header('Content-Disposition: attachment; filename="' . basename($filepath) . '"');
-header('Expires: 0');
-header('Cache-Control: must-revalidate');
-header('Pragma: public');
-header('Content-Length: ' . filesize($filepath));
-flush(); // Flush system output buffer
 
-$handle = fopen($path, 'rb');
-while (!feof($handle)) {
-    echo fread($handle, 8192);
+function DownloadFileAsResumable($file)
+{
+    $filesize = filesize($file);
+
+    $offset = 0;
+    $length = $filesize;
+
+    if (isset($_SERVER['HTTP_RANGE'])) {
+        // if the HTTP_RANGE header is set we're dealing with partial content
+
+        $partialContent = true;
+
+        // find the requested range
+        // this might be too simplistic, apparently the client can request
+        // multiple ranges, which can become pretty complex, so ignore it for now
+        preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
+
+        $offset = intval($matches[1]);
+        $length = intval($matches[2]) - $offset;
+    } else {
+        $partialContent = false;
+    }
+
+    if ($partialContent) {
+        // output the right headers for partial content
+
+        header('HTTP/1.1 206 Partial Content');
+
+        header('Content-Range: bytes ' . $offset . '-' . ($offset + $length) . '/' . $filesize);
+    }
+
+    // output the regular HTTP headers
+    header('Content-Description: File Transfer');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename=' . basename($file));
+    header('Content-Transfer-Encoding: binary');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($file));
+    ob_clean();
     flush();
+
+    $handle = fopen($file, 'rb');
+    fseek($file, $offset);
+
+    while (!feof($handle)) {
+        echo fread($handle, 8192);
+        flush();
+    }
+    fclose($handle);
+    die;
+
+    // don't forget to send the data too
+    // print($data);
 }
-fclose($handle);
 
-die();
+function DownloadFile($file)
+{ // $file = include path
+    if (file_exists($file)) {
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=' . basename($file));
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($file));
+        ob_clean();
+        flush();
+        readfile($file);
+        exit;
+    } else {
+        echo "file not found";
+    }
+}
 
-
-// // Process download
-// if (file_exists($filepath)) {
-   
-// } else {
-//     http_response_code(404);
-//     die();
-// }
+DownloadFile($filepath);
