@@ -77,8 +77,8 @@ class CoursesController extends BaseController
                 'course' => $course
             ];
 
-            $d1 = json_decode($licenseKey->device_one);
-            $d2 = json_decode($licenseKey->device_two);
+            $d1 = $licenseKey->device_one;
+            $d2 = $licenseKey->device_two;
 
             if($d1 && $d2){
 
@@ -87,20 +87,20 @@ class CoursesController extends BaseController
 
             }elseif(!$d1 && !$d2){
 
-                $licenseKey->device_one = json_encode($deviceInfo);
+                $licenseKey->device_one = $deviceInfo;
                 $licenseKey->save();
 
             }elseif($d1 && !$d2){
 
                 if($d1->imei != $deviceInfo->imei){
-                    $licenseKey->device_two = json_encode($deviceInfo);
+                    $licenseKey->device_two = $deviceInfo;
                     $licenseKey->save();
                 }
         
             }elseif(!$d1 && $d2){
 
                 if($d2->imei != $deviceInfo->imei){
-                    $licenseKey->device_one = json_encode($deviceInfo);
+                    $licenseKey->device_one = $deviceInfo;
                     $licenseKey->save();
                 }
 
@@ -108,8 +108,8 @@ class CoursesController extends BaseController
 
             // to prevent two different lk's connected to one course in one device
             if($old_licenseKey != null && $old_licenseKey != $licenseKey){
-                $d1 = json_decode($old_licenseKey->device_one);
-                $d2 = json_decode($old_licenseKey->device_two);
+                $d1 = $old_licenseKey->device_one;
+                $d2 = $old_licenseKey->device_two;
 
                 if($d1->imei == $deviceInfo->imei)
                     $old_licenseKey->device_one = null;
@@ -224,7 +224,7 @@ class CoursesController extends BaseController
             "is_encrypted" => $course->is_encrypted,
             "headings" => $headings,
             "contents" => $contents,
-            "content_hierarchy" => $course->content_hierarchy,
+            "content_hierarchy" => json_decode($course->content_hierarchy),
             "logo" => $logo,
         ];
     }
