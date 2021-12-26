@@ -77,8 +77,8 @@ class CoursesController extends BaseController
                 'course' => $course
             ];
 
-            $d1 = $licenseKey->device_one;
-            $d2 = $licenseKey->device_two;
+            $d1 = (object)$licenseKey->device_one;
+            $d2 = (object)$licenseKey->device_two;
 
             if($d1 && $d2){
 
@@ -108,8 +108,8 @@ class CoursesController extends BaseController
 
             // to prevent two different lk's connected to one course in one device
             if($old_licenseKey != null && $old_licenseKey != $licenseKey){
-                $d1 = $old_licenseKey->device_one;
-                $d2 = $old_licenseKey->device_two;
+                $d1 = (object)$old_licenseKey->device_one;
+                $d2 = (object)$old_licenseKey->device_two;
 
                 if($d1->imei == $deviceInfo->imei)
                     $old_licenseKey->device_one = null;
