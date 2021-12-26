@@ -95,7 +95,7 @@ class CoursesController extends BaseController
 
             }elseif($d1 && !$d2){
 
-                if($d1->imei != (object)$deviceInfo->imei){
+                if($d1->imei != "123456"){
                     $licenseKey->device_two = $deviceInfo;
                     $licenseKey->save();
                 }
