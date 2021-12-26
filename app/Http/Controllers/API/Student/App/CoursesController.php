@@ -40,7 +40,7 @@ class CoursesController extends BaseController
     public function registerCourseInDevice(Request $request){
         $lk = $request->input('lk');
         $old_lk = $request->input('old_lk');
-        $deviceInfo = $request->input('device_info');
+        $deviceInfo = (object)$request->input('device_info');
         $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
 
         if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
@@ -82,7 +82,7 @@ class CoursesController extends BaseController
 
             if($d1 && $d2){
 
-                if($d1->imei != $deviceInfo->imei && $d2->imei != $deviceInfo->ime)
+                if($d1->imei != $deviceInfo->imei && $d2->imei != $deviceInfo->imei)
                    return $this->sendResponse(Constant::$DEVICE_LIMIT, null);
 
             }elseif(!$d1 && !$d2){
