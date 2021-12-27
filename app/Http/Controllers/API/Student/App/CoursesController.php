@@ -108,8 +108,8 @@ class CoursesController extends BaseController
 
             // to prevent two different lk's connected to one course in one device
             if($old_licenseKey != null && $old_licenseKey != $licenseKey){
-                $d1 = json_decode($old_licenseKey->device_one);
-                $d2 = json_decode($old_licenseKey->device_two);
+                $d1 = (object)json_decode($licenseKey->device_one, true);
+                $d2 = (object)json_decode($licenseKey->device_two, true);
 
                 if($d1->imei == $deviceInfo->imei)
                     $old_licenseKey->device_one = null;
@@ -212,7 +212,7 @@ class CoursesController extends BaseController
         $logo = null;
         if($course->logo) {
             $logo_file_type = UploadTransaction::where('upload_key', $course->logo)->first()->file_type;
-            $logo = env("FTP_SERVER_URL") . "//public_files/" 
+            $logo = env("FTP_SERVER_URL") . "/public_files/" 
                    . $username . "/" 
                    . $course->logo . "." . $logo_file_type;
         }
