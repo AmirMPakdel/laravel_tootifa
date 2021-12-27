@@ -222,6 +222,7 @@ class StudentCourseController extends BaseController
     private function buildListCourseObject($course){
         return [
             'id' => $course->id,
+            'is_online' => $course->is_online,
             'title' => $course->title,
         ];
     }
@@ -302,6 +303,7 @@ class StudentCourseController extends BaseController
             "tags" => $tags,
             "duration" => $course->duration,
             "has_discount" => $course->has_discount,
+            "is_online" => $course->is_online,
             "discount" => $course->discount,
             "holding_status" => $course->holding_status,
             "release_date" => $course->release_date,

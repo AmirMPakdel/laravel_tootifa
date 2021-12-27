@@ -269,6 +269,7 @@ class CoursesController extends BaseController
             'has_access' => $has_access,
             'title' => $course->title,
             "is_encrypted" => $course->is_encrypted,
+            "is_online" => $course->is_online,
             "headings" => $headings,
             "contents" => $contents,
             "content_hierarchy" => json_decode($course->content_hierarchy),

@@ -203,6 +203,7 @@ class CourseStoreController extends BaseController
             'sells' => $course->sells,
             'score' => $course->score,
             'visits_count' => $course->visits_count,
+            'is_online' => $course->is_online,
             'g1' => $course->level_one_group_id,
             'g2' => $course->level_two_group_id,
             'g3' => $course->level_three_group_id,
