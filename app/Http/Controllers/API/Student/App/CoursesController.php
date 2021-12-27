@@ -21,7 +21,7 @@ class CoursesController extends BaseController
     // public function getLicenseKeyShollowInfo(Request $request){
     //     $lk = $request->input('lk');
     //     $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
-        
+
     //     if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
 
     //     $username = $tenant->id;
@@ -40,12 +40,13 @@ class CoursesController extends BaseController
     //     return $result;
     // }
 
-    public function registerCourseInDevice(Request $request){
+    public function registerCourseInDevice(Request $request)
+    {
         $lk = $request->input('lk');
         $deviceInfo = $request->input('device_info');
         $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
 
-        if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
+        if (!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
 
         $profile = UProfile::where('tenant_id', $tenant->id)->first();
         $user_info = [
@@ -54,12 +55,12 @@ class CoursesController extends BaseController
             'title' => $profile->title,
         ];
 
-        $result = $tenant->run(function() use ($lk, $deviceInfo, $user_info){
+        $result = $tenant->run(function () use ($lk, $deviceInfo, $user_info) {
             $licenseKey = LicenseKey::where('key', $lk)->first();
-            if($licenseKey == null) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
+            if ($licenseKey == null) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
 
             $complete_course = Course::find($licenseKey->course_id);
-            if($complete_course->validation_status != Constant::$VALIDATION_STATUS_VALID)
+            if ($complete_course->validation_status != Constant::$VALIDATION_STATUS_VALID)
                 return $this->sendResponse(Constant::$COURSE_NOT_VALID, null);
 
             $course = $this->buildCourseObject(
@@ -77,30 +78,26 @@ class CoursesController extends BaseController
             $d1 = json_decode($licenseKey->device_one, true);
             $d2 = json_decode($licenseKey->device_two, true);
 
-            if($d1 && $d2){
+            if ($d1 && $d2) {
 
-                if($d1['imei'] != $deviceInfo['imei'] && $d2['imei'] != $deviceInfo['imei'])
-                   return $this->sendResponse(Constant::$DEVICE_LIMIT, null);
-
-            }elseif(!$d1 && !$d2){
+                if ($d1['imei'] != $deviceInfo['imei'] && $d2['imei'] != $deviceInfo['imei'])
+                    return $this->sendResponse(Constant::$DEVICE_LIMIT, null);
+            } elseif (!$d1 && !$d2) {
 
                 $licenseKey->device_one = json_encode($deviceInfo);
                 $licenseKey->save();
+            } elseif ($d1 && !$d2) {
 
-            }elseif($d1 && !$d2){
-
-                if($d1['imei'] != $deviceInfo['imei']){
+                if ($d1['imei'] != $deviceInfo['imei']) {
                     $licenseKey->device_two = json_encode($deviceInfo);
                     $licenseKey->save();
                 }
-        
-            }elseif(!$d1 && $d2){
+            } elseif (!$d1 && $d2) {
 
-                if($d2['imei'] != $deviceInfo['imei']){
+                if ($d2['imei'] != $deviceInfo['imei']) {
                     $licenseKey->device_one = json_encode($deviceInfo);
                     $licenseKey->save();
                 }
-
             }
 
             // to prevent two different lk's connected to one course in one device
@@ -110,7 +107,7 @@ class CoursesController extends BaseController
                 ['course_id', $licenseKey->course_id],
             ])->first();
 
-            if($old_lk_d1){
+            if ($old_lk_d1) {
                 $old_lk_d1->device_one = null;
                 $old_lk_d1->save();
             }
@@ -121,7 +118,7 @@ class CoursesController extends BaseController
                 ['course_id', $licenseKey->course_id],
             ])->first();
 
-            if($old_lk_d2){
+            if ($old_lk_d2) {
                 $old_lk_d2->device_two = null;
                 $old_lk_d2->save();
             }
@@ -132,26 +129,27 @@ class CoursesController extends BaseController
         return $result;
     }
 
-    public function loadCourses(Request $request){
+    public function loadCourses(Request $request)
+    {
         $imei = $request->input('imei');
         $keys = $request->input('keys');
         $courses = [];
 
-        foreach($keys as $key){
+        foreach ($keys as $key) {
             $key = (object)$key;
             $tenant = Tenant::find($key->username);
-            if($tenant == null) {
+            if ($tenant == null) {
                 array_push($courses, Constant::$USER_NOT_FOUND);
                 continue;
             }
 
-            $course = $tenant->run(function() use ($key, $imei){
+            $course = $tenant->run(function () use ($key, $imei) {
                 $licenseKey = LicenseKey::where('key', $key->lk)->first();
-                if($licenseKey == null) return Constant::$LISCENSE_KEY_NOT_FOUND;
+                if ($licenseKey == null) return Constant::$LISCENSE_KEY_NOT_FOUND;
 
                 $complete_course = Course::find($licenseKey->course_id);
-                if($complete_course->validation_status != Constant::$VALIDATION_STATUS_VALID)
-                    return $this->sendResponse(Constant::$COURSE_NOT_VALID, null);
+                if ($complete_course->validation_status != Constant::$VALIDATION_STATUS_VALID)
+                    return Constant::$COURSE_NOT_VALID;
 
                 $course = $this->buildCourseObject(
                     Student::find($licenseKey->student_id),
@@ -162,11 +160,11 @@ class CoursesController extends BaseController
                 $d1 = json_decode($licenseKey->device_one, true);
                 $d2 = json_decode($licenseKey->device_two, true);
 
-                if($d1 != null && $d1['imei'] == $imei){
+                if ($d1 != null && $d1['imei'] == $imei) {
                     return $course;
                 }
 
-                if($d2 != null && $d2['imei'] == $imei){
+                if ($d2 != null && $d2['imei'] == $imei) {
                     return $course;
                 }
 
@@ -179,19 +177,53 @@ class CoursesController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, $courses);
     }
 
+    public function loadCourse(Request $request)
+    {
+        $imei = $request->input('imei');
+        $key = (object)$request->input('key');
 
-    public function buildCourseObject($student, $course, $username){
+        $tenant = Tenant::find($key->username);
+        if ($tenant == null) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
+
+        $result = $tenant->run(function () use ($key, $imei) {
+            $licenseKey = LicenseKey::where('key', $key->lk)->first();
+            if ($licenseKey == null) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
+
+            $complete_course = Course::find($licenseKey->course_id);
+            if ($complete_course->validation_status != Constant::$VALIDATION_STATUS_VALID)
+                return $this->sendResponse(Constant::$COURSE_NOT_VALID, null);
+
+            $course = $this->buildCourseObject(
+                Student::find($licenseKey->student_id),
+                $complete_course,
+                $key->username
+            );
+
+            $d1 = json_decode($licenseKey->device_one, true);
+            $d2 = json_decode($licenseKey->device_two, true);
+
+            if ( ($d1 != null && $d1['imei'] == $imei) || ($d2 != null && $d2['imei'] == $imei) ) 
+                $this->sendResponse(Constant::$SUCCESS, $course);
+            
+            $this->sendResponse(Constant::$DEVICE_NOT_FOUND, $course);
+        });
+
+        return $result;
+    }
+
+    public function buildCourseObject($student, $course, $username)
+    {
         $has_access = DB::table('course_student')
-                ->whereCourseId($course->id)
-                ->whereStudentId($student->id)
-                ->whereAccess(1)
-                ->count() > 0;
+            ->whereCourseId($course->id)
+            ->whereStudentId($student->id)
+            ->whereAccess(1)
+            ->count() > 0;
 
-        $headings = $course->course_headings()->get()->map(function ($heading){
+        $headings = $course->course_headings()->get()->map(function ($heading) {
             return ['id' => $heading->id, 'title' => $heading->title];
         });
 
-        $contents = $course->course_contents()->get()->map(function ($content) use ($has_access, $student, $course, $username){
+        $contents = $course->course_contents()->get()->map(function ($content) use ($has_access, $student, $course, $username) {
             $c = [
                 'id' => $content->id,
                 'title' => $content->title,
@@ -200,7 +232,7 @@ class CoursesController extends BaseController
             ];
 
             switch ($content->type) {
-                case Constant::$CONTENT_TYPE_VIDEO:                    
+                case Constant::$CONTENT_TYPE_VIDEO:
                     $c['url'] = ($has_access || $content->is_free) ? $content->content_video->url : null;
                     $c['size'] = $content->content_video->size;
                     $c['encoding'] = $content->content_video->encoding;
@@ -214,19 +246,20 @@ class CoursesController extends BaseController
                     $c['size'] = $content->content_document->size;
             }
 
-            if($c['url'] != null){
+            if ($c['url'] != null) {
                 $c['url'] = Helper::generateStudentDownloadCourseItemFileUrl(
                     $username,
-                    $student->id, 
+                    $student->id,
                     $c['url'],
-                    $course->id);
+                    $course->id
+                );
             }
 
             return $c;
         });
 
         $logo = null;
-        if($course->logo) {
+        if ($course->logo) {
             $logo_file_type = UploadTransaction::where('upload_key', $course->logo)->first()->file_type;
             $logo = Helper::generatePublicDownloadFileUrl($username, $course->logo, $logo_file_type);
         }
@@ -242,6 +275,4 @@ class CoursesController extends BaseController
             "logo" => $logo,
         ];
     }
-
-    
 }
