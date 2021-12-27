@@ -138,6 +138,7 @@ class CoursesController extends BaseController
         $courses = [];
 
         foreach($keys as $key){
+            $key = (object)$key;
             $tenant = Tenant::find($key->username);
             if($tenant == null) {
                 array_push($courses, Constant::$USER_NOT_FOUND);
