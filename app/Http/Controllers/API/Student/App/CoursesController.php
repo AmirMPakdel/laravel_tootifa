@@ -180,13 +180,14 @@ class CoursesController extends BaseController
     public function loadCourse(Request $request)
     {
         $imei = $request->input('imei');
-        $key = (object)$request->input('key');
+        $lk = $request->input('lk');
+        $username = $request->input('username');
 
-        $tenant = Tenant::find($key->username);
+        $tenant = Tenant::find($lk->username);
         if ($tenant == null) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
 
-        $result = $tenant->run(function () use ($key, $imei) {
-            $licenseKey = LicenseKey::where('key', $key->lk)->first();
+        $result = $tenant->run(function () use ($lk, $username, $imei) {
+            $licenseKey = LicenseKey::where('key', $lk)->first();
             if ($licenseKey == null) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
 
             $complete_course = Course::find($licenseKey->course_id);
@@ -196,7 +197,7 @@ class CoursesController extends BaseController
             $course = $this->buildCourseObject(
                 Student::find($licenseKey->student_id),
                 $complete_course,
-                $key->username
+                $username
             );
 
             $d1 = json_decode($licenseKey->device_one, true);
