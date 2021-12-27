@@ -16,7 +16,7 @@ class AddColumnsToUProfilesTable extends Migration
         Schema::table('u_profiles', function (Blueprint $table) {
             $table->string('domain')->nullable();
             $table->string('title')->nullable();
-            //$table->string('tenant_id')->nullable();
+            $table->string('tenant_id')->nullable();
         });
     }
 
@@ -30,7 +30,7 @@ class AddColumnsToUProfilesTable extends Migration
         Schema::table('u_profiles', function (Blueprint $table) {
             $table->dropColumn('domain');
             $table->dropColumn('title');
-            //$table->dropColumn('tenant_id');
+            $table->dropColumn('tenant_id');
         });
     }
 }
