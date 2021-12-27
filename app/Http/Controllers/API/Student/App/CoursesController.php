@@ -134,7 +134,7 @@ class CoursesController extends BaseController
 
     public function loadCourses(Request $request){
         $imei = $request->input('imei');
-        $keys = json_decode($request->input('keys'));
+        $keys = $request->input('keys');
         $courses = [];
 
         foreach($keys as $key){
@@ -158,14 +158,14 @@ class CoursesController extends BaseController
                     $key->username
                 );
 
-                $d1 = json_decode($licenseKey->device_one);
-                $d2 = json_decode($licenseKey->device_two);
+                $d1 = json_decode($licenseKey->device_one, true);
+                $d2 = json_decode($licenseKey->device_two, true);
 
-                if($d1 != null && $d1->imei == $imei){
+                if($d1 != null && $d1['imei'] == $imei){
                     return $course;
                 }
 
-                if($d2 != null && $d2->imei == $imei){
+                if($d2 != null && $d2['imei'] == $imei){
                     return $course;
                 }
 
