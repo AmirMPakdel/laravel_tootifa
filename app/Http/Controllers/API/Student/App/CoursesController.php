@@ -47,10 +47,11 @@ class CoursesController extends BaseController
 
         if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
 
+        $profile = UProfile::where('tenant_id', $tenant->id)->first();
         $user_info = [
             'username' => $tenant->id,
-            'domain' => 'foo',
-            'title' => 'bar',
+            'domain' => $profile->domain,
+            'title' => $profile->title,
         ];
 
         $result = $tenant->run(function() use ($lk, $old_lk, $deviceInfo, $user_info){
