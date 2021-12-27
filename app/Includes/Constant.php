@@ -17,6 +17,7 @@ class Constant
     public static $INVALID_FILE = 1114;
     public static $SERVER_ISSUE = 1115;
     public static $NOT_DELETABLE = 1116;
+    public static $OLD_LISCENSE_KEY_NOT_FOUND = 1117;
     public static $SERVER_NOT_AVAILABLE = 1119;
     public static $INVALID_ID = 1120;
     public static $VIDEO_UNAVAILABLE = 1121;
@@ -54,8 +55,7 @@ class Constant
     public static $REPETITIVE_SMS_TYPE_NAME = 1153;
     public static $NEGETIVE_MAINTANANCE_BALANCE = 1154;
     public static $INVALID_USER_NAME = 1155;
-    public static $COURSE_NOT_VALID = 1116;
-    public static $OLD_LISCENSE_KEY_NOT_FOUND = 1117;
+    public static $COURSE_NOT_VALID = 1156;
 
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";

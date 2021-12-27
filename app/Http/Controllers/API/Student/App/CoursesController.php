@@ -14,35 +14,35 @@ use App\Models\UProfile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CoursesController extends BaseController
 {
-    public function getLicenseKeyShollowInfo(Request $request){
-        $lk = $request->input('lk');
-        $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
+    // public function getLicenseKeyShollowInfo(Request $request){
+    //     $lk = $request->input('lk');
+    //     $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
         
-        if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
+    //     if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
 
-        $username = $tenant->id;
-        $result = $tenant->run(function() use ($lk, $username){
-            $licenseKey = LicenseKey::where('key', $lk)->first();
-            if($licenseKey == null) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
+    //     $username = $tenant->id;
+    //     $result = $tenant->run(function() use ($lk, $username){
+    //         $licenseKey = LicenseKey::where('key', $lk)->first();
+    //         if($licenseKey == null) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
 
-            $content = [
-                'username' => $username,
-                'course_id' => $licenseKey->course_id
-            ];
+    //         $content = [
+    //             'username' => $username,
+    //             'course_id' => $licenseKey->course_id
+    //         ];
 
-            return $this->sendResponse(Constant::$SUCCESS, $content);
-        });
+    //         return $this->sendResponse(Constant::$SUCCESS, $content);
+    //     });
 
-        return $result;
-    }
+    //     return $result;
+    // }
 
     public function registerCourseInDevice(Request $request){
         $lk = $request->input('lk');
-        $old_lk = $request->input('old_lk');
-        $deviceInfo = (object)$request->input('device_info');
+        $deviceInfo = $request->input('device_info');
         $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
 
         if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
@@ -54,15 +54,9 @@ class CoursesController extends BaseController
             'title' => $profile->title,
         ];
 
-        $result = $tenant->run(function() use ($lk, $old_lk, $deviceInfo, $user_info){
+        $result = $tenant->run(function() use ($lk, $deviceInfo, $user_info){
             $licenseKey = LicenseKey::where('key', $lk)->first();
             if($licenseKey == null) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
-
-            $old_licenseKey = null;
-            if($old_lk != null){
-                $old_licenseKey = LicenseKey::where('key', $old_lk)->first();
-                if($old_licenseKey == null) return $this->sendResponse(Constant::$OLD_LISCENSE_KEY_NOT_FOUND, null);
-            }
 
             $complete_course = Course::find($licenseKey->course_id);
             if($complete_course->validation_status != Constant::$VALIDATION_STATUS_VALID)
@@ -80,12 +74,12 @@ class CoursesController extends BaseController
                 'course' => $course
             ];
 
-            $d1 = (object)json_decode($licenseKey->device_one, true);
-            $d2 = (object)json_decode($licenseKey->device_two, true);
+            $d1 = json_decode($licenseKey->device_one, true);
+            $d2 = json_decode($licenseKey->device_two, true);
 
             if($d1 && $d2){
 
-                if($d1->imei != $deviceInfo->imei && $d2->imei != $deviceInfo->imei)
+                if($d1['imei'] != $deviceInfo['imei'] && $d2['imei'] != $deviceInfo['imei'])
                    return $this->sendResponse(Constant::$DEVICE_LIMIT, null);
 
             }elseif(!$d1 && !$d2){
@@ -95,14 +89,14 @@ class CoursesController extends BaseController
 
             }elseif($d1 && !$d2){
 
-                if($d1->imei != $deviceInfo->imei){
+                if($d1['imei'] != $deviceInfo['imei']){
                     $licenseKey->device_two = json_encode($deviceInfo);
                     $licenseKey->save();
                 }
         
             }elseif(!$d1 && $d2){
 
-                if($d2->imei != $deviceInfo->imei){
+                if($d2['imei'] != $deviceInfo['imei']){
                     $licenseKey->device_one = json_encode($deviceInfo);
                     $licenseKey->save();
                 }
@@ -110,16 +104,26 @@ class CoursesController extends BaseController
             }
 
             // to prevent two different lk's connected to one course in one device
-            if($old_licenseKey != null && $old_licenseKey != $licenseKey){
-                $d1 = (object)json_decode($licenseKey->device_one, true);
-                $d2 = (object)json_decode($licenseKey->device_two, true);
+            $old_lk_d1 = LicenseKey::where([
+                ['device_one->imei',  $deviceInfo['imei']],
+                ['key', '<>', $licenseKey->key],
+                ['course_id', $licenseKey->course_id],
+            ])->first();
 
-                if($d1->imei == $deviceInfo->imei)
-                    $old_licenseKey->device_one = null;
-                elseif($d2->imei == $deviceInfo->imei)
-                    $old_licenseKey->device_two = null;
+            if($old_lk_d1){
+                $old_lk_d1->device_one = null;
+                $old_lk_d1->save();
+            }
 
-                $old_licenseKey->save();
+            $old_lk_d2 = LicenseKey::where([
+                ['device_two->imei',  $deviceInfo['imei']],
+                ['key', '<>', $licenseKey->key],
+                ['course_id', $licenseKey->course_id],
+            ])->first();
+
+            if($old_lk_d2){
+                $old_lk_d2->device_two = null;
+                $old_lk_d2->save();
             }
 
             return $this->sendResponse(Constant::$SUCCESS, $content);

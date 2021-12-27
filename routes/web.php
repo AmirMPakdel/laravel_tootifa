@@ -203,7 +203,6 @@ Route::group([
     'prefix' => 'api/app',
     'namespace'  => 'App\Http\Controllers\API\Student\App',
 ], function () {
-    Route::post('/course/shallow', 'CoursesController@getLicenseKeyShollowInfo');
     Route::post('/course/register', 'CoursesController@registerCourseInDevice');
     Route::post('/courses/load', 'CoursesController@loadCourses');
 });
