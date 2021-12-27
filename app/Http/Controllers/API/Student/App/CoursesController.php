@@ -183,7 +183,7 @@ class CoursesController extends BaseController
         $lk = $request->input('lk');
         $username = $request->input('username');
 
-        $tenant = Tenant::find($lk->username);
+        $tenant = Tenant::find($username);
         if ($tenant == null) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
 
         $result = $tenant->run(function () use ($lk, $username, $imei) {
