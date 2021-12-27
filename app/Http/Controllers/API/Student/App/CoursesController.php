@@ -204,9 +204,9 @@ class CoursesController extends BaseController
             $d2 = json_decode($licenseKey->device_two, true);
 
             if ( ($d1 != null && $d1['imei'] == $imei) || ($d2 != null && $d2['imei'] == $imei) ) 
-                $this->sendResponse(Constant::$SUCCESS, $course);
+                return $this->sendResponse(Constant::$SUCCESS, $course);
             
-            $this->sendResponse(Constant::$DEVICE_NOT_FOUND, $course);
+            return $this->sendResponse(Constant::$DEVICE_NOT_FOUND, $course);
         });
 
         return $result;
