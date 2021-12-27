@@ -184,7 +184,7 @@ class CoursesController extends BaseController
             return ['id' => $heading->id, 'title' => $heading->title];
         });
 
-        $contents = $course->course_contents()->get()->map(function ($content) use ($has_access){
+        $contents = $course->course_contents()->get()->map(function ($content) use ($has_access, $student, $course, $username){
             $c = [
                 'id' => $content->id,
                 'title' => $content->title,
@@ -193,7 +193,7 @@ class CoursesController extends BaseController
             ];
 
             switch ($content->type) {
-                case Constant::$CONTENT_TYPE_VIDEO:
+                case Constant::$CONTENT_TYPE_VIDEO:                    
                     $c['url'] = ($has_access || $content->is_free) ? $content->content_video->url : null;
                     $c['size'] = $content->content_video->size;
                     $c['encoding'] = $content->content_video->encoding;
@@ -205,6 +205,14 @@ class CoursesController extends BaseController
                 case Constant::$CONTENT_TYPE_DOCUMENT:
                     $c['url'] = ($has_access || $content->is_free) ? $content->content_document->url : null;
                     $c['size'] = $content->content_document->size;
+            }
+
+            if($c['url'] != null){
+                $c['url'] = Helper::generateStudentDownloadCourseItemFileUrl(
+                    $username,
+                    $student->id, 
+                    $c['url'],
+                    $course->id);
             }
 
             return $c;
