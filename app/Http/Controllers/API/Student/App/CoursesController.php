@@ -212,6 +212,38 @@ class CoursesController extends BaseController
         return $result;
     }
 
+
+    public function resetUserLks(Request $request)
+    {
+        $keys = $request->input('keys');
+        $results = [];
+
+        foreach ($keys as $key) {
+            $key = (object)$key;
+            $tenant = Tenant::find($key->username);
+
+            if ($tenant == null) {
+                array_push($results, "NA");
+                continue;
+            }
+    
+            $result = $tenant->run(function () use ($key) {
+                $licenseKey = LicenseKey::where('key', $key->lk)->first();
+                if ($licenseKey == null) return "NA";
+
+                $licenseKey->device_one = null;
+                $licenseKey->device_two = null;
+                $licenseKey->save();
+
+                return "OK";
+            });
+
+            array_push($results, $result);
+        }
+
+        return $this->sendResponse(Constant::$SUCCESS, $results);
+    }
+
     public function buildCourseObject($student, $course, $username)
     {
         $has_access = DB::table('course_student')
@@ -277,4 +309,5 @@ class CoursesController extends BaseController
             "logo" => $logo,
         ];
     }
+
 }

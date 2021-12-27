@@ -206,6 +206,7 @@ Route::group([
     Route::post('/course/register', 'CoursesController@registerCourseInDevice');
     Route::post('/courses/load', 'CoursesController@loadCourses');
     Route::post('/course/load', 'CoursesController@loadCourse');
+    Route::post('/lks/reset', 'CoursesController@loadCourse');
 });
 
 
