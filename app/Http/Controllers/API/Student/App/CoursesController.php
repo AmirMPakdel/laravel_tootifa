@@ -10,6 +10,7 @@ use App\Models\LicenseKey;
 use App\Models\Student;
 use App\Models\Tenant;
 use App\Models\UploadTransaction;
+use App\Models\UProfile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

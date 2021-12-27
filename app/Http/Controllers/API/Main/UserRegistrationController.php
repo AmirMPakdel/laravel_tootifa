@@ -154,7 +154,9 @@ class UserRegistrationController extends BaseController
         $profile = new UProfile();
         $user->u_profile()->save($profile);
         $user->u_profile_id = $profile->id;
-
+        $profile->tenant_id = $request->input('user_name');
+        $profile->save();
+        
         // setting key
         $previous = User::find(User::where('id', '<', $user->id)->max('id'));
         if ($previous) {
