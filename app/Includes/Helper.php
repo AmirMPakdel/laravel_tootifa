@@ -787,4 +787,16 @@ class Helper
 
         return $token;
     }
+
+    public static function generatePublicDownloadFileUrl($username, $upload_key, $file_type){
+        return env("FTP_SERVER_URL") . "/public_files/" 
+                   . $username . "/" 
+                   . $upload_key . "." . $file_type;
+    }
+
+    public static function generateStudentDownloadCourseItemFileUrl($username, $student_id, $upload_key, $course_id){
+        return env("FTP_SERVER_URL") . "/download_course_item.php" . 
+               "?username=$username&student_id=$student_id&" . 
+               "upload_key=$upload_key&course_id=$course_id";
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Student\App;
 
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
+use App\Includes\Helper;
 use App\Models\Course;
 use App\Models\LicenseKey;
 use App\Models\Student;
@@ -212,9 +213,7 @@ class CoursesController extends BaseController
         $logo = null;
         if($course->logo) {
             $logo_file_type = UploadTransaction::where('upload_key', $course->logo)->first()->file_type;
-            $logo = env("FTP_SERVER_URL") . "/public_files/" 
-                   . $username . "/" 
-                   . $course->logo . "." . $logo_file_type;
+            $logo = Helper::generatePublicDownloadFileUrl($username, $course->logo, $logo_file_type);
         }
 
         return [
@@ -228,4 +227,6 @@ class CoursesController extends BaseController
             "logo" => $logo,
         ];
     }
+
+    
 }
