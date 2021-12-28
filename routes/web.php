@@ -115,6 +115,8 @@ Route::group([
 
     Route::post('/upload/uploadkey', 'UploadController@generateUploadKey');
     Route::post('/upload/verify', 'UploadController@verifyUploadKey');
+
+    Route::post('/download/verify', 'DownloadController@verifyUserForDownloadCourseItem');
 });
 
 // Tenant public routes
@@ -160,7 +162,7 @@ Route::group([
     Route::post('/main/load', 'MainPageController@loadMainPage');
     Route::post('/popups/load', 'MainPageController@loadActivePopups');
 
-    Route::post('/download/verify', 'DownloadController@verifyForDownloadCourseItem');
+    Route::post('/download/verify', 'DownloadController@verifyStudentForDownloadCourseItem');
 });
 
 // Tenant students' routes

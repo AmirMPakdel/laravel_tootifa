@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class DownloadController extends BaseController
 {
-    public function verifyForDownloadCourseItem(Request $request)
+    public function verifyStudentForDownloadCourseItem(Request $request)
     {
         $course = Course::find($request->input('course_id'));
         if(!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
