@@ -482,11 +482,18 @@ class CourseEditController extends BaseController
         $course_content = CourseContent::find($request->input('content_id'));
         if (!$course_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
+// amp change start
+//         if (
+//             !$request->exists('title') ||
+//             !$request->exists('is_free') ||
+//             !$request->exists('upload_key')
+//         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        
         if (
             !$request->exists('title') ||
-            !$request->exists('is_free') ||
-            !$request->exists('upload_key')
+            !$request->exists('is_free')
         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+// amp change end
 
         $course_content->title = $request->input('title');
         $course_content->is_free = $request->input('is_free') ? 1 : 0;
