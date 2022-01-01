@@ -60,23 +60,23 @@ class PostsController extends BaseController
 
     public function fetchPosts(Request $request, $chunk_count, $page_count)
     {
-        $filters = (object)$request->input('filters');
+        $filters = $request->input('filters');
         $sorting_mode = $request->input('sorting_mode');
 
-        $search_phrase = $filters->search_phrase;
-        $group = (object)$filters->group;
+        $search_phrase = $filters['search_phrase'];
+        $group = $filters['group'];
 
         // which group
-        if (isset($group->level)) {
-            switch ($group->level) {
+        if ($group && isset($group['level'])) {
+            switch ($group['level']) {
                 case 1:
-                    $group = LevelOneGroup::find($group->id);
+                    $group = LevelOneGroup::find($group['id']);
                     break;
                 case 2:
-                    $group = LevelTwoGroup::find($group->id);
+                    $group = LevelTwoGroup::find($group['id']);
                     break;
                 case 3:
-                    $group = LevelThreeGroup::find($group->id);
+                    $group = LevelThreeGroup::find($group['id']);
                     break;
                 default:
                     $group = null;
