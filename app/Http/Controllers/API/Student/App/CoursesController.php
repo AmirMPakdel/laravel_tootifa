@@ -18,28 +18,6 @@ use Illuminate\Support\Facades\Log;
 
 class CoursesController extends BaseController
 {
-    // public function getLicenseKeyShollowInfo(Request $request){
-    //     $lk = $request->input('lk');
-    //     $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
-
-    //     if(!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
-
-    //     $username = $tenant->id;
-    //     $result = $tenant->run(function() use ($lk, $username){
-    //         $licenseKey = LicenseKey::where('key', $lk)->first();
-    //         if($licenseKey == null) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
-
-    //         $content = [
-    //             'username' => $username,
-    //             'course_id' => $licenseKey->course_id
-    //         ];
-
-    //         return $this->sendResponse(Constant::$SUCCESS, $content);
-    //     });
-
-    //     return $result;
-    // }
-
     public function registerCourseInDevice(Request $request)
     {
         $lk = $request->input('lk');

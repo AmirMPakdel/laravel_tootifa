@@ -122,26 +122,22 @@ class CoursesController extends BaseController
                 $order_direction = "desc";
         }
 
-//AMP change start
-      //$filters = (object)$request->input('filters');
-        $filters = null;
-//AMP change end
-        
-        $search_phrase = isset($filters) ? $filters->search_phrase : null;
-        $validation_status = isset($filters) ? $filters->validation_status : null;
-        $group = isset($filters) ? (object)$filters->group : null;
+        $filters = $request->input('filters');
+        $search_phrase = isset($filters) ? $filters['search_phrase'] : null;
+        $validation_status = isset($filters) ? $filters['validation_status'] : null;
+        $group = isset($filters) ? $filters['group'] : null;
 
         // which group
-        if ($group && isset($group->level)) {
-            switch ($group->level) {
+        if ($group && isset($group['level'])) {
+            switch ($group['level']) {
                 case 1:
-                    $group = LevelOneGroup::find($group->id);
+                    $group = LevelOneGroup::find($group['id']);
                     break;
                 case 2:
-                    $group = LevelTwoGroup::find($group->id);
+                    $group = LevelTwoGroup::find($group['id']);
                     break;
                 case 3:
-                    $group = LevelThreeGroup::find($group->id);
+                    $group = LevelThreeGroup::find($group['id']);
                     break;
                 default:
                     $group = null;

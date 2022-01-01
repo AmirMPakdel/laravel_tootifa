@@ -12,7 +12,7 @@ class StudentNotification extends Model
     protected $fillable = [
         'title',
         'content',
-        'read',
+        'expiration_date',
     ];
 
     public function student()
