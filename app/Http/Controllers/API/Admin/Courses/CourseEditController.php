@@ -28,7 +28,7 @@ class CourseEditController extends BaseController
     public function editCourse(Request $request, $ep)
     {
         // check for maintenance balance
-        if($request->input('user')->u_profile->m_balance < 0)
+        if ($request->input('user')->u_profile->m_balance < 0)
             return $this->sendResponse(Constant::$NEGETIVE_MAINTANANCE_BALANCE, null);
 
         $course = Course::find($request->input('course_id'));
@@ -482,18 +482,15 @@ class CourseEditController extends BaseController
         $course_content = CourseContent::find($request->input('content_id'));
         if (!$course_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-// amp change start
-//         if (
-//             !$request->exists('title') ||
-//             !$request->exists('is_free') ||
-//             !$request->exists('upload_key')
-//         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
-        
-        if (
-            !$request->exists('title') ||
-            !$request->exists('is_free')
-        ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
-// amp change end
+        // amp change start
+        //         if (
+        //             !$request->exists('title') ||
+        //             !$request->exists('is_free') ||
+        //             !$request->exists('upload_key')
+        //         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+
+        if (!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        // amp change end
 
         $course_content->title = $request->input('title');
         $course_content->is_free = $request->input('is_free') ? 1 : 0;
@@ -573,11 +570,15 @@ class CourseEditController extends BaseController
         $course_content = CourseContent::find($request->input('content_id'));
         if (!$course_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if (
-            !$request->exists('title') ||
-            !$request->exists('is_free') ||
-            !$request->exists('upload_key')
-        ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        // amp change start
+        //         if (
+        //             !$request->exists('title') ||
+        //             !$request->exists('is_free') ||
+        //             !$request->exists('upload_key')
+        //         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+
+        if (!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        // amp change end
 
         $course_content->title = $request->input('title');
         $course_content->is_free = $request->input('is_free') ? 1 : 0;
@@ -657,11 +658,15 @@ class CourseEditController extends BaseController
         $course_content = CourseContent::find($request->input('content_id'));
         if (!$course_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if (
-            !$request->exists('title') ||
-            !$request->exists('is_free') ||
-            !$request->exists('upload_key')
-        ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        // amp change start
+        //         if (
+        //             !$request->exists('title') ||
+        //             !$request->exists('is_free') ||
+        //             !$request->exists('upload_key')
+        //         ) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+
+        if (!$request->exists('title')) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        // amp change end
 
         $course_content->title = $request->input('title');
         $course_content->is_free = $request->input('is_free') ? 1 : 0;
@@ -731,7 +736,7 @@ class CourseEditController extends BaseController
     public function updateCourseIntroVideo(Request $request)
     {
         $course_introduction = CourseIntroduction::find($request->input('intro_id'));
-        if(!$course_introduction) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        if (!$course_introduction) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         if (!$request->exists('upload_key'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
@@ -754,7 +759,7 @@ class CourseEditController extends BaseController
     public function deleteCourseIntroVideo(Request $request)
     {
         $course_introduction = CourseIntroduction::find($request->input('intro_id'));
-        if(!$course_introduction) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        if (!$course_introduction) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         $content_video = $course_introduction->content_video()->first();
         $result = UploadManager::deleteFile(tenant()->id, $content_video->url);
@@ -784,7 +789,7 @@ class CourseEditController extends BaseController
     public function updateCourseHeading(Request $request)
     {
         $heading = CourseHeading::find($request->input('heading_id'));
-        if(!$heading) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        if (!$heading) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         if (!$request->exists('title'))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
@@ -798,7 +803,7 @@ class CourseEditController extends BaseController
     public function deleteCourseHeading(Request $request)
     {
         $heading = CourseHeading::find($request->input('heading_id'));
-        if(!$heading) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        if (!$heading) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
         $heading->delete();
 
