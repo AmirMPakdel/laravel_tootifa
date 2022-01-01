@@ -122,9 +122,11 @@ class CoursesController extends BaseController
                 $order_direction = "desc";
         }
 
-
-        $filters = (object)$request->input('filters');
-
+//AMP change start
+      //$filters = (object)$request->input('filters');
+        $filters = null;
+//AMP change end
+        
         $search_phrase = isset($filters) ? $filters->search_phrase : null;
         $validation_status = isset($filters) ? $filters->validation_status : null;
         $group = isset($filters) ? (object)$filters->group : null;
