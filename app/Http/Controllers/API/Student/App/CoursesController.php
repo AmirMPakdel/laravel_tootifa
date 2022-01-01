@@ -262,6 +262,7 @@ class CoursesController extends BaseController
                     $username,
                     $student->id,
                     $c['url'],
+                    $c['id'],
                     $course->id
                 );
             }

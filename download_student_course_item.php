@@ -21,10 +21,11 @@ $NO_ACCESS_TO_COURSE = 1144;
 $username = $_GET['username'];
 $student_id = $_GET['student_id'];
 $course_id = $_GET['course_id'];
+$content_id = $_GET['content_id'];
 $upload_key = $_GET['upload_key'];
 
 // checking if inputs are set
-if (!$username || !$student_id || !$course_id || !$upload_key) {
+if (!$username || !$student_id || !$course_id || !$upload_key || !$content_id) {
     echo get_result($INVALID_VALUE, null);
     die();
 }
@@ -39,7 +40,8 @@ if ($_GET['dev']) {
 $postRequest = array(
     'student_id' => $student_id,
     'course_id' => $course_id,
-    'upload_key' => $upload_key
+    'upload_key' => $upload_key,
+    'content_id' => $content_id
 );
 
 $ch = curl_init();

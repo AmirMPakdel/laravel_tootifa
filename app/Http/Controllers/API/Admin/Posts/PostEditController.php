@@ -26,6 +26,8 @@ use Illuminate\Http\Request;
 
 class PostEditController extends BaseController
 {
+    // TODO disable uploadkey checks when updating content as in course edit
+
     public function editPost(Request $request, $ep)
     {
         // check for maintenance balance
