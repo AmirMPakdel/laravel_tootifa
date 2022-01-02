@@ -51,8 +51,12 @@ class UserRegistrationController extends BaseController
 
         $user->token = bin2hex(random_bytes(16));
         $user->save();
-
-        return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token, 'username' => $user->username]);
+        
+        //AMP change start
+        //return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token, 'username' => $user->username]);
+        return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token, 'username' => $user->tenant_id]);
+        //AMP change end
+        
     }
 
     public function sendVerificationCode(Request $request)
