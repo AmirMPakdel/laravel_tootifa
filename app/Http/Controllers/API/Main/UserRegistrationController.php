@@ -99,8 +99,10 @@ class UserRegistrationController extends BaseController
         $result = User::where('verification_code', $request->input('code'));
 
         // to prevent a low probable bug
-        if ($result->count() > 1)
-            return $this->sendResponse(Constant::$INVALID_VERIFICATION_CODE, null);
+        // AMP change -> testing mode when all codes are 1111 would make bug
+        //if ($result->count() > 1)
+        //    return $this->sendResponse(Constant::$INVALID_VERIFICATION_CODE, null);
+        // AMP change end
 
         $user = $result->first();
         if ($user)
