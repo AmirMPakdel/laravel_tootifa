@@ -186,7 +186,7 @@ class UserRegistrationController extends BaseController
 
         // AMP change start
         //return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token]);
-        return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token], 'username' => $user->tenant_id]);
+        return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token, 'username' => $user->tenant_id]);
         // AMP change end
     }
 }
