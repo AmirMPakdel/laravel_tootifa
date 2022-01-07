@@ -184,6 +184,9 @@ class UserRegistrationController extends BaseController
 
         // TODO send registration success message via third party sms platform api
 
-        return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token]);
+        // AMP change start
+        //return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token]);
+        return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token], 'username' => $user->tenant_id]);
+        // AMP change end
     }
 }
