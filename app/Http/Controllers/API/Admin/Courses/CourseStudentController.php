@@ -32,7 +32,6 @@ class CourseStudentController extends BaseController
             ];
         });
 
-        if (sizeof($students) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
         $result = ["total_size" => $paginator->total(), "list" => $students];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);

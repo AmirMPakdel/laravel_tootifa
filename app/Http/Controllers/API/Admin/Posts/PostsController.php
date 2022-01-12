@@ -124,7 +124,6 @@ class PostsController extends BaseController
             return $this->buildListPostObject($post);
         });
 
-        if (sizeof($posts) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
         $result = ["total_size" => $paginator->total(), "list" => $posts];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);

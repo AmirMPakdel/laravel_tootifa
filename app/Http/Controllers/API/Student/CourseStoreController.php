@@ -96,7 +96,6 @@ class CourseStoreController extends BaseController
             return $this->buildListCourseObject($course);
         });
 
-        if (sizeof($courses) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
         $result = ["total_size" => $paginator->total(), "list" => $courses];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);

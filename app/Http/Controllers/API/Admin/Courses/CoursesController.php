@@ -163,7 +163,6 @@ class CoursesController extends BaseController
             return $this->buildListCourseObject($course);
         });
 
-        if (sizeof($courses) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
         $result = ["total_size" => $paginator->total(), "list" => $courses];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);
@@ -201,6 +200,7 @@ class CoursesController extends BaseController
             'visits_count' => $course->visits_count,
             'validation_status' => $course->validation_status,
             'is_online' => $course->is_online,
+            'logo' => $course->logo,
             'g1' => $course->level_one_group_id,
             'g2' => $course->level_two_group_id,
             'g3' => $course->level_three_group_id,

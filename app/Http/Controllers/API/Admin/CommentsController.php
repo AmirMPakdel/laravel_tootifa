@@ -31,7 +31,6 @@ class CommentsController extends BaseController
             ];
         });
 
-        if (sizeof($comments) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
         $result = ["total_size" => $paginator->total(), "list" => $comments];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);
@@ -55,7 +54,6 @@ class CommentsController extends BaseController
             ];
         });
 
-        if (sizeof($comments) == 0) return $this->sendResponse(Constant::$NO_DATA, null);
         $result = ["total_size" => $paginator->total(), "list" => $comments];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);
