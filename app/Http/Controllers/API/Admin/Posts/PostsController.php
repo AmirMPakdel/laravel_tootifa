@@ -38,6 +38,7 @@ class PostsController extends BaseController
         // create post
         $post = new Post();
         $post->title = $title;
+        $post->save();
 
         // add it to tags
         foreach (Tag::find($tags) as $tag)

@@ -9,7 +9,6 @@ use App\Models\Course;
 use App\Models\LevelOneGroup;
 use App\Models\LevelTwoGroup;
 use App\Models\LevelThreeGroup;
-use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 

@@ -27,6 +27,8 @@ class DownloadController extends BaseController
         $cc = CourseContent::find($request->input('content_id'));
         if (!$cc) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
+        // TODO check the relation between inputs
+        
         // if (!in_array($upload_transaction->upload_type, Constant::getCourseFreeUploadTypes())) {}
         if (!$cc->is_free) {
             $registered = DB::table('course_student')

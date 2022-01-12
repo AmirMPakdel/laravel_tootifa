@@ -45,12 +45,12 @@ class CoursesController extends BaseController
                 return $this->sendResponse(Constant::$INVALID_GROUP_HIERARCHY, null);
         }
 
-
         // create course
         $course = new Course();
         $course->title = $title;
         $course->price = $price;
         $course->is_encrypted = $is_encrypted;
+        $course->save();
 
         // TODO delete this line (It has to be managed by tootifa admins)
         $course->validation_status = Constant::$VALIDATION_STATUS_VALID;

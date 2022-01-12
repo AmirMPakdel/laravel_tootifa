@@ -51,12 +51,8 @@ class UserRegistrationController extends BaseController
 
         $user->token = bin2hex(random_bytes(16));
         $user->save();
-        
-        //AMP change start
-        //return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token, 'username' => $user->username]);
-        return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token, 'username' => $user->tenant_id]);
-        //AMP change end
-        
+
+        return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token, 'username' => $user->tenant_id]);        
     }
 
     public function sendVerificationCode(Request $request)
@@ -96,15 +92,11 @@ class UserRegistrationController extends BaseController
 
     public function checkVerificationCode(Request $request)
     {
-        $result = User::where('verification_code', $request->input('code'));
-
-        // to prevent a low probable bug
-        // AMP change -> testing mode when all codes are 1111 would make bug
-        //if ($result->count() > 1)
-        //    return $this->sendResponse(Constant::$INVALID_VERIFICATION_CODE, null);
-        // AMP change end
-
-        $user = $result->first();
+        $user = User::where([
+            ['verification_code', $request->input('code')],
+            ['phone_number', $request->input('phone_number')]
+        ])->first();
+     
         if ($user)
             return $this->sendResponse(Constant::$SUCCESS, ['user_id' => $user->id]);
         else
@@ -184,9 +176,6 @@ class UserRegistrationController extends BaseController
 
         // TODO send registration success message via third party sms platform api
 
-        // AMP change start
-        //return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token]);
         return $this->sendResponse(Constant::$SUCCESS, ['token' => $user->token, 'username' => $user->tenant_id]);
-        // AMP change end
     }
 }
