@@ -1,10 +1,5 @@
 <?php
 
-//added for disabling CORS error for localhost testing by AMP
-header('Access-Control-Allow-Origin: *');
-//header('Access-Control-Allow-Methods: *');
-//header('Access-Control-Allow-Headers: *');
-
 /*
 |--------------------------------------------------------------------------
 | Create The Application
