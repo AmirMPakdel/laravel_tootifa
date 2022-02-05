@@ -32,8 +32,9 @@ Route::group([
     Route::post('/user/passwordreset/request', 'UserPasswordResetController@requestResetPassword');
     Route::post('/user/passwordreset/checktoken', 'UserPasswordResetController@checkPasswordResetToken');
     Route::post('/user/passwordreset/reset', 'UserPasswordResetController@resetPassword');
-    Route::post('/user/course/validation/check', 'MinfoRequestsController@requestForValidationCheck')->middleware('token_verified');
+    Route::get('/portals/get', 'MinfoRequestsController@getMinfoBankingPortals');
 });
+
 
 //********************************************************TENANT*********************************************************
 
@@ -110,13 +111,14 @@ Route::group([
     Route::post('/comment/set/checked', 'CommentsController@setCommentChecked');
     Route::post('/comment/set/valid', 'CommentsController@setCommentValid');
 
-    Route::get('/product/pay', 'UserTransactionController@payForProduct');
-    Route::get('/product/pay/done', 'UserTransactionController@payForProduct');
-
     Route::post('/upload/uploadkey', 'UploadController@generateUploadKey');
     Route::post('/upload/verify', 'UploadController@verifyUploadKey');
 
     Route::post('/download/verify', 'DownloadController@verifyUserForDownloadCourseItem');
+
+    Route::post('/transaction/get', 'UserTransactionController@getUserTransaction');
+    Route::get('/product/pay', 'UserTransactionController@payForProduct');
+    Route::get('/product/pay/done', 'UserTransactionController@payForProductIsDone')->name('user-product-pay-done');
 });
 
 // Tenant public routes

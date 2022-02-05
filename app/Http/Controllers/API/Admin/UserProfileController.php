@@ -16,6 +16,7 @@ class UserProfileController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
+    // TODO calculate total income
     public function loadUserProfile(Request $request){
         $profile = $request->input('user')->u_profile()->first();
         
@@ -31,6 +32,7 @@ class UserProfileController extends BaseController
             'bio' => $profile->bio,
             'holdable_test_count' => $profile->holdable_test_count,
             'infinit_test_finish_date' => $profile->infinit_test_finish_date,
+            'total_saved_income' => 0
         ];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);

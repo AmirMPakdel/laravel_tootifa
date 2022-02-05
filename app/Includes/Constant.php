@@ -240,6 +240,9 @@ class Constant
         ];
     }
 
+    public static $BANKING_PORTAL_ZARINPAL = "bp_zarinpal";
+
+
     //**************************************************** EDIT PARAMS *************************************************
     public static $EDIT_PARAM_LOGO = "ep_logo";
     public static $EDIT_PARAM_COVER = "ep_cover";

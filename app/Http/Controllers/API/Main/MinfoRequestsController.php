@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Main;
 
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
+use App\Models\BankingPortal;
 use App\Models\Course;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
@@ -25,5 +26,18 @@ class MinfoRequestsController extends BaseController
         //TODO set a requset in minfo database
 
         return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+    
+    public function getMinfoBankingPortals(){
+        $portals = BankingPortal::all()->map(function($p) {
+            return [
+                'id' => $p->id,
+                'title' => $p->title,
+                'name' => $p->name,
+                'logo' => $p->logo,
+            ];
+        });
+
+        return $this->sendResponse(Constant::$SUCCESS, $portals);
     }
 }
