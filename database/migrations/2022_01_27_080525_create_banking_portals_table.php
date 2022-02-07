@@ -17,7 +17,6 @@ class CreateBankingPortalsTable extends Migration
             $table->id();
             $table->string('title')->nullable();
             $table->string('name')->nullable();
-            $table->string('key')->nullable();
             $table->string('logo')->nullable();
             $table->timestamps();
         });
