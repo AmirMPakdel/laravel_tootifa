@@ -37,8 +37,7 @@ class UserTransactionController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
-    public function payForProduct(Request $request)
-    {
+    public function generateUserTransaction(Request $request){
         $transaction = new UserTransaction();
         $transaction->order_no = $this->getOrderNo();
         $transaction->title = $request->query('title'); //$this->generateTransactionTitle($pt, $prt, $value, $days);
@@ -51,6 +50,27 @@ class UserTransactionController extends BaseController
         $transaction->redirect_url = $request->query('redirect_url');
         $transaction->save();
 
+        $result = [
+            'id' => $transaction->id,
+            'title' => $transaction->id,
+            'price' => $transaction->id,
+            'pt' => $transaction->id,
+            'prt' => $transaction->id,
+            'value' => $transaction->id,
+            'days' => $transaction->id,
+            'portal' => $transaction->id,
+            'redirect_url' => $transaction->id,
+            'success' => $transaction->success,
+            'order_no' => $transaction->order_no,
+            'ref_id' => $transaction->ref_id,
+        ];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
+    }
+
+    public function payForProduct(Request $request)
+    {
+        $transaction = UserTransaction::find($request->query('transaction_id'));
         $invoice = (new Invoice)->amount($transaction->price);
 
         return Payment::via($transaction->portal)
@@ -94,7 +114,7 @@ class UserTransactionController extends BaseController
 
         return Redirect::to(
             $transaction->redirect_url 
-            . '/?id=' . $transaction->id 
+            . '/?transaction_id=' . $transaction->id 
             . '&tenant=' 
             . $request->user->tenant_id);
     }

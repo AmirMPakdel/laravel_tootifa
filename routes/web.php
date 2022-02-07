@@ -117,6 +117,7 @@ Route::group([
     Route::post('/download/verify', 'DownloadController@verifyUserForDownloadCourseItem');
 
     Route::post('/transaction/get', 'UserTransactionController@getUserTransaction');
+    Route::post('/transaction/generate', 'UserTransactionController@generateUserTransaction');
     Route::get('/product/pay', 'UserTransactionController@payForProduct');
     Route::get('/product/pay/done', 'UserTransactionController@payForProductIsDone')->name('user-product-pay-done');
 });

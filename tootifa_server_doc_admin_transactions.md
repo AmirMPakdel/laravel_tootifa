@@ -84,6 +84,53 @@
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+## GENERATE TRANSACTION
+
+**path**
+
+    /transaction/generate
+
+**format**
+
+    P11UTA
+
+**input**
+
+    title:string
+
+    price:number
+
+    pt:enum(pt_incremental|pt_activation)
+
+    prt:enum(prt_sms|prt_maintenance|prt_test)
+
+    value:number
+
+    days:number
+
+    portal:enum(zarinpal)
+
+    redirect_url:string
+
+**output**
+
+    SUCCESS:
+    {
+        id:number,
+        title:string,
+        price:number,
+        pt:enum(pt_incremental|pt_activation),
+        prt:enum(prt_sms|prt_maintenance|prt_test),
+        value:number,
+        days:number
+        portal:enum(zarinpal),
+        redirect_url:string,
+        success:number,
+        ref_id:string,
+    }
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 ## GET TRANSACTION
 
 **path**
@@ -93,6 +140,10 @@
 **format**
 
     P11UTA
+
+**input**
+
+    transaction_id:number
 
 **output**
 
@@ -121,29 +172,13 @@
 
 **format**
 
+    transaction_id:number
+
     G11UTA 
 
 **input**
 
-    title:string
-
-    price:number
-
-    price:number
-
-    pt:enum(pt_incremental|pt_activation)
-
-    prt:enum(prt_sms|prt_maintenance|prt_test)
-
-    value:number
-
-    days:number
-
-    portal:enum(zarinpal)
-
-    redirect_url:string
-
-    * description: send inputs as query params
+    * description: send inputs (tenant and token) as query params
 
 **output**
 
