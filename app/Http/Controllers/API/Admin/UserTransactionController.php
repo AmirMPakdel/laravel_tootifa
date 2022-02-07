@@ -40,14 +40,14 @@ class UserTransactionController extends BaseController
     public function generateUserTransaction(Request $request){
         $transaction = new UserTransaction();
         $transaction->order_no = $this->getOrderNo();
-        $transaction->title = $request->query('title'); //$this->generateTransactionTitle($pt, $prt, $value, $days);
-        $transaction->price = $request->query('price');
-        $transaction->pt = $request->query('pt');
-        $transaction->prt = $request->query('prt');
-        $transaction->value = $request->query('value');
-        $transaction->days = $request->query('days');
-        $transaction->portal = $request->query('portal');
-        $transaction->redirect_url = $request->query('redirect_url');
+        $transaction->title = $request->input('title'); //$this->generateTransactionTitle($pt, $prt, $value, $days);
+        $transaction->price = $request->input('price');
+        $transaction->pt = $request->input('pt');
+        $transaction->prt = $request->input('prt');
+        $transaction->value = $request->input('value');
+        $transaction->days = $request->input('days');
+        $transaction->portal = $request->input('portal');
+        $transaction->redirect_url = $request->input('redirect_url');
         $transaction->save();
 
         $result = [
