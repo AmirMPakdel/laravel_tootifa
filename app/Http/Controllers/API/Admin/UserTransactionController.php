@@ -8,6 +8,7 @@ use App\Models\UserTransaction;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Shetabit\Multipay\Invoice;
 use Shetabit\Payment\Facade\Payment;
@@ -33,6 +34,7 @@ class UserTransactionController extends BaseController
             'order_no' => $transaction->order_no,
             'ref_id' => $transaction->ref_id,
             'date' => $transaction->updated_at,
+            'error_msg' => $transaction->error_msg,
             'name' => $request->input('user')->first_name . " " . $request->input('user')->last_name
         ];
 
@@ -65,7 +67,6 @@ class UserTransactionController extends BaseController
             'success' => $transaction->success,
             'order_no' => $transaction->order_no,
             'ref_id' => $transaction->ref_id,
-            'error_msg' => $transaction->error_msg,
             'name' => $request->input('user')->first_name . " " . $request->input('user')->last_name
         ];
 
@@ -77,7 +78,8 @@ class UserTransactionController extends BaseController
         $transaction = UserTransaction::find($request->query('transaction_id'));
         $invoice = (new Invoice)->amount($transaction->price);
 
-        $callback_url = env('APP_URL') . "/product/pay/done?tenant=" .
+        $callback_url = "http://" . env('APP_URL') .
+                        "/api/tenant/user/product/pay/done?tenant=" .
                         $request->input('user')->tenant_id .
                         "&token=" .
                         $request->input('user')->token .
