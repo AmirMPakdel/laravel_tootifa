@@ -158,10 +158,10 @@
         value:number,
         days:number
         portal:enum(zarinpal),
-        date:timestamp
         redirect_url:string,
         success:number,
-        name:string
+        name:string,
+        date:timestamp
         error_msg:string
         ref_id:string,
     }
