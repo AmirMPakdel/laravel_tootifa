@@ -32,6 +32,8 @@ class UserTransactionController extends BaseController
             'success' => $transaction->success,
             'order_no' => $transaction->order_no,
             'ref_id' => $transaction->ref_id,
+            'date' => $transaction->updated_at,
+            'name' => $request->input('user')->first_name . " " . $request->input('user')->last_name
         ];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);
@@ -63,6 +65,8 @@ class UserTransactionController extends BaseController
             'success' => $transaction->success,
             'order_no' => $transaction->order_no,
             'ref_id' => $transaction->ref_id,
+            'error_msg' => $transaction->error_msg,
+            'name' => $request->input('user')->first_name . " " . $request->input('user')->last_name
         ];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);
@@ -73,14 +77,16 @@ class UserTransactionController extends BaseController
         $transaction = UserTransaction::find($request->query('transaction_id'));
         $invoice = (new Invoice)->amount($transaction->price);
 
+        $callback_url = env('APP_URL') . "/product/pay/done?tenant=" .
+                        $request->input('user')->tenant_id .
+                        "&token=" .
+                        $request->input('user')->token .
+                        "&transaction_id=" .
+                        $transaction->id;
+
         return Payment::via($transaction->portal)
-                ->callbackUrl(route('user-product-pay-done', 
-                    [
-                     'tenant' => $request->input('user')->tenant_id, 
-                     'token' => $request->input('user')->token,
-                     'transaction_id' => $transaction->id,
-                    ]
-                ))->purchase($invoice, function($driver, $transaction_id) use($transaction,$invoice){
+                ->callbackUrl($callback_url)
+                ->purchase($invoice, function($driver, $transaction_id) use($transaction,$invoice){
 
             $transaction->uuid = $invoice->getUuid();
             $transaction->invoice_transaction_id = $transaction_id;

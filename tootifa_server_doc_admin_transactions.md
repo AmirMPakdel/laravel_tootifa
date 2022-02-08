@@ -126,6 +126,7 @@
         portal:enum(zarinpal),
         redirect_url:string,
         success:number,
+        name:string
         ref_id:string,
     }
 
@@ -157,8 +158,11 @@
         value:number,
         days:number
         portal:enum(zarinpal),
+        date:timestamp
         redirect_url:string,
         success:number,
+        name:string
+        error_msg:string
         ref_id:string,
     }
 
@@ -184,5 +188,27 @@
 
     SUCCESS: redirects to the portal
 
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## GET PORTAL LIST
+
+**path**
+
+    /portals/get
+
+**format**
+
+    G00MA
+
+**output**
+
+    SUCCESS:
+    {
+        id:number,
+        title:string,
+        logo:string,
+        name:string,
+    }
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

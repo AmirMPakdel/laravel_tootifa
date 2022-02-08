@@ -54,6 +54,8 @@ class CourseEditController extends BaseController
                 return $this->editCourseLongDesc($request);
             case Constant::$EDIT_PARAM_PRICE:
                 return $this->editCoursePrice($request);
+            case Constant::$EDIT_PARAM_DISCOUNT_PRICE:
+                return $this->editCourseDiscountPrice($request);
             case Constant::$EDIT_PARAM_RELEASE_DATE:
                 return $this->editCourseReleaseDate($request);
             case Constant::$EDIT_PARAM_SHORT_DESC:
@@ -258,6 +260,19 @@ class CourseEditController extends BaseController
         if (!$price) return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         $course->price = $price;
+        $course->save();
+
+        return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
+    public function editCourseDiscountPrice(Request $request)
+    {
+        $course = $request->input('course');
+        $discount_price = $request->input('discount_price');
+
+        if (!$discount_price) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+
+        $course->discount_price = $discount_price;
         $course->save();
 
         return $this->sendResponse(Constant::$SUCCESS, null);

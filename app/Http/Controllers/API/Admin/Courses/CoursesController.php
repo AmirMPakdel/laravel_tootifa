@@ -53,7 +53,7 @@ class CoursesController extends BaseController
         $course->save();
 
         // TODO delete this line (It has to be managed by tootifa admins)
-        $course->validation_status = Constant::$VALIDATION_STATUS_VALID;
+        // $course->validation_status = Constant::$VALIDATION_STATUS_VALID;
 
         // add it to tags
         foreach (Tag::find($tags) as $tag)

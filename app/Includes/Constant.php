@@ -249,6 +249,7 @@ class Constant
     public static $EDIT_PARAM_TITLE = "ep_title";
     public static $EDIT_PARAM_DURATION = "ep_duration";
     public static $EDIT_PARAM_PRICE = "ep_price";
+    public static $EDIT_PARAM_DISCOUNT_PRICE = "ep_discount_price";
     public static $EDIT_PARAM_SUGGESTED_COURSES = "ep_suggested_courses";
     public static $EDIT_PARAM_SUGGESTED_POSTS = "ep_suggested_posts";
     public static $EDIT_PARAM_HOLDING_STATUS = "ep_holding_status";

@@ -1512,6 +1512,34 @@
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+## EDIT COURSE DISCOUNT PRICE
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_discount_price)|ui
+
+    course_id:number
+
+    discount_price:number
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_VALUE:null
+
+    COURSE_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 ## EDIT COURSE RELEASE DATE
 
 **path**
