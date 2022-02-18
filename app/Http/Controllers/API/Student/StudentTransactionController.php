@@ -7,65 +7,100 @@ use App\Includes\Constant;
 use App\Models\StudentTransaction;
 use App\Models\Student;
 use App\Models\Course;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Shetabit\Multipay\Invoice;
+use Shetabit\Payment\Facade\Payment;
 use Zarinpal\Zarinpal;
 
 
 class StudentTransactionController extends BaseController
 {
-    public function payForCourse(Request $request)
+    public function getStudentTransaction(Request $request)
     {
-        $student = $request->student;
-        $username = tenant()->id;
-        $title = $request->query('title');
-        $course_id = $request->query('ci');
-        $price = $request->query('price');
+        $transaction = StudentTransaction::find($request->input('transaction_id'));
 
-        // creating transaction
-        $transaction = new StudentTransaction();
-        $transaction->order_no = $this->getOrderNo();
-        $transaction->title = $title; //$this->generateTransactionTitle($pt, $prt, $value, $days);
-        $transaction->price = $price;
-        $transaction->course_id = $course_id;
-        $transaction->student_id = $student->id;
+        $result = [
+            'id' => $transaction->id,
+            'title' => $transaction->title,
+            'price' => $transaction->price,
+            'course_id' => $transaction->course_id,
+            'course_title' => $transaction->course_title,
+            'portal' => $transaction->portal,
+            'redirect_url' => $transaction->redirect_url,
+            'success' => $transaction->success,
+            'order_no' => $transaction->order_no,
+            'ref_id' => $transaction->ref_id,
+            'date' => $transaction->updated_at,
+            'error_msg' => $transaction->error_msg,
+            'name' => $request->input('student')->first_name . " " . $request->input('student')->last_name
+        ];
 
-        $zarinpal = new Zarinpal(env('ZARINPAL_STUDENT_TRANSACTIONS_CODE'));
-        $zarinpal->enableSandbox(); // active sandbox mod for test env
-        // $zarinpal->isZarinGate(); // active zarinGate mode
-        $results = $zarinpal->request(
-            env('APP_URL') . "/api/product/pay/done?token={$student->token}&tenant={$username}",
-            $price,
-            $title,
-            $student->email,
-            $student->phone_number
-        );
-
-        if (isset($results['Authority'])) {
-            file_put_contents('Authority', $results['Authority']);
-            $transaction->authority = $results['Authority'];
-            $transaction->save();
-            $zarinpal->redirect();
-        }
-
-
-        return "Authority not found!";
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
-    public function payForProductIsDone(Request $request)
+    public function generateStudentTransaction(Request $request){
+        $transaction = new StudentTransaction();
+        $transaction->order_no = $this->getOrderNo();
+        $transaction->title = $request->input('title'); 
+        $transaction->price = $request->input('price');
+        $transaction->course_id = $request->input('course_id');
+        $transaction->course_title = $request->input('course_title');
+        $transaction->portal = $request->input('portal');
+        $transaction->redirect_url = $request->input('redirect_url');
+        $transaction->save();
+
+        $result = [
+            'id' => $transaction->id,
+            'title' => $transaction->title,
+            'price' => $transaction->price,
+            'course_id' => $transaction->course_id,
+            'course_title' => $transaction->course_title,
+            'portal' => $transaction->portal,
+            'redirect_url' => $transaction->redirect_url,
+            'success' => $transaction->success,
+            'order_no' => $transaction->order_no,
+            'ref_id' => $transaction->ref_id,
+            'name' => $request->input('user')->first_name . " " . $request->input('user')->last_name
+        ];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
+    }
+
+    public function payForCourse(Request $request)
     {
-        $zarinpal = new Zarinpal(env('ZARINPAL_STUDENT_TRANSACTIONS_CODE'));
-        $authority = file_get_contents('Authority');
-        $transaction = StudentTransaction::where('authority', $authority)->first();
+        $transaction = StudentTransaction::find($request->query('transaction_id'));
+        $invoice = (new Invoice)->amount($transaction->price);
+
+        $callback_url = "http://" . env('APP_URL') .
+                        "/api/tenant/student/course/pay/done?tenant=" .
+                        tenant()->id .
+                        "&token=" .
+                        $request->input('student')->token .
+                        "&transaction_id=" .
+                        $transaction->id;
+
+        return Payment::via($transaction->portal)
+                ->callbackUrl($callback_url)
+                ->purchase($invoice, function($driver, $transaction_id) use($transaction,$invoice){
+
+            $transaction->uuid = $invoice->getUuid();
+            $transaction->invoice_transaction_id = $transaction_id;
+            $transaction->save();
+
+        })->pay()->render();
+    }
+
+    public function payForCourseIsDone(Request $request)
+    {
+        $transaction = StudentTransaction::find($request->query('transaction_id'));
 
         if ($transaction) {
-            $result = $zarinpal->verify('OK', 1000, $authority);
-            if ($result['Status'] == 'success') {
-                // updating transaction
+            try{
+                $receipt = Payment::amount($transaction->price)->transactionId($transaction->ref_id)->verify();
+                $transaction->ref_id = $receipt->getReferenceId();
                 $transaction->success = 1;
-                $transaction->issue_tracking_no = $result['RefID'];
-                $transaction->card_pan_mask = $result['ExtraDetail']['Transaction']['CardPanMask'];
-                $transaction->card_pan_hash = $result['ExtraDetail']['Transaction']['CardPanHash'];
                 $transaction->save();
 
                 // apply transaction result
@@ -74,15 +109,21 @@ class StudentTransactionController extends BaseController
                     Student::find($transaction->student_id),
                     Course::find($transaction->course_id),
                     Constant::$REGISTRATION_TYPE_WEBSITE
-                );
-            } else {
+                );               
+            }catch(Exception $e){
                 $transaction->success = 0;
+                $transaction->error_msg = $e->getMessage();
                 $transaction->save();
             }
+        }else {
+            return "TRANSACTION NOT FOUND";
         }
 
-        // TODO redirect to a url which presents transaction's status
-        return Redirect::to(env('APP_URL') . '/dashboard/' . $transaction->id . '/transaction');
+        return Redirect::to(
+            $transaction->redirect_url 
+            . '/?transaction_id=' . $transaction->id 
+            . '&tenant=' 
+            . tenant()->id);
     }
 
     private function getOrderNo()

@@ -81,13 +81,11 @@ class StudentRegistrationController extends BaseController
     }
 
     public function checkVerificationCode(Request $request){
-        $result = Student::where('verification_code', $request->input('code'));
+        $student = Student::where([
+            ['verification_code', $request->input('code')],
+            ['phone_number', $request->input('phone_number')]
+        ])->first();
 
-        // to prevent a low probable bug
-        if ($result->count() > 1)
-            return $this->sendResponse(Constant::$INVALID_VERIFICATION_CODE, null);
-
-        $student = $result->first();
         if ($student)
             return $this->sendResponse(Constant::$SUCCESS, ['student_id' => $student->id]);
         else

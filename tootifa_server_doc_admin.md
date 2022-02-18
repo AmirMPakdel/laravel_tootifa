@@ -1018,8 +1018,7 @@
         "g3":number,
         "tags":Array[Tag],
         "duration":number|f:minutes,
-        "has_discount":number|b,
-        "discount":number|f:percent
+        "discount_price":number,
         "holding_status":enum(coming_soon|is_holding|finished),
         "release_date":string|f:yyyy-mm-dd,
         "subjects":Array(string),

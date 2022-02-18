@@ -247,7 +247,8 @@ class StudentCourseController extends BaseController
                 'id' => $educator->id,
                 'first_name' => $educator->first_name,
                 'last_name' => $educator->last_name,
-                'bio' => $educator->bio
+                'bio' => $educator->bio,
+                'image' => $educator->image,
             ];
         });
 
@@ -301,9 +302,8 @@ class StudentCourseController extends BaseController
             'g3' => $course->level_three_group_id,
             "tags" => $tags,
             "duration" => $course->duration,
-            "has_discount" => $course->has_discount,
+            "discount_price" => $course->discount_price,
             "is_online" => $course->is_online,
-            "discount" => $course->discount,
             "holding_status" => $course->holding_status,
             "release_date" => $course->release_date,
             "subjects" => $course->subjects,
