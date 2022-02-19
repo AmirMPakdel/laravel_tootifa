@@ -193,6 +193,7 @@ class CourseStoreController extends BaseController
             return $c;
         });
 
+        // TODO consider is_favorite
         return [
             'registered' => $registered,
             'has_access' => $has_access,

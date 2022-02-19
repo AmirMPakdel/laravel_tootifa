@@ -262,6 +262,12 @@ class StudentCourseController extends BaseController
             'size' => $course->course_introduction->content_video->size
         ] : null;
 
+        $is_favorite = Favorite::where([
+            ['favoritable_id' , $course->id],
+            ['favoritable_type' , "App\Models\Course"],
+            ['student_id' , $student->id]
+        ])->exists();
+
         $contents = $course->course_contents()->get()->map(function ($content) use ($has_access){
             $c = [
                 'id' => $content->id,
@@ -320,7 +326,8 @@ class StudentCourseController extends BaseController
             "contents" => $contents,
             "educators" => $educators,
             "logo" => $course->logo,
-            "cover" => $course->cover
+            "cover" => $course->cover,
+            "is_favorite" => $is_favorite ? 1 : 0
         ];
     }
 
