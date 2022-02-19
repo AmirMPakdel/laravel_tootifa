@@ -32,7 +32,7 @@ class StudentRegistrationController extends BaseController
         $student = Student::where([
             ['phone_number', $phone_number],
             ['phone_verified_at', '<>', null]
-        ])->exists();
+        ])->first();
 
         if (!$student)
             return $this->sendResponse(Constant::$INVALID_PHONE_NUMBER, null);
