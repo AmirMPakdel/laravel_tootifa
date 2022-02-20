@@ -86,7 +86,7 @@ class StudentTransactionController extends BaseController
             'success' => $transaction->success,
             'order_no' => $transaction->order_no,
             'ref_id' => $transaction->ref_id,
-            'name' => $request->input('user')->first_name . " " . $request->input('user')->last_name
+            'name' => $request->input('student')->first_name . " " . $request->input('student')->last_name
         ];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);
