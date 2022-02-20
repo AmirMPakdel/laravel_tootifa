@@ -70,6 +70,7 @@ class StudentTransactionController extends BaseController
         $transaction->title = $request->input('title'); 
         $transaction->price = $request->input('price');
         $transaction->course_id = $request->input('course_id');
+        $transaction->student_id = $request->student->id;
         $transaction->course_title = $request->input('course_title');
         $transaction->portal = $request->input('portal');
         $transaction->redirect_url = $request->input('redirect_url');
