@@ -200,8 +200,9 @@ Route::group([
     Route::post('/comment/score/update', 'StudentCourseController@updateCommentScore');
     Route::post('/store/course/load', 'CourseStoreController@loadCourseForLoggedIn');
 
-    Route::post('/transaction/get', 'StudentTransactionController@getUserTransaction');
-    Route::post('/transaction/generate', 'StudentTransactionController@generateUserTransaction');
+    Route::post('/transaction/get', 'StudentTransactionController@getStudentTransaction');
+    Route::post('/transaction/get/list', 'StudentTransactionController@getStudentTransactionList');
+    Route::post('/transaction/generate', 'StudentTransactionController@generateStudentTransaction');
     Route::get('/course/pay', 'StudentTransactionController@payForCourse');
     Route::get('/course/pay/done', 'StudentTransactionController@payForCourseIsDone')->name('student-course-pay-done');
 });

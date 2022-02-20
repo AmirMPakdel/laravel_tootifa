@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Student;
 
 use App\Http\Controllers\API\Admin\Courses\CoursesController;
+use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Models\StudentTransaction;
 use App\Models\Student;
@@ -12,11 +13,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Shetabit\Multipay\Invoice;
 use Shetabit\Payment\Facade\Payment;
-use Zarinpal\Zarinpal;
 
 
 class StudentTransactionController extends BaseController
 {
+    public function getStudentTransactionList(Request $request)
+    {
+        $transactions = StudentTransaction::where('student_id', $request->input('student')->id)
+            ->get()->map(function($transaction) use ($request){
+                return [
+                    'id' => $transaction->id,
+                    'title' => $transaction->title,
+                    'price' => $transaction->price,
+                    'course_id' => $transaction->course_id,
+                    'course_title' => $transaction->course_title,
+                    'portal' => $transaction->portal,
+                    'redirect_url' => $transaction->redirect_url,
+                    'success' => $transaction->success,
+                    'order_no' => $transaction->order_no,
+                    'ref_id' => $transaction->ref_id,
+                    'date' => $transaction->updated_at,
+                    'error_msg' => $transaction->error_msg,
+                    'name' => $request->input('student')->first_name . " " . $request->input('student')->last_name
+                ];
+            });
+
+        return $this->sendResponse(Constant::$SUCCESS, $transactions);
+    }
+
     public function getStudentTransaction(Request $request)
     {
         $transaction = StudentTransaction::find($request->input('transaction_id'));

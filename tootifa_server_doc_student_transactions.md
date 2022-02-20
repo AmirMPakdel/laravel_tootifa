@@ -130,6 +130,41 @@
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+## GET TRANSACTION LIST
+
+**path**
+
+    /transaction/get/list
+
+**format**
+
+    P11STA
+
+**input**
+
+    transaction_id:number
+
+**output**
+
+    SUCCESS:Array[
+        {
+            id:number,
+            title:string,
+            price:number,
+            course_id:number,
+            course_title:string
+            portal:enum(zarinpal),
+            redirect_url:string,
+            success:number,
+            name:string,
+            date:timestamp
+            error_msg:string
+            ref_id:string,
+        }
+    ]
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 ## PAY FOR COURSE
 
 **path**
