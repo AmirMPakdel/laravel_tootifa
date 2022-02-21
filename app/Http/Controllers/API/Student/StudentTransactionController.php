@@ -17,10 +17,12 @@ use Shetabit\Payment\Facade\Payment;
 
 class StudentTransactionController extends BaseController
 {
-    public function getStudentTransactionList(Request $request)
+    public function getStudentTransactionList(Request $request, $chunk_count, $page_count)
     {
-        $transactions = StudentTransaction::where('student_id', $request->input('student')->id)
-            ->get()->map(function($transaction) use ($request){
+        $paginator = StudentTransaction::where('student_id', $request->input('student')->id)
+            ->paginate($chunk_count, ['*'], 'page', $page_count);
+
+        $transactions = $paginator->map(function($transaction) use ($request){
                 return [
                     'id' => $transaction->id,
                     'title' => $transaction->title,
@@ -38,7 +40,9 @@ class StudentTransactionController extends BaseController
                 ];
             });
 
-        return $this->sendResponse(Constant::$SUCCESS, $transactions);
+        $result = ["total_size" => $paginator->total(), "list" => $transactions];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function getStudentTransaction(Request $request)

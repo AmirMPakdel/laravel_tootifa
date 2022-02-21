@@ -177,11 +177,11 @@ Route::group([
     Route::post('/registration/course/complete', 'StudentCourseController@completeCourseRegistration');
     Route::post('/profile/load', 'StudentProfileController@loadStudentProfile');
     Route::post('/profile/update', 'StudentProfileController@updateStudentProfile');
-    Route::post('/courses/fetch', 'StudentCourseController@fetchCourses');
+    Route::post('/courses/fetch/{chunk_count}/{page_count}', 'StudentCourseController@fetchCourses');
     Route::post('/course/load', 'StudentCourseController@loadCourse');
     Route::post('/course/score/get', 'StudentCourseController@getCourseScore');
     Route::post('/course/score/update', 'StudentCourseController@updateCourseScore');
-    Route::post('/courses/favorite', 'StudentCourseController@fetchFavoriteCourses');
+    Route::post('/courses/favorite/{chunk_count}/{page_count}', 'StudentCourseController@fetchFavoriteCourses');
     Route::post('/course/favorite/add', 'StudentCourseController@addFavoriteCourse');
     Route::post('/course/favorite/remove', 'StudentCourseController@removeFavoriteCourse');
     Route::post('/course/comments/fetch/{chunk_count}/{page_count}', 'StudentCourseController@fetchComments');
@@ -201,7 +201,7 @@ Route::group([
     Route::post('/store/course/load', 'CourseStoreController@loadCourseForLoggedIn');
 
     Route::post('/transaction/get', 'StudentTransactionController@getStudentTransaction');
-    Route::post('/transaction/get/list', 'StudentTransactionController@getStudentTransactionList');
+    Route::post('/transaction/get/list/{chunk_count}/{page_count}', 'StudentTransactionController@getStudentTransactionList');
     Route::post('/transaction/generate', 'StudentTransactionController@generateStudentTransaction');
     Route::get('/course/pay', 'StudentTransactionController@payForCourse');
     Route::get('/course/pay/done', 'StudentTransactionController@payForCourseIsDone')->name('student-course-pay-done');

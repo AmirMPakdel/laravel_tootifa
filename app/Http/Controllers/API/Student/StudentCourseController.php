@@ -28,12 +28,17 @@ class StudentCourseController extends BaseController
         $cc->addStudentToCourse($student, $course, Constant::$REGISTRATION_TYPE_WEBSITE);
     }
 
-    public function fetchCourses(Request $request){
-        $courses = $request->input('student')->courses->map(function ($course) {
-            return $this->buildListCourseObject($course);
-        })->toArray();
+    public function fetchCourses(Request $request, $chunk_count, $page_count){
+        $paginator = $request->input('student')->courses
+                ->paginate($chunk_count, ['*'], 'page', $page_count);
 
-        return $this->sendResponse(Constant::$SUCCESS, $courses);
+        $courses = $paginator->map(function ($course) {
+            return $this->buildListCourseObject($course);
+        });
+
+        $result = ["total_size" => $paginator->total(), "list" => $courses];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function loadCourse(Request $request){
@@ -133,14 +138,18 @@ class StudentCourseController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
-    public function fetchFavoriteCourses(Request $request){
-        $courses = $request->input('student')->favorites()
-            ->where("favoritable_type", "App\Models\Course")->get()
-            ->map(function ($favorite){
-                return $this->buildListCourseObject(Course::find($favorite->favoritable_id));
-            });
+    public function fetchFavoriteCourses(Request $request, $chunk_count, $page_count){
+        $paginator = $request->input('student')->favorites()
+            ->where("favoritable_type", "App\Models\Course")
+            ->paginate($chunk_count, ['*'], 'page', $page_count);
 
-        return $this->sendResponse(Constant::$SUCCESS, $courses);
+        $courses = $paginator->map(function ($favorite){
+            return $this->buildListCourseObject(Course::find($favorite->favoritable_id));
+        });
+
+        $result = ["total_size" => $paginator->total(), "list" => $courses];
+
+        return $this->sendResponse(Constant::$SUCCESS, $result);
     }
 
     public function addFavoriteCourse(Request $request){
@@ -223,6 +232,7 @@ class StudentCourseController extends BaseController
             'id' => $course->id,
             'is_online' => $course->is_online,
             'title' => $course->title,
+            'logo' => $course->logo
         ];
     }
 
