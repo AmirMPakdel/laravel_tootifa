@@ -29,7 +29,7 @@ class StudentCourseController extends BaseController
     }
 
     public function fetchCourses(Request $request, $chunk_count, $page_count){
-        $paginator = $request->input('student')->courses
+        $paginator = $request->input('student')->courses()
                 ->paginate($chunk_count, ['*'], 'page', $page_count);
 
         $courses = $paginator->map(function ($course) {
