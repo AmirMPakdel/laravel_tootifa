@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers\API\Admin\MainPage;
 
+use App\Http\Controllers\API\Admin\GroupsController;
 use App\Http\Controllers\API\Admin\UploadController;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
@@ -102,6 +103,12 @@ class UserMainPageEditController extends BaseController
                 return $this->updateMainForm($request);
             case Constant::$EDIT_PARAM_MAIN_FORM_DELETE:
                 return $this->deleteMainForm($request);
+            case Constant::$EDIT_PARAM_MAIN_INFO_BOX_ADD:
+                    return $this->addMainPageInfoBox($request);
+            case Constant::$EDIT_PARAM_MAIN_INFO_BOX_UPDATE:
+                    return $this->updateMainPageInfoBox($request);
+            case Constant::$EDIT_PARAM_MAIN_INFO_BOX_DELETE:
+                    return $this->deleteMainPageInfoBox($request);
             default:
                 return $this->sendResponse(Constant::$INVALID_EDIT_TYPE, null);
         }
@@ -196,7 +203,9 @@ class UserMainPageEditController extends BaseController
     public function editPropertiesFooterLinks(Request $request)
     {
         $properties = MainPageProperties::all()[0];
-        $properties->footer_links = json_encode($request->input("links"));
+        $properties->footer_links = json_encode($request->input("links")); 
+        $properties->footer_telephones = json_encode($request->input("telephones"));
+
         $properties->save();
 
         // TODO check it's validity
@@ -211,6 +220,13 @@ class UserMainPageEditController extends BaseController
         $file_state = $request->input("file_state");
         if (!$file_state) return $this->sendResponse(Constant::$NO_FILE_STATE, null);
 
+        $properties->page_cover_title = $request->input("title");
+        $properties->page_cover_text = $request->input("text");
+        $properties->page_cover_has_link = $request->input("has_link");
+        $properties->page_cover_link = $request->input("link");
+        $properties->page_cover_link_title = $request->input("link_title");
+        $properties->page_cover_template = $request->input("template");
+
         $result = UploadManager::updateFileState(
             $file_state,
             tenant()->id,
@@ -221,6 +237,8 @@ class UserMainPageEditController extends BaseController
             false,
             $request->input('upload_key')
         );
+
+        $properties->save();
 
         return $this->sendResponse($result, null);
     }
@@ -245,6 +263,135 @@ class UserMainPageEditController extends BaseController
 
         return $this->sendResponse($result, null);
     }
+
+    public function addMainPageInfoBox(Request $request){
+        if (
+            !$request->exists('title') ||
+            !$request->exists('text')
+        )
+            return $this->sendResponse(Constant::$INVALID_VALUE, null);
+
+        $main_content = new MainContent();
+        $main_content->title = $request->input('title');
+        $main_content->text = $request->input('text');
+        $main_content->has_link = $request->input('has_link');
+        $main_content->link = $request->input('link');
+        $main_content->link_title = $request->input('link_title');
+        $main_content->type = $request->input('type');
+        $main_content->visible = $request->input('visible');
+
+        $result = Constant::$SUCCESS;
+        switch($main_content->type){
+            case Constant::$CONTENT_TYPE_VIDEO:
+                $content_video = new ContentVideo();
+                $content_video->belongs_to = Constant::$BELONGING_MAIN;
+                $result = UploadManager::saveFile(tenant()->id, 1, $content_video, 'url', true, false, $request->input('upload_key'));
+
+                if ($result == Constant::$SUCCESS) {
+                    $main_content->save();
+                    $main_content->content_video()->save($content_video);
+                }
+                break;
+            case Constant::$CONTENT_TYPE_IMAGE:
+                $content_image = new ContentImage();
+                $content_image->belongs_to = Constant::$BELONGING_MAIN;
+                $result = UploadManager::saveFile(tenant()->id, 1, $content_image, 'url', true, false, $request->input('upload_key'));
+        
+                if ($result == Constant::$SUCCESS) {
+                    $main_content->save();
+                    $main_content->content_image()->save($content_image);
+                }
+                break;
+        }
+
+        if ($result == Constant::$SUCCESS) $main_content->save();
+        
+        return $this->sendResponse($result, ['content_id' => $main_content->id]);
+    }
+
+    public function updateMainPageInfoBox(Request $request){
+        $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        
+        if (!$request->exists('file_state'))
+            return $this->sendResponse(Constant::$NO_FILE_STATE, null);
+
+        $main_content->title = $request->input('title');
+        $main_content->text = $request->input('text');
+        $main_content->has_link = $request->input('has_link');
+        $main_content->link = $request->input('link');
+        $main_content->link_title = $request->input('link_title');
+        $main_content->type = $request->input('type');
+        $main_content->visible = $request->input('visible');
+
+        $result = Constant::$SUCCESS;
+        switch($main_content->type){
+            case Constant::$CONTENT_TYPE_VIDEO:
+                $content_video = $main_content->content_video()->first();
+
+                $result = UploadManager::updateFileState(
+                    $request->input('file_state'),
+                    tenant()->id,
+                    1,
+                    $content_video,
+                    "url",
+                    true,
+                    false,
+                    $request->input('upload_key')
+                );
+                break;
+            case Constant::$CONTENT_TYPE_IMAGE:
+                $content_image = $main_content->content_image()->first();
+
+                $result = UploadManager::updateFileState(
+                    $request->input('file_state'),
+                    tenant()->id,
+                    1,
+                    $content_image,
+                    "url",
+                    true,
+                    false,
+                    $request->input('upload_key')
+                );
+                break;
+        }
+
+        if ($result == Constant::$SUCCESS) $main_content->save();
+
+        return $this->sendResponse($result, null);
+    }
+
+    public function deleteMainPageInfoBox(Request $request){
+        $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+
+        $result = Constant::$SUCCESS;
+        switch($main_content->type){
+            case Constant::$CONTENT_TYPE_VIDEO:
+                $content_video = $main_content->content_video()->first();
+
+                $result = UploadManager::deleteFile(tenant()->id, $content_video->url);
+                if ($result == Constant::$SUCCESS) {
+                    $content_video->delete();
+                }
+                break;
+            case Constant::$CONTENT_TYPE_IMAGE:
+                $content_image = $main_content->content_image()->first();
+
+                $result = UploadManager::deleteFile(tenant()->id, $content_image->url);
+                if ($result == Constant::$SUCCESS) {
+                    $content_image->delete();
+                }
+                break;
+        }
+
+        if ($result == Constant::$SUCCESS) {
+            $main_content->delete();
+        }
+
+        return $this->sendResponse($result, null);
+    }
+
 
     public function addMainContentVideo(Request $request)
     {
@@ -663,17 +810,23 @@ class UserMainPageEditController extends BaseController
 
     public function addMainCourseList(Request $request)
     {
-        if (
-            !$request->exists('title') ||
-            !$request->exists('list') ||
-            !$request->exists('default_type')
-        )
-            return $this->sendResponse(Constant::$INVALID_VALUE, null);
-
         $main_course_list = new MainCourseList();
         $main_course_list->title = $request->input('title');
         $main_course_list->list = $request->input('list');
         $main_course_list->default_type = $request->input('default_type');
+
+        $groups = (object)$request->input('groups');
+
+        // check groups hierarchy
+        if (isset($groups->g1) && isset($groups->g2) && isset($groups->g3)) {
+            if (!GroupsController::checkGroupsHierarchy($groups))
+                return $this->sendResponse(Constant::$INVALID_GROUP_HIERARCHY, null);
+        }
+
+        $main_course_list->level_one_group_id = $groups->g1;
+        $main_course_list->level_two_group_id = $groups->g2;
+        $main_course_list->level_three_group_id = $groups->g3;
+
         $main_course_list->save();
 
         return $this->sendResponse(Constant::$SUCCESS, ['list_id' => $main_course_list->id]);
@@ -684,16 +837,23 @@ class UserMainPageEditController extends BaseController
         $main_course_list = MainCourseList::find($request->input('list_id'));
         if (!$main_course_list) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
-        if (
-            !$request->exists('title') ||
-            !$request->exists('list') ||
-            !$request->exists('default_type')
-        )
-            return $this->sendResponse(Constant::$INVALID_VALUE, null);
-
         $main_course_list->title = $request->input('title');
         $main_course_list->list = $request->input('list');
         $main_course_list->default_type = $request->input('default_type');
+
+        $groups = (object)$request->input('groups');
+
+        // check groups hierarchy
+        if (isset($groups->g1) && isset($groups->g2) && isset($groups->g3)) {
+            if (!GroupsController::checkGroupsHierarchy($groups))
+                return $this->sendResponse(Constant::$INVALID_GROUP_HIERARCHY, null);
+        }
+
+        $main_course_list->level_one_group_id = $groups->g1;
+        $main_course_list->level_two_group_id = $groups->g2;
+        $main_course_list->level_three_group_id = $groups->g3;
+
+        
         $main_course_list->save();
 
         return $this->sendResponse(Constant::$SUCCESS, null);

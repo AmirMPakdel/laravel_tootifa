@@ -92,6 +92,7 @@ class Constant
     public static $CONTENT_TYPE_VOICE = "ct_voice";
     public static $CONTENT_TYPE_TEXT = "ct_text";
     public static $CONTENT_TYPE_SLIDER = "ct_slider";
+    public static $CONTENT_TYPE_NONE = "ct_none";
 
     public static $HOLDING_STATUS_COMING_SOON = "coming_soon";
     public static $HOLDING_STATUS_IS_HOLDING = "is_holding";
@@ -190,6 +191,10 @@ class Constant
         "کنکور",
     ];
 
+    public static $APP_LINKS = [
+        ["name" => "android", "url" => "/"]
+    ];
+
     // UPLOAD TYPES
     public static $UPLOAD_TYPE_WRITER_IMAGE = "ut_writer_image";
     public static $UPLOAD_TYPE_EDUCATOR_IMAGE = "ut_educator_image";
@@ -211,6 +216,13 @@ class Constant
     public static $UPLOAD_TYPE_COURSE_VIDEO_FREE = "ut_course_video_free";
     public static $UPLOAD_TYPE_COURSE_DOCUMENT_FREE = "ut_course_document_free";
     public static $UPLOAD_TYPE_COURSE_VOICE_FREE = "ut_course_voice_free";
+
+
+
+    public static $MAIN_COURSE_LIST_DEFAULT_TYPE_MOST_VISITED = "dt_most_visited";
+    public static $MAIN_COURSE_LIST_DEFAULT_TYPE_MOST_SELL = "dt_most_sell";
+    public static $MAIN_COURSE_LIST_DEFAULT_TYPE_MOST_SCORE = "dt_most_score";
+    public static $MAIN_COURSE_LIST_DEFAULT_TYPE_NEWEST = "dt_most_newest";
 
     public static function getCourseFreeUploadTypes()
     {
@@ -308,6 +320,9 @@ class Constant
     public static $EDIT_PARAM_POST_FORM_ADD = "ep_content_post_form_add";
     public static $EDIT_PARAM_POST_FORM_UPDATE = "ep_content_post_form_update";
     public static $EDIT_PARAM_POST_FORM_DELETE = "ep_content_post_form_delete";
+    public static $EDIT_PARAM_MAIN_INFO_BOX_ADD = "ep_content_main_box_info_add";
+    public static $EDIT_PARAM_MAIN_INFO_BOX_UPDATE = "ep_content_main_box_info_update";
+    public static $EDIT_PARAM_MAIN_INFO_BOX_DELETE = "ep_content_main_box_info_delete";
     //******************************************************************************************************************
 
 }

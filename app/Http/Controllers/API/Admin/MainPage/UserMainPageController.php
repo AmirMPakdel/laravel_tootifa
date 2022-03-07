@@ -15,13 +15,17 @@ use Illuminate\Http\Request;
 
 class UserMainPageController extends BaseController
 {
-    public function loadMainPage(Request $request){
+    public function loadMainPage(){
         $properties = MainPageProperties::all()[0];
         $contents = MainContent::all()->map(function ($content){
             $c = [
                 'id' => $content->id,
                 'title' => $content->title,
+                'has_link' => $content->has_link,
                 'link' => $content->link,
+                'link_title' => $content->link_title,
+                'text' => $content->text,
+                'visible' => $content->visible,
                 'type' => $content->type,
             ];
 
@@ -30,21 +34,25 @@ class UserMainPageController extends BaseController
                     $c['url'] = $content->content_video->url;
                     $c['size'] = $content->content_video->size;
                     break;
-                case Constant::$CONTENT_TYPE_VOICE:
-                    $c['url'] = $content->content_voice->url;
-                    $c['size'] = $content->content_voice->size;
-                    break;
                 case Constant::$CONTENT_TYPE_IMAGE:
                     $c['url'] = $content->content_image->url;
                     $c['size'] = $content->content_image->size;
                     break;
-                case Constant::$CONTENT_TYPE_TEXT:
-                    $c['text'] = $content->content_text->text;
+                case Constant::$CONTENT_TYPE_NONE:
+                    $c['url'] = "/";
+                    $c['size'] = 0;
                     break;
-                case Constant::$CONTENT_TYPE_SLIDER:
-                    $c['slides'] = $content->content_slider->content_images()->get()->map(function ($image){
-                        return ["url" => $image->url, "size" => $image->size];
-                    });
+                // case Constant::$CONTENT_TYPE_VOICE:
+                //     $c['url'] = $content->content_voice->url;
+                //     $c['size'] = $content->content_voice->size;
+                //     break;
+                // case Constant::$CONTENT_TYPE_TEXT:
+                //     $c['text'] = $content->content_text->text;
+                //     break;
+                // case Constant::$CONTENT_TYPE_SLIDER:
+                //     $c['slides'] = $content->content_slider->content_images()->get()->map(function ($image){
+                //         return ["url" => $image->url, "size" => $image->size];
+                //     });
             }
 
             return $c;
@@ -52,9 +60,13 @@ class UserMainPageController extends BaseController
 
         $course_lists = MainCourseList::all()->map(function ($course_list){
             return [
+                'id' => $course_list->id,
                 'title' => $course_list->title,
                 'default_type' => $course_list->default_type,
                 'list' => $course_list->list,
+                'g1' => $course_list->level_one_group_id,
+                'g2' => $course_list->level_two_group_id,
+                'g3' => $course_list->level_three_group_id,
             ];
         });
 
@@ -80,21 +92,29 @@ class UserMainPageController extends BaseController
         });
 
         return [
-            'is_banner_on' => $properties->is_banner_on,
-            'banner_cover' => $properties->banner_cover,
+            // 'is_banner_on' => $properties->is_banner_on,
+            // 'banner_cover' => $properties->banner_cover,
             'page_cover' => $properties->page_cover,
+            'page_cover_title' => $properties->page_cover_title,
+            'page_cover_text' => $properties->page_cover_text,
+            'page_cover_has_link' => $properties->page_cover_has_link,
+            'page_cover_link' => $properties->page_cover_link,
+            'page_cover_link_title' => $properties->page_cover_link_title,
+            'page_cover_template' => $properties->page_cover_template,
             'page_logo' => $properties->page_logo,
             'store_open' => $properties->store_open,
-            'blog_open' => $properties->blog_open,
-            'banner_link' => $properties->banner_link,
-            'banner_text' => $properties->banner_text,
+            // 'banner_link' => $properties->banner_link,
+            // 'banner_text' => $properties->banner_text,
             'page_title' => $properties->page_title,
             'content_hierarchy' => $properties->content_hierarchy,
             'footer_links' => $properties->footer_links,
+            'footer_telephones' => $properties->footer_telephones,
+            'footer_app_links' => Constant::$APP_LINKS,
             'contents' => $contents,
             'course_lists' => $course_lists,
-            'post_lists' => $post_lists,
-            'main_forms' => $main_forms,
+            // 'blog_open' => $properties->blog_open,
+            // 'post_lists' => $post_lists,
+            // 'main_forms' => $main_forms,
         ];
     }
 }
