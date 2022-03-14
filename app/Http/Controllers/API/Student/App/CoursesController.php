@@ -14,7 +14,7 @@ use App\Models\UProfile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+
 
 class CoursesController extends BaseController
 {
@@ -189,7 +189,6 @@ class CoursesController extends BaseController
 
         return $result;
     }
-
 
     public function resetUserLks(Request $request)
     {

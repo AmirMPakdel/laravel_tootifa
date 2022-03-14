@@ -323,6 +323,7 @@ class Constant
     public static $EDIT_PARAM_MAIN_INFO_BOX_ADD = "ep_content_main_box_info_add";
     public static $EDIT_PARAM_MAIN_INFO_BOX_UPDATE = "ep_content_main_box_info_update";
     public static $EDIT_PARAM_MAIN_INFO_BOX_DELETE = "ep_content_main_box_info_delete";
+    public static $EDIT_PARAM_MAIN_INFO_BOX_TOGGLE_VISIBILITY = "ep_content_main_box_info_toggle_visibility"
     //******************************************************************************************************************
 
 }

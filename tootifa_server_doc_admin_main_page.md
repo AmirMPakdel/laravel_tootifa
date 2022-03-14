@@ -458,3 +458,60 @@
 ```
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## EDIT MAIN CONTENT HIERARCHY
+
+**path**
+
+    /course/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_hierarchy)|ui
+
+    hierarchy:Array[H_object]
+
+**output**
+
+    SUCCESS:null
+
+    CONTENT_NOT_FOUND:null
+
+**types**
+
+```javascript
+    def H_object = {
+        "any format prefered"
+    }
+
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## TOGGLE MAIN INFO BOX VISIBILITY
+
+**path**
+
+    /mainpage/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_main_box_info_toggle_visibility)|ui
+
+**output**
+
+    SUCCESS:{
+        "visibile":number
+    }
+
+    CONTENT_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

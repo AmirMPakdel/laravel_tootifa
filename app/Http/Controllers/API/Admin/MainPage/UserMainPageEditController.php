@@ -107,6 +107,8 @@ class UserMainPageEditController extends BaseController
                     return $this->addMainPageInfoBox($request);
             case Constant::$EDIT_PARAM_MAIN_INFO_BOX_UPDATE:
                     return $this->updateMainPageInfoBox($request);
+            case Constant::$EDIT_PARAM_MAIN_INFO_BOX_TOGGLE_VISIBILITY:
+                    return $this->toggleMainPageInfoBoxVisibility($request);
             case Constant::$EDIT_PARAM_MAIN_INFO_BOX_DELETE:
                     return $this->deleteMainPageInfoBox($request);
             default:
@@ -359,6 +361,16 @@ class UserMainPageEditController extends BaseController
         if ($result == Constant::$SUCCESS) $main_content->save();
 
         return $this->sendResponse($result, null);
+    }
+
+    public function toggleMainPageInfoBoxVisibility(Request $request){
+        $main_content = MainContent::find($request->input('content_id'));
+        if (!$main_content) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        
+        $main_content->visible = $main_content->visible ? 0 : 1;
+        $main_content->save();
+
+        return $this->sendResponse(Constant::$SUCCESS, ['visible' => $main_content->visible]);
     }
 
     public function deleteMainPageInfoBox(Request $request){
