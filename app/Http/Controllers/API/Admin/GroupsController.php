@@ -183,7 +183,7 @@ class GroupsController extends BaseController
     }
 
     public function deleteLevelThreeGroup(Request $request){
-        $group = LevelTwoGroup::find($request->input("id"));
+        $group = LevelThreeGroup::find($request->input("id"));
         $force_delete = $request->input("force_delete");
 
         if(!$group) return $this->sendResponse(Constant::$ENTITY_NOT_FOUND, null);
