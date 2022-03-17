@@ -38,7 +38,7 @@ class AddColumnsToMainPageProperties extends Migration
             $table->dropColumn('page_cover_link');
             $table->dropColumn('page_cover_link_title');
             $table->dropColumn('page_cover_template');
-            $table->dropColumn('footer_telephones');
+            $table->dropColumn('telephones');
         });
     }
 }

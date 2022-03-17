@@ -4,10 +4,8 @@
 namespace App\Http\Controllers\API\Admin\MainPage;
 
 use App\Http\Controllers\API\Admin\GroupsController;
-use App\Http\Controllers\API\Admin\UploadController;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
-use App\Includes\Helper;
 use App\Includes\UploadManager;
 use App\Models\ContentImage;
 use App\Models\ContentSlider;
@@ -89,12 +87,16 @@ class UserMainPageEditController extends BaseController
                 return $this->addMainCourseList($request);
             case Constant::$EDIT_PARAM_COURSE_LIST_UPDATE:
                 return $this->updateMainCourseList($request);
+            case Constant::$EDIT_PARAM_COURSE_LIST_TOGGLE_VISIBILITY:
+                return $this->toggleMainCourseListVisibility($request);
             case Constant::$EDIT_PARAM_COURSE_LIST_DELETE:
                 return $this->deleteMainCourseList($request);
             case Constant::$EDIT_PARAM_POST_LIST_ADD:
                 return $this->addMainPostList($request);
             case Constant::$EDIT_PARAM_POST_LIST_UPDATE:
                 return $this->updateMainPostList($request);
+            case Constant::$EDIT_PARAM_POST_LIST_TOGGLE_VISIBILITY:
+                return $this->toggleMainPostListVisibility($request);
             case Constant::$EDIT_PARAM_POST_LIST_DELETE:
                 return $this->deleteMainPostList($request);
             case Constant::$EDIT_PARAM_MAIN_FORM_ADD:
@@ -826,6 +828,7 @@ class UserMainPageEditController extends BaseController
         $main_course_list->title = $request->input('title');
         $main_course_list->list = $request->input('list');
         $main_course_list->default_type = $request->input('default_type');
+        $main_course_list->visible = $request->input('visible');
 
         $groups = (object)$request->input('groups');
 
@@ -852,6 +855,7 @@ class UserMainPageEditController extends BaseController
         $main_course_list->title = $request->input('title');
         $main_course_list->list = $request->input('list');
         $main_course_list->default_type = $request->input('default_type');
+        $main_course_list->visible = $request->input('visible');
 
         $groups = (object)$request->input('groups');
 
@@ -869,6 +873,16 @@ class UserMainPageEditController extends BaseController
         $main_course_list->save();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
+    public function toggleMainCourseListVisibility(Request $request){
+        $main_course_list = MainCourseList::find($request->input('list_id'));
+        if (!$main_course_list) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        
+        $main_course_list->visible = $main_course_list->visible ? 0 : 1;
+        $main_course_list->save();
+
+        return $this->sendResponse(Constant::$SUCCESS, ['visible' => $main_course_list->visible]);
     }
 
     public function deleteMainCourseList(Request $request)
@@ -893,6 +907,7 @@ class UserMainPageEditController extends BaseController
         $main_post_list = new MainPostList();
         $main_post_list->title = $request->input('title');
         $main_post_list->list = $request->input('list');
+        $main_post_list->visible = $request->input('visible');
         $main_post_list->default_type = $request->input('default_type');
         $main_post_list->save();
 
@@ -913,10 +928,21 @@ class UserMainPageEditController extends BaseController
 
         $main_post_list->title = $request->input('title');
         $main_post_list->list = $request->input('list');
+        $main_post_list->visible = $request->input('visible');
         $main_post_list->default_type = $request->input('default_type');
         $main_post_list->save();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
+    public function toggleMainPostListVisibility(Request $request){
+        $main_post_list = MainPostList::find($request->input('list_id'));
+        if (!$main_post_list) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
+        
+        $main_post_list->visible = $main_post_list->visible ? 0 : 1;
+        $main_post_list->save();
+
+        return $this->sendResponse(Constant::$SUCCESS, ['visible' => $main_post_list->visible]);
     }
 
     public function deleteMainPostList(Request $request)

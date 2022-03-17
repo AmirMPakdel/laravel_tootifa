@@ -2,10 +2,6 @@
 
 
 namespace App\Http\Controllers\API;
-
-use Illuminate\Http\Request;
-use App\Models\Student;
-use App\Includes\Constant;
 use App\Http\Controllers\Controller as Controller;
 
 class BaseController extends Controller
