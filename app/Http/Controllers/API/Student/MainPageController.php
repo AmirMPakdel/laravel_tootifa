@@ -84,6 +84,7 @@ class MainPageController extends BaseController
                 'title' => $post_list->title,
                 'default_type' => $post_list->default_type,
                 // 'list' => $post_list->list,
+                // todo add groups
             ];
         });
 
