@@ -63,7 +63,8 @@ class UserMainPageController extends BaseController
                 'id' => $course_list->id,
                 'title' => $course_list->title,
                 'default_type' => $course_list->default_type,
-                'list' => $course_list->list,
+                // 'list' => $course_list->list,
+                'visible' => $course_list->visible,
                 'g1' => $course_list->level_one_group_id,
                 'g2' => $course_list->level_two_group_id,
                 'g3' => $course_list->level_three_group_id,
@@ -72,9 +73,13 @@ class UserMainPageController extends BaseController
 
         $post_lists = MainPostList::all()->map(function ($post_list){
             return [
+                'id' => $post_list->id,
                 'title' => $post_list->title,
                 'default_type' => $post_list->default_type,
-                'list' => $post_list->list,
+                'visible' => $post_list->visible,
+                // 'list' => $post_list->list,
+
+                // todo add groups
             ];
         });
 

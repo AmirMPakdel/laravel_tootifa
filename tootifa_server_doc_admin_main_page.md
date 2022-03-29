@@ -305,6 +305,8 @@
 
     groups:GroupInput
 
+    visible:number
+
 **output**
 
     SUCCESS:{
@@ -350,6 +352,8 @@
     default_type:enum("dt_most_visited"|"dt_most_sell"|"dt_most_score"|"dt_most_newest")
 
     groups:GroupInput
+
+    visible:number
 
 **output**
 
@@ -505,6 +509,34 @@
 **input**
 
     ep:string(ep_content_main_box_info_toggle_visibility)|ui
+
+    content_id:number
+
+**output**
+
+    SUCCESS:{
+        "visibile":number
+    }
+
+    CONTENT_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## TOGGLE MAIN COURSE LIST VISIBILITY
+
+**path**
+
+    /mainpage/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_content_main_course_list_toggle_visibility)|ui
+
+    list_id:number
 
 **output**
 

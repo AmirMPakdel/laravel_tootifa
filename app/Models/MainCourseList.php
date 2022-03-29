@@ -14,4 +14,8 @@ class MainCourseList extends Model
         'list',
         'default_type',
     ];
+
+    public function scopeVisible($query){
+        return $query->where('visible', '=', 1);
+    }
 }

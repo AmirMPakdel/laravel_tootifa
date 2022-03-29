@@ -5,6 +5,10 @@ namespace App\Http\Controllers\API\Student;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Includes\Helper;
+use App\Models\Course;
+use App\Models\LevelOneGroup;
+use App\Models\LevelThreeGroup;
+use App\Models\LevelTwoGroup;
 use App\Models\MainContent;
 use App\Models\MainCourseList;
 use App\Models\MainForm;
@@ -22,7 +26,7 @@ class MainPageController extends BaseController
         Helper::setMainVisit();
 
         $properties = MainPageProperties::all()[0];
-        $contents = MainContent::all()->map(function ($content){
+        $contents = MainContent::visible()->get()->map(function ($content){
             $c = [
                 'id' => $content->id,
                 'title' => $content->title,
@@ -63,25 +67,26 @@ class MainPageController extends BaseController
             return $c;
         });
 
-        $course_lists = MainCourseList::all()->map(function ($course_list){
+        $course_lists = MainCourseList::visible()->get()->map(function ($course_list){
             return [
                 'title' => $course_list->title,
                 'default_type' => $course_list->default_type,
-                'list' => $course_list->list,
+                // 'list' => $course_list->list,
                 'g1' => $course_list->level_one_group_id,
                 'g2' => $course_list->level_two_group_id,
                 'g3' => $course_list->level_three_group_id,
             ];
         });
 
-        $post_lists = MainPostList::all()->map(function ($post_list){
+        $post_lists = MainPostList::visible()->get()->map(function ($post_list){
             return [
                 'title' => $post_list->title,
                 'default_type' => $post_list->default_type,
-                'list' => $post_list->list,
+                // 'list' => $post_list->list,
             ];
         });
 
+        // todo only visibles
         $main_forms = MainForm::all()->map(function ($main_form){
             return [
                 'title' => $main_form->title,
@@ -140,6 +145,74 @@ class MainPageController extends BaseController
         })->toArray();
 
         return $this->sendResponse(Constant::$SUCCESS, $popups);
+    }
+
+    public function getMainCourseListData(Request $request){
+        $default_type = MainCourseList::find($request->input('course_list_id'));
+        $group = $request->input('group');
+
+        if(!$default_type){
+            return $this->sendResponse(Constant::$NO_DEFAULT_TYPE, null);
+        }
+
+        // which order
+        switch ($default_type) {
+            case Constant::$MAIN_LIST_DEFAULT_TYPE_HIGHEST_SCORE:
+                $order_by = "score";
+                $order_direction = "desc";
+                break;
+            case Constant::$MAIN_LIST_DEFAULT_TYPE_LAST_CREATED:
+                $order_by = "created_at";
+                $order_direction = "asc";
+                break;
+            case Constant::$MAIN_LIST_DEFAULT_TYPE_MOST_SELLS:
+                $order_by = "sells";
+                $order_direction = "desc";
+                break;
+            case Constant::$MAIN_LIST_DEFAULT_TYPE_MOST_VISITED:
+                $order_by = "visits_count";
+                $order_direction = "asc";
+                break;
+            default:
+                $order_by = "created_at";
+                $order_direction = "desc";
+        }
+
+        // which group
+        if ($group && isset($group['level'])) {
+            switch ($group['level']) {
+                case 1:
+                    $group = LevelOneGroup::find($group['id']);
+                    break;
+                case 2:
+                    $group = LevelTwoGroup::find($group['id']);
+                    break;
+                case 3:
+                    $group = LevelThreeGroup::find($group['id']);
+                    break;
+                default:
+                    $group = null;
+            }
+        } else $group = null;
+
+
+        if ($group) {
+            $courses = $group->courses()->where([
+                ['validation_status', 1],
+            ])->orderBy($order_by, $order_direction)
+                ->limit(11)->map(function ($course) {
+                    return $this->buildListCourseObject($course);
+            });
+        } else {
+            $courses = Course::where([
+                ['validation_status', 1],
+            ])->orderBy($order_by, $order_direction)
+                ->limit(11)->map(function ($course) {
+                    return $this->buildListCourseObject($course);
+            });
+        }
+
+        return $this->sendResponse(Constant::$SUCCESS, $courses);
     }
         
 }

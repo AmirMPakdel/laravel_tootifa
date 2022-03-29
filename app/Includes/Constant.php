@@ -56,6 +56,7 @@ class Constant
     public static $NEGETIVE_MAINTANANCE_BALANCE = 1154;
     public static $INVALID_USER_NAME = 1155;
     public static $COURSE_NOT_VALID = 1156;
+    public static $NO_DEFAULT_TYPE = 1157;
 
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";

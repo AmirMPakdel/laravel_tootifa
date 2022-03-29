@@ -34,4 +34,8 @@ class MainContent extends Model
     public function content_slider(){
         return $this->morphOne(ContentSlider::class, 'content_sliderable');
     }
+
+    public function scopeVisible($query){
+        return $query->where('visible', '=', 1);
+    }
 }
