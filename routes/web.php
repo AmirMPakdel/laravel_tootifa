@@ -164,6 +164,7 @@ Route::group([
 
     Route::post('/main/load', 'MainPageController@loadMainPage');
     Route::post('/popups/load', 'MainPageController@loadActivePopups');
+    Route::post('/main/list/course/load', 'MainPageController@getMainCourseListData');
 
     Route::post('/download/verify', 'DownloadController@verifyStudentForDownloadCourseItem');
 });
