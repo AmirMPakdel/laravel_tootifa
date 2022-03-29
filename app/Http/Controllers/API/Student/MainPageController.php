@@ -150,12 +150,15 @@ class MainPageController extends BaseController
     }
 
     public function getMainCourseListData(Request $request){
-        $default_type = MainCourseList::find($request->input('course_list_id'));
-        $group = $request->input('group');
-
-        if(!$default_type){
+        $mcl = MainCourseList::find($request->input('course_list_id'));
+        if(!$mcl)
+            return $this->sendResponse(Constant::$MCL_NOT_FOUND, null);
+        
+        $default_type = $mcl->default_type;
+        if(!$default_type)
             return $this->sendResponse(Constant::$NO_DEFAULT_TYPE, null);
-        }
+
+        $group = $mcl->groups;
 
         // which order
         switch ($default_type) {
@@ -215,6 +218,14 @@ class MainPageController extends BaseController
         }
 
         return $this->sendResponse(Constant::$SUCCESS, $courses);
+    }
+
+    private function buildListCourseObject($course){
+        return [
+            'id' => $course->id,
+            'title' => $course->title,
+            'logo' => $course->logo
+        ];
     }
         
 }

@@ -57,7 +57,8 @@ class Constant
     public static $INVALID_USER_NAME = 1155;
     public static $COURSE_NOT_VALID = 1156;
     public static $NO_DEFAULT_TYPE = 1157;
-
+    public static $MCL_NOT_FOUND = 1158;
+    
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
     public static $GENDER_FEMALE = 0;

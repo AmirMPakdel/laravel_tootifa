@@ -98,7 +98,7 @@ class CourseStoreController extends BaseController
 
         $result = ["total_size" => $paginator->total(), "list" => $courses];
 
-        return $this->sendResponse(Constant::$SUCCESS, $result);
+        return $this->sendResponis_favoritese(Constant::$SUCCESS, $result);
     }
 
     public function loadCourse(Request $request)

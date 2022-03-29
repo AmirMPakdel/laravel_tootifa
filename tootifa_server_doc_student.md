@@ -532,3 +532,48 @@
 ```
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## FECH MAIN LIST COURSES
+
+**path**
+
+    /main/course_list/load
+
+**format**
+
+    P11PSTA
+
+**input**
+
+    course_list_id:number
+
+    default_type:enum("dt_most_visited"|"dt_most_sell"|"dt_most_score"|"dt_most_newest")
+
+    groups:GroupInput
+
+**output**
+
+    SUCCESS:Array[CourseItem]
+
+**types**
+
+```javascript
+
+    def CourseItem = {
+        "id":number,
+        "title":string,
+        "logo":string,
+    }
+
+    def GroupInput = {
+        "g1": number,
+        "g2": number,
+        "g3" : number,
+    }
+
+    description: "You can't have lower group levels without specializing higher group ids"
+    description: "set the g#level to null or empty string if it's not necessary" 
+
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
