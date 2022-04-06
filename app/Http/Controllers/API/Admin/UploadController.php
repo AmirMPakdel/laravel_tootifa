@@ -14,7 +14,7 @@ class UploadController extends BaseController
     public function generateUploadKey(Request $request)
     {
         $upload_transaction = new UploadTransaction();
-        $upload_transaction->upload_key = uniqid('', true);
+        $upload_transaction->upload_key = uniqid('', true)."-".$request->input('file_type');
         $upload_transaction->upload_type = $request->input('upload_type');
         $upload_transaction->file_type = $request->input('file_type');
         $upload_transaction->file_size = $request->input('file_size');
