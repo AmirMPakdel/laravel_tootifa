@@ -257,6 +257,15 @@ class Constant
     public static $BANKING_PORTAL_ZARINPAL = "bp_zarinpal";
 
 
+    public static $INCOME_CHART_FILTER_ALL = "icf_all";
+    public static $INCOME_CHART_FILTER_YEAR = "icf_year";
+    public static $INCOME_CHART_FILTER_MONTH = "icf_month";
+    public static $INCOME_CHART_FILTER_WEEK = "icf_week";
+
+    public static $RECORDS_FILTER_SELLS = "rf_sells";
+    public static $RECORDS_FILTER_INCREASE_M_BALANCE = "rf_increase_m_balacne";
+    public static $RECORDS_FILTER_DECREASE_M_BALANCE = "rf_decrease_m_balacne";
+
     //**************************************************** EDIT PARAMS *************************************************
     public static $EDIT_PARAM_LOGO = "ep_logo";
     public static $EDIT_PARAM_COVER = "ep_cover";

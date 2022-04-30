@@ -120,6 +120,11 @@ Route::group([
     Route::post('/transaction/generate', 'UserTransactionController@generateUserTransaction');
     Route::get('/product/pay', 'UserTransactionController@payForProduct');
     Route::get('/product/pay/done', 'UserTransactionController@payForProductIsDone')->name('user-product-pay-done');
+
+    Route::post('/dashboard/info/load', 'DashboardController@loadDashboardMainInfo');
+    Route::post('/dashboard/chart/load', 'DashboardController@loadIncomeChart');
+    Route::post('/dashboard/records/load', 'DashboardController@getRecords');
+
 });
 
 // Tenant public routes
