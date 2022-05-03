@@ -9,6 +9,7 @@ use App\Models\Comment;
 use App\Models\Course;
 use App\Models\Favorite;
 use App\Models\Score;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -39,6 +40,16 @@ class StudentCourseController extends BaseController
         $result = ["total_size" => $paginator->total(), "list" => $courses];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);
+    }
+
+    public function loadCourseFromAnywhere(Request $request){
+        $student = Student::where('token', $request->input('token'))->first();
+
+        $course = Course::where('id',$request->input('course_id'))->get()->map(function ($course) use ($student) {
+            return $this->buildCourseObjectExtended($student, $course);
+        })->toArray()[0];
+
+        return $this->sendResponse(Constant::$SUCCESS, $course);
     }
 
     public function loadCourse(Request $request){
@@ -308,6 +319,127 @@ class StudentCourseController extends BaseController
             'id' => $course->id,
             'registered' => $registered,
             'has_access' => $has_access,
+            'title' => $course->title,
+            'price' => $course->price,
+            'sells' => $course->sells,
+            'score' => $course->score,
+            'visits_count' => $course->visits_count,
+            'g1' => $course->level_one_group_id,
+            'g2' => $course->level_two_group_id,
+            'g3' => $course->level_three_group_id,
+            "tags" => $tags,
+            "duration" => $course->duration,
+            "discount_price" => $course->discount_price,
+            "is_online" => $course->is_online,
+            "holding_status" => $course->holding_status,
+            "release_date" => $course->release_date,
+            "subjects" => $course->subjects,
+            "short_desc" => $course->short_desc,
+            "long_desc" => $course->long_desc,
+            "requirements" => $course->requirements,
+            "suggested_courses" => $course->suggested_courses,
+            "suggested_posts" => $course->suggested_posts,
+            "intro_video" => $intro_video,
+            "content_hierarchy" => $course->content_hierarchy,
+            "is_comments_open" => $course->is_comments_open,
+            "is_encrypted" => $course->is_encrypted,
+            "headings" => $headings,
+            "contents" => $contents,
+            "educators" => $educators,
+            "logo" => $course->logo,
+            "cover" => $course->cover,
+            "is_favorite" => $is_favorite ? 1 : 0
+        ];
+    }
+
+    public function buildCourseObjectExtended($student, $course){
+        $access_type = Constant::$ACCESS_TYPE_ONE;
+
+        if($student){
+            $access_type = Constant::$ACCESS_TYPE_TWO;
+
+            $registered = DB::table('course_student')
+                ->whereCourseId($course->id)
+                ->whereStudentId($student->id)
+                ->count() > 0;
+
+            if($registered) $access_type = Constant::$ACCESS_TYPE_THREE;
+
+            
+            $has_access = DB::table('course_student')
+                    ->whereCourseId($course->id)
+                    ->whereStudentId($student->id)
+                    ->whereAccess(1)
+                    ->count() > 0;
+
+            if($has_access) $access_type = Constant::$ACCESS_TYPE_FOUR;
+        }
+       
+
+        $tags = $course->tags()->get()->map(function ($tag){
+            return ['id' => $tag->id, 'title' => $tag->title];
+        });
+
+        $educators = $course->educators()->get()->map(function ($educator){
+            return [
+                'id' => $educator->id,
+                'first_name' => $educator->first_name,
+                'last_name' => $educator->last_name,
+                'bio' => $educator->bio,
+                'image' => $educator->image,
+            ];
+        });
+
+        $headings = $course->course_headings()->get()->map(function ($heading){
+            return ['id' => $heading->id, 'title' => $heading->title];
+        });
+
+        $intro_video = ($course->course_introduction) ? [
+            'id' => $course->course_introduction->id,
+            'url' => $course->course_introduction->content_video->url,
+            'size' => $course->course_introduction->content_video->size
+        ] : null;
+
+        if($access_type != Constant::$ACCESS_TYPE_ONE){
+            $is_favorite = Favorite::where([
+                ['favoritable_id' , $course->id],
+                ['favoritable_type' , "App\Models\Course"],
+                ['student_id' , $student->id]
+            ])->exists();
+        }else{
+            $is_favorite = null;
+        }
+        
+
+        $contents = $course->course_contents()->get()->map(function ($content) use ($has_access, $access_type){
+            $c = [
+                'id' => $content->id,
+                'title' => $content->title,
+                'type' => $content->type,
+                'is_free' => $content->is_free,
+            ];
+
+            switch ($content->type) {
+                case Constant::$CONTENT_TYPE_VIDEO:
+                    $c['url'] = ($access_type == Constant::$ACCESS_TYPE_FOUR || $content->is_free) ? $content->content_video->url : null;
+                    $c['size'] = $content->content_video->size;
+                    $c['encoding'] = $content->content_video->encoding;
+                    break;
+                case Constant::$CONTENT_TYPE_VOICE:
+                    $c['url'] = ($access_type == Constant::$ACCESS_TYPE_FOUR || $content->is_free) ? $content->content_voice->url : null;
+                    $c['size'] = $content->content_voice->size;
+                    break;
+                case Constant::$CONTENT_TYPE_DOCUMENT:
+                    $c['url'] = ($access_type == Constant::$ACCESS_TYPE_FOUR || $content->is_free) ? $content->content_document->url : null;
+                    $c['size'] = $content->content_document->size;
+            }
+
+            return $c;
+        });
+
+        return [
+            'id' => $course->id,
+            'access_type' => $access_type,
             'title' => $course->title,
             'price' => $course->price,
             'sells' => $course->sells,

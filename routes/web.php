@@ -213,6 +213,13 @@ Route::group([
     Route::get('/course/pay/done', 'StudentTransactionController@payForCourseIsDone')->name('student-course-pay-done');
 });
 
+Route::group([
+    'prefix' => 'api/tenant/inner/student',
+    'namespace'  => 'App\Http\Controllers\API\Student',
+    'middleware' => [ InitializeTenancyByRequestData::class],
+], function () {
+    Route::post('/course/load', 'StudentCourseController@loadCourseFromAnywhere');
+});
 //********************************************************APP*********************************************************
 
 // App routes

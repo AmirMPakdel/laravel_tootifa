@@ -35,7 +35,7 @@ class StudentPasswordResetController extends BaseController
         $password_reset->token = bin2hex(random_bytes(16));
         $password_reset->save();
 
-        // TODO Generate a link and send it via sms API
+        // TODO send token via sms API
 
         return $this->sendResponse(Constant::$SUCCESS, null);
     }

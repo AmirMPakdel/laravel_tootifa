@@ -158,6 +158,31 @@
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+## EDIT MAINPAGE LOGO
+
+**path**
+
+    /mainpage/edit/{ep}
+
+**format**
+
+    P11UTA
+
+**input**
+
+    ep:string(ep_logo)|ui
+
+    file_state:enum(ufs_no_change|ufs_new|ufs_replace|ufs_delete)
+
+    upload_key:string|nr
+    description: it is required when file_state is ufs_new or ufs_replace
+
+**output**
+
+    SUCCESS:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 ## EDIT MAINPAGE BOXINFO ADD
 
 **path**
