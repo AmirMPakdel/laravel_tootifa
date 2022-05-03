@@ -411,7 +411,7 @@ class StudentCourseController extends BaseController
         }
         
 
-        $contents = $course->course_contents()->get()->map(function ($content) use ($has_access, $access_type){
+        $contents = $course->course_contents()->get()->map(function ($content) use ($access_type){
             $c = [
                 'id' => $content->id,
                 'title' => $content->title,
