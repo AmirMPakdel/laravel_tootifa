@@ -333,7 +333,8 @@
         "educators":Array[Educator],
         "logo":string, "decription: upload_key"
         "cover":string, "decription: upload_key"
-        "is_favorite":number|b
+        "is_favorite":number|b,
+        "updated_at":date
     }
 
     def Tag = {
@@ -657,6 +658,9 @@
         "id":number,
         "title":string,
         "logo":string,
+        "price":number,
+        "discount_price":number,
+        "educators_name":Array[string],
     }
 
     def GroupInput = {

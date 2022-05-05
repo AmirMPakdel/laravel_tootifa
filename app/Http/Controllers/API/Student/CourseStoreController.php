@@ -232,16 +232,23 @@ class CourseStoreController extends BaseController
 
     private function buildListCourseObject($course)
     {
+        $educators = $course->educators()->get()->map(function ($educator){
+            return $educator->first_name + " " + $educator->last_name;
+        });
+
         return [
             'id' => $course->id,
             'title' => $course->title,
             'price' => $course->price,
+            'discount_price' => $course->discount_price,
             'sells' => $course->sells,
             'score' => $course->score,
             'visits_count' => $course->visits_count,
             'g1' => $course->level_one_group_id,
             'g2' => $course->level_two_group_id,
             'g3' => $course->level_three_group_id,
+            'logo' => $course->logo,
+            'educators_name' => $educators
         ];
     }
 }

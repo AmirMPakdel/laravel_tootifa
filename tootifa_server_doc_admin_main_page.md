@@ -488,6 +488,26 @@
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+## GET FOOTER DATA
+
+**path**
+
+    /footer/load
+
+**format**
+
+    P11UTA
+
+**output**
+
+    SUCCESS:{
+        "footer_links":string,
+        "footer_telephones":string,
+        "footer_app_links":string,
+    }
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 ## EDIT MAIN CONTENT HIERARCHY
 
 **path**

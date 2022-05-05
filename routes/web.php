@@ -103,6 +103,7 @@ Route::group([
 
     Route::post('/mainpage/edit/{ep}', 'MainPage\UserMainPageEditController@editMainPage');
     Route::post('/mainpage/load', 'MainPage\UserMainPageController@loadMainPage');
+    Route::post('/footer/load', 'MainPage\UserMainPageController@loadFooterData');
 
     Route::post('/course/checkedcomments/fetch/{chunk_count}/{page_count}', 'CommentsController@fetchCourseCheckedComments');
     Route::post('/course/uncheckedcomments/fetch/{chunk_count}/{page_count}', 'CommentsController@fetchCourseUnCheckedComments');
@@ -124,6 +125,7 @@ Route::group([
     Route::post('/dashboard/info/load', 'DashboardController@loadDashboardMainInfo');
     Route::post('/dashboard/chart/load', 'DashboardController@loadIncomeChart');
     Route::post('/dashboard/records/load', 'DashboardController@getRecords');
+    Route::post('/dashboard/student_transaction/load', 'DashboardController@loadStudentTransaction');
 
 });
 

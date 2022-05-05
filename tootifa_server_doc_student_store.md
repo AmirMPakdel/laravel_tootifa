@@ -111,6 +111,7 @@
         "id":number,
         "title":string,
         "price":number,
+        "discount_price":number,
         "sells":number,
         "score":number,
         "visits_count":number,
@@ -118,6 +119,8 @@
         "g1":number,
         "g2":number,
         "g3":number,
+        "logo":string,
+        "educators_name":Array[string],
     }
 
     description: "You can't have lower group levels without specializing higher group ids"

@@ -596,7 +596,54 @@ class Helper
         return $cities[$p_id];
     }
 
-    public static function calculateUsersDailyMaintenanceCost($tenant_id)
+    public static function calculateUsersTotalMaintenanceCost(){
+        // get post contents' size
+        $post_videos =  DB::table('content_videos')->where('belongs_to', Constant::$BELONGING_POST)->select('size');
+        $post_images =  DB::table('content_images')->where('belongs_to', Constant::$BELONGING_POST)->select('size');
+        $post_voices =  DB::table('content_voices')->where('belongs_to', Constant::$BELONGING_POST)->select('size');
+        $post_content_sizes = $post_videos->unionAll($post_images)->unionAll($post_voices)->get();
+
+        // get course contents' size
+        $course_videos =  DB::table('content_videos')->where('belongs_to', Constant::$BELONGING_COURSE)->select('size');
+        $course_documents =  DB::table('content_documents')->where('belongs_to', Constant::$BELONGING_COURSE)->select('size');
+        $course_voices =  DB::table('content_voices')->where('belongs_to', Constant::$BELONGING_COURSE)->select('size');
+        $course_content_sizes = $course_videos->unionAll($course_documents)->unionAll($course_voices)->get();
+
+        // get main contents' size
+        $main_videos =  DB::table('content_videos')->where('belongs_to', Constant::$BELONGING_MAIN)->select('size');
+        $main_images =  DB::table('content_images')->where('belongs_to', Constant::$BELONGING_MAIN)->select('size');
+        $main_voices =  DB::table('content_voices')->where('belongs_to', Constant::$BELONGING_MAIN)->select('size');
+        $main_content_sizes = $main_videos->unionAll($main_images)->unionAll($main_voices)->get();
+
+        // calculate report
+        $posts_total_size = array_sum(array_column($post_content_sizes->toArray(), 'size'));
+        $courses_total_size = array_sum(array_column($course_content_sizes->toArray(), 'size'));
+        $main_total_size = array_sum(array_column($main_content_sizes->toArray(), 'size'));
+
+        $videos_total_size = ContentVideo::all()->sum('size');
+        $images_total_size = ContentImage::all()->sum('size');
+        $documents_total_size = ContentDocument::all()->sum('size');
+        $voices_total_size = ContentVoice::all()->sum('size');
+
+        $total_size = $videos_total_size + $images_total_size + $documents_total_size + $voices_total_size;
+        $total_cost = Helper::calculateMaintenanceCost($total_size);
+
+        $result = [
+            'total_cost' => $total_cost,
+            'total_size' => $total_size,
+            'posts_total_size' => $posts_total_size,
+            'courses_total_size' => $courses_total_size,
+            'main_total_size' => $main_total_size,
+            'videos_total_size' => $videos_total_size,
+            'images_total_size' => $images_total_size,
+            'documents_total_size' => $documents_total_size,
+            'voices_total_size' => $voices_total_size,
+        ];
+
+        return $result;
+    }
+
+    public static function setDailyMaintenanceCostReport($tenant_id)
     {
         $tenant = Tenant::find($tenant_id);
         $profile = User::find($tenant->user_id)->u_profile;
@@ -606,50 +653,23 @@ class Helper
             $today = Carbon::now()->format('Y-m-d') . '%';
             if (DailyMaintenanceCostReport::where('created_at', 'like', $today)->exists()) return;
 
-            // get post contents' size
-            $post_videos =  DB::table('content_videos')->where('belongs_to', Constant::$BELONGING_POST)->select('size');
-            $post_images =  DB::table('content_images')->where('belongs_to', Constant::$BELONGING_POST)->select('size');
-            $post_voices =  DB::table('content_voices')->where('belongs_to', Constant::$BELONGING_POST)->select('size');
-            $post_content_sizes = $post_videos->unionAll($post_images)->unionAll($post_voices)->get();
-
-            // get course contents' size
-            $course_videos =  DB::table('content_videos')->where('belongs_to', Constant::$BELONGING_COURSE)->select('size');
-            $course_documents =  DB::table('content_documents')->where('belongs_to', Constant::$BELONGING_COURSE)->select('size');
-            $course_voices =  DB::table('content_voices')->where('belongs_to', Constant::$BELONGING_COURSE)->select('size');
-            $course_content_sizes = $course_videos->unionAll($course_documents)->unionAll($course_voices)->get();
-
-            // get main contents' size
-            $main_videos =  DB::table('content_videos')->where('belongs_to', Constant::$BELONGING_MAIN)->select('size');
-            $main_images =  DB::table('content_images')->where('belongs_to', Constant::$BELONGING_MAIN)->select('size');
-            $main_voices =  DB::table('content_voices')->where('belongs_to', Constant::$BELONGING_MAIN)->select('size');
-            $main_content_sizes = $main_videos->unionAll($main_images)->unionAll($main_voices)->get();
-
-            // calculate report
-            $posts_total_size = array_sum(array_column($post_content_sizes->toArray(), 'size'));
-            $courses_total_size = array_sum(array_column($course_content_sizes->toArray(), 'size'));
-            $main_total_size = array_sum(array_column($main_content_sizes->toArray(), 'size'));
-
-            $videos_total_size = ContentVideo::all()->sum('size');
-            $images_total_size = ContentImage::all()->sum('size');
-            $documents_total_size = ContentDocument::all()->sum('size');
-            $voices_total_size = ContentVoice::all()->sum('size');
-
-            $total_size = $videos_total_size + $images_total_size + $documents_total_size + $voices_total_size;
+            $result = $this->calculateUsersTotalMaintenanceCost();
 
             $report = new DailyMaintenanceCostReport();
-            $report->total_cost = Helper::calculateMaintenanceCost($total_size);
-            $report->total_size = $total_size;
-            $report->posts_size = $posts_total_size;
-            $report->courses_size = $courses_total_size;
-            $report->main_size = $main_total_size;
-            $report->images_size = $images_total_size;
-            $report->videos_size = $videos_total_size;
-            $report->voices_size = $voices_total_size;
-            $report->documents_size = $documents_total_size;
+            $report->total_cost = $result['total_cost'];
+            $report->total_size = $result['total_size'];
+            $report->posts_size = $result['posts_size'];
+            $report->courses_size = $result['courses_size'];
+            $report->main_size = $result['main_size'];
+            $report->images_size = $result['images_size'];
+            $report->videos_size = $result['videos_size'];
+            $report->voices_size = $result['voices_size'];
+            $report->documents_size = $result['documents_size'];
             $report->save();
 
             $profile->m_balance -= $report->total_cost;
             $profile->save();
+            
             // Log::debug("{$profile}");
         });
     }

@@ -290,6 +290,7 @@ class CoursesController extends BaseController
             "educators" => $educators,
             "logo" => $course->logo,
             "cover" => $course->cover,
+            "updated_at" => $course->updated_at,
         ];
     }
 

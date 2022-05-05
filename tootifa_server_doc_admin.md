@@ -1035,6 +1035,7 @@
         "educators":Array[Educator],
         "logo":string, "decription: upload_key"
         "cover":string, "decription: upload_key"
+        "updated_at":date
     }
 
     def Tag = {

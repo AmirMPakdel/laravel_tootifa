@@ -16,7 +16,7 @@ use App\Models\MainPageProperties;
 use App\Models\MainPostList;
 use App\Models\Popup;
 use Illuminate\Http\Request;
-
+use PDO;
 
 class MainPageController extends BaseController
 {
@@ -221,10 +221,27 @@ class MainPageController extends BaseController
     }
 
     private function buildListCourseObject($course){
+        $educators = $course->educators()->get()->map(function ($educator){
+            return $educator->first_name + " " + $educator->last_name;
+        });
+
         return [
             'id' => $course->id,
             'title' => $course->title,
-            'logo' => $course->logo
+            'logo' => $course->logo,
+            'price' => $course->price,
+            'discount_price' => $course->discount_price,
+            'educators_name' => $educators
+        ];
+    }
+
+    public function loadFooterData(){
+        $properties = MainPageProperties::all()[0];
+
+        return [
+            'footer_links' => $properties->footer_links,
+            'footer_telephones' => $properties->footer_telephones,
+            'footer_app_links' => Constant::$APP_LINKS,
         ];
     }
         

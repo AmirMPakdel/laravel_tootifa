@@ -38,6 +38,6 @@ class CalculateUsersDailyMaintenanceCostCommand extends Command
      */
     public function handle()
     {
-        Helper::calculateUsersDailyMaintenanceCost($this->argument('tenant'));
+        Helper::setDailyMaintenanceCostReport($this->argument('tenant'));
     }
 }
