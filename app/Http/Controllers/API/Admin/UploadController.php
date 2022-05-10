@@ -67,4 +67,51 @@ class UploadController extends BaseController
 
         return $this->sendResponse(Constant::$SUCCESS, $result);
     }
+    
+    public function createUniqueUploadKey($type, $is_public, $is_encrypted, $tenant_id){
+
+        if($is_public){
+            $is_public = 1;
+        }else{
+            $is_public = 0;
+        }
+        if($is_encrypted){
+            $is_encrypted = 1;
+        }else{
+            $is_encrypted = 0;
+        }
+
+        $random_str = md5(bin2hex(random_bytes(32)));
+
+        $type_part = false;
+
+        $type_map = array(
+            "mp4"=>"a",
+            "png"=>"b",
+            "mp3"=>"c",
+            "jpg"=>"d",
+            "svg"=>"e",
+            "pdf"=>"f",
+            "gif"=>"g",
+            "ogg"=>"h"
+        );
+
+        foreach ($type_map as $type_name => $type_char){
+            if($type === $type_name){
+                $type_part = $type_char;
+            }
+        }
+
+        if(!$type_part){
+            return false;
+        }
+
+        $tenant_part = dechex($tenant_id);
+
+        if(!$tenant_part){
+            return false;
+        }
+
+        return $random_str."-".$type_part.strval($is_public).strval($is_encrypted)."-".$tenant_part;
+    }
 }
