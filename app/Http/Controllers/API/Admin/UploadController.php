@@ -14,8 +14,8 @@ class UploadController extends BaseController
     public function generateUploadKey(Request $request)
     {
         $upload_transaction = new UploadTransaction();
-        $upload_transaction->upload_key = uniqid('', true)."-".$request->input('file_type');
         $upload_transaction->upload_type = $request->input('upload_type');
+        # $upload_transaction->upload_key = uniqid('', true)."-".$request->input('file_type');
         $upload_transaction->file_type = $request->input('file_type');
         $upload_transaction->file_size = $request->input('file_size');
         $upload_transaction->old_upload_key = $request->input('old_upload_key');
@@ -35,6 +35,12 @@ class UploadController extends BaseController
         }
 
         $upload_transaction->status = Constant::$UPLOAD_TRANSACTION_STATUS_GENERATED;
+        $upload_transaction->upload_key = $this->createUniqueUploadKey(
+            $upload_transaction->upload_type,
+            $upload_transaction->is_public,
+            $upload_transaction->is_encrypted,
+            $request->user->id
+        );
         $upload_transaction->save();
 
         if ($request->input('old_upload_key')) {
