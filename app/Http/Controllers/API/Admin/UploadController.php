@@ -109,13 +109,15 @@ class UploadController extends BaseController
         }
 
         if(!$type_part){
-            return false;
+            return "$type=>".$type;
+            //return false;
         }
 
         $tenant_part = dechex($user_id);
 
         if(!$tenant_part){
-            return false;
+            return "$user_id=>".$user_id;
+            //return false;
         }
 
         return $tenant_part."-".$type_part.strval($is_public).strval($is_encrypted)."-".$random_str;
