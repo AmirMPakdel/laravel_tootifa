@@ -36,7 +36,7 @@ class UploadController extends BaseController
 
         $upload_transaction->status = Constant::$UPLOAD_TRANSACTION_STATUS_GENERATED;
         $upload_transaction->upload_key = $this->createUniqueUploadKey(
-            $upload_transaction->upload_type,
+            $upload_transaction->file_type,
             $upload_transaction->is_public,
             $upload_transaction->is_encrypted,
             $request->user->id
