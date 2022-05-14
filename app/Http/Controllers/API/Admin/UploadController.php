@@ -41,6 +41,11 @@ class UploadController extends BaseController
             $upload_transaction->is_encrypted,
             $request->user->id
         );
+        
+        if(!$upload_transaction->upload_key){
+            return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        }
+        
         $upload_transaction->save();
 
         if ($request->input('old_upload_key')) {
@@ -109,15 +114,13 @@ class UploadController extends BaseController
         }
 
         if(!$type_part){
-            return "$type=>".$type;
-            //return false;
+            return false;
         }
 
         $tenant_part = dechex($user_id);
 
         if(!$tenant_part){
-            return "$user_id=>".$user_id;
-            //return false;
+            return false;
         }
 
         return $tenant_part."-".$type_part.strval($is_public).strval($is_encrypted)."-".$random_str;
