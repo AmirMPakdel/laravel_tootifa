@@ -111,6 +111,8 @@ class CourseEditController extends BaseController
             default:
                 return $this->sendResponse(Constant::$INVALID_EDIT_TYPE, null);
         }
+
+        // update course updated_at
     }
 
     public function editCourseLogo(Request $request)

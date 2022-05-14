@@ -68,7 +68,7 @@ class UploadController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, $result);
     }
     
-    public function createUniqueUploadKey($type, $is_public, $is_encrypted, $tenant_id){
+    public function createUniqueUploadKey($type, $is_public, $is_encrypted, $user_id){
 
         if($is_public){
             $is_public = 1;
@@ -106,12 +106,12 @@ class UploadController extends BaseController
             return false;
         }
 
-        $tenant_part = dechex($tenant_id);
+        $tenant_part = dechex($user_id);
 
         if(!$tenant_part){
             return false;
         }
 
-        return $random_str."-".$type_part.strval($is_public).strval($is_encrypted)."-".$tenant_part;
+        return $tenant_part."-".$type_part.strval($is_public).strval($is_encrypted)."-".$random_str;
     }
 }

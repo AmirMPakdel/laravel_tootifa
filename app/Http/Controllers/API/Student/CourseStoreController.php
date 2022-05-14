@@ -233,7 +233,7 @@ class CourseStoreController extends BaseController
     private function buildListCourseObject($course)
     {
         $educators = $course->educators()->get()->map(function ($educator){
-            return $educator->first_name + " " + $educator->last_name;
+            return $educator->first_name . " " . $educator->last_name;
         });
 
         return [

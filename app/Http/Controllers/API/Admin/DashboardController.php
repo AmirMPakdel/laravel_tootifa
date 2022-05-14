@@ -65,6 +65,7 @@ class DashboardController extends BaseController
     }
 
 
+    // todo paginate
     public function getRecords(Request $request){
         $filter = $request->input('filter');
         $result = [];
@@ -73,7 +74,7 @@ class DashboardController extends BaseController
             case Constant::$RECORDS_FILTER_SELLS:
                 $result = StudentTransaction::all(['id','price','title','created_at']);
                 break;
-            case Constant::$RECORDS_FILTER_INCREASE_M_BALANCE:
+            case Constant::$RECORDS_FILTER_INCREASE_M_BALANCE: // todo add titile
                 $result = UserTransaction::where([
                     ['pt', Constant::$PT_INCREMENTAL],
                     ['prt', Constant::$PRT_MAINTENANCE],
@@ -89,6 +90,7 @@ class DashboardController extends BaseController
     }
 
 
+    // todo null student
     public function loadStudentTransaction(Request $request)
     {
         $transaction = StudentTransaction::find($request->input('transaction_id'));

@@ -149,6 +149,7 @@ class MainPageController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, $popups);
     }
 
+    // todo empty list bug
     public function getMainCourseListData(Request $request){
         $mcl = MainCourseList::find($request->input('course_list_id'));
         if(!$mcl)
@@ -235,6 +236,7 @@ class MainPageController extends BaseController
         ];
     }
 
+    // bad route
     public function loadFooterData(){
         $properties = MainPageProperties::all()[0];
 
