@@ -415,7 +415,7 @@ class CourseEditController extends BaseController
         $course = $request->input('course');
         $hierarchy = (array)$request->input('hierarchy');
 
-        if (!$hierarchy)
+        if (!isset($hierarchy))
             return $this->sendResponse(Constant::$INVALID_VALUE, null);
 
         // TODO check it's validity
