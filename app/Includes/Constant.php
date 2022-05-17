@@ -197,6 +197,9 @@ class Constant
         ["name" => "android", "url" => "/"]
     ];
 
+    public static $M_BALANCE_INCREASE_DIRECT_PAYMENT = "پرداخت مستقیم";
+    public static $M_BALANCE_INCREASE_FROM_INCOME = "پرداخت از صندوق درآمد";
+
     // UPLOAD TYPES
     public static $UPLOAD_TYPE_WRITER_IMAGE = "ut_writer_image";
     public static $UPLOAD_TYPE_EDUCATOR_IMAGE = "ut_educator_image";

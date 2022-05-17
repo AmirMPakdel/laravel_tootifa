@@ -496,7 +496,7 @@
 
 **format**
 
-    P11UTA
+    P10PSTA
 
 **output**
 

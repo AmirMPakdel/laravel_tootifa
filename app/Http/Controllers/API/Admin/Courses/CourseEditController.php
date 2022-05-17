@@ -34,8 +34,11 @@ class CourseEditController extends BaseController
         $course = Course::find($request->input('course_id'));
         if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
+        $course->updated_at = Carbon::now();
+        $course->save();
+        
         $request->request->add(['course' => $course]);
-
+        
         // Whenever edit content server should receive new hierarchy
         switch ($ep) {
             case Constant::$EDIT_PARAM_COMMENTS_AVAILABILITY:
@@ -112,7 +115,6 @@ class CourseEditController extends BaseController
                 return $this->sendResponse(Constant::$INVALID_EDIT_TYPE, null);
         }
 
-        // update course updated_at
     }
 
     public function editCourseLogo(Request $request)

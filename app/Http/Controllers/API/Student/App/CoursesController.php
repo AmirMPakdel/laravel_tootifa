@@ -58,7 +58,7 @@ class CoursesController extends BaseController
 
             if ($d1 && $d2) {
 
-                if ($d1['imei'] != $deviceInfo['imei'] && $d2['imei'] != $deviceInfo['imei'])
+                if ($d1['uid'] != $deviceInfo['uid'] && $d2['uid'] != $deviceInfo['uid'])
                     return $this->sendResponse(Constant::$DEVICE_LIMIT, null);
             } elseif (!$d1 && !$d2) {
 
@@ -66,13 +66,13 @@ class CoursesController extends BaseController
                 $licenseKey->save();
             } elseif ($d1 && !$d2) {
 
-                if ($d1['imei'] != $deviceInfo['imei']) {
+                if ($d1['uid'] != $deviceInfo['uid']) {
                     $licenseKey->device_two = json_encode($deviceInfo);
                     $licenseKey->save();
                 }
             } elseif (!$d1 && $d2) {
 
-                if ($d2['imei'] != $deviceInfo['imei']) {
+                if ($d2['uid'] != $deviceInfo['uid']) {
                     $licenseKey->device_one = json_encode($deviceInfo);
                     $licenseKey->save();
                 }
@@ -80,7 +80,7 @@ class CoursesController extends BaseController
 
             // to prevent two different lk's connected to one course in one device
             $old_lk_d1 = LicenseKey::where([
-                ['device_one->imei',  $deviceInfo['imei']],
+                ['device_one->uid',  $deviceInfo['uid']],
                 ['key', '<>', $licenseKey->key],
                 ['course_id', $licenseKey->course_id],
             ])->first();
@@ -91,7 +91,7 @@ class CoursesController extends BaseController
             }
 
             $old_lk_d2 = LicenseKey::where([
-                ['device_two->imei',  $deviceInfo['imei']],
+                ['device_two->uid',  $deviceInfo['uid']],
                 ['key', '<>', $licenseKey->key],
                 ['course_id', $licenseKey->course_id],
             ])->first();
@@ -109,7 +109,7 @@ class CoursesController extends BaseController
 
     public function loadCourses(Request $request)
     {
-        $imei = $request->input('imei');
+        $uid = $request->input('uid');
         $keys = $request->input('keys');
         $courses = [];
 
@@ -121,7 +121,7 @@ class CoursesController extends BaseController
                 continue;
             }
 
-            $course = $tenant->run(function () use ($key, $imei) {
+            $course = $tenant->run(function () use ($key, $uid) {
                 $licenseKey = LicenseKey::where('key', $key->lk)->first();
                 if ($licenseKey == null) return Constant::$LISCENSE_KEY_NOT_FOUND;
 
@@ -138,11 +138,11 @@ class CoursesController extends BaseController
                 $d1 = json_decode($licenseKey->device_one, true);
                 $d2 = json_decode($licenseKey->device_two, true);
 
-                if ($d1 != null && $d1['imei'] == $imei) {
+                if ($d1 != null && $d1['uid'] == $uid) {
                     return $course;
                 }
 
-                if ($d2 != null && $d2['imei'] == $imei) {
+                if ($d2 != null && $d2['uid'] == $uid) {
                     return $course;
                 }
 
@@ -157,14 +157,14 @@ class CoursesController extends BaseController
 
     public function loadCourse(Request $request)
     {
-        $imei = $request->input('imei');
+        $uid = $request->input('uid');
         $lk = $request->input('lk');
         $username = $request->input('username');
 
         $tenant = Tenant::find($username);
         if ($tenant == null) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
 
-        $result = $tenant->run(function () use ($lk, $username, $imei) {
+        $result = $tenant->run(function () use ($lk, $username, $uid) {
             $licenseKey = LicenseKey::where('key', $lk)->first();
             if ($licenseKey == null) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
 
@@ -181,7 +181,7 @@ class CoursesController extends BaseController
             $d1 = json_decode($licenseKey->device_one, true);
             $d2 = json_decode($licenseKey->device_two, true);
 
-            if ( ($d1 != null && $d1['imei'] == $imei) || ($d2 != null && $d2['imei'] == $imei) ) 
+            if ( ($d1 != null && $d1['uid'] == $uid) || ($d2 != null && $d2['uid'] == $uid) ) 
                 return $this->sendResponse(Constant::$SUCCESS, $course);
             
             return $this->sendResponse(Constant::$DEVICE_NOT_FOUND, $course);

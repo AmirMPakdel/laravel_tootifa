@@ -65,23 +65,48 @@ class DashboardController extends BaseController
     }
 
 
-    // todo paginate
-    public function getRecords(Request $request){
+    public function getRecords(Request $request, $chunk_count, $page_count){
         $filter = $request->input('filter');
         $result = [];
 
         switch($filter){
             case Constant::$RECORDS_FILTER_SELLS:
-                $result = StudentTransaction::all(['id','price','title','created_at']);
+                $paginator = StudentTransaction::paginate($chunk_count, ['*'], 'page', $page_count);
+                $items = $paginator->map(function($item) {
+                    return [
+                        'id' => $item->id,
+                        'price' => $item->price,
+                        'title' => $item->title,
+                        'created_at' => $item->created_at,
+                    ];
+                });
+                $result = ["total_size" => $paginator->total(), "list" => $items];
                 break;
-            case Constant::$RECORDS_FILTER_INCREASE_M_BALANCE: // todo add titile
-                $result = UserTransaction::where([
+            case Constant::$RECORDS_FILTER_INCREASE_M_BALANCE: 
+                $paginator = UserTransaction::where([
                     ['pt', Constant::$PT_INCREMENTAL],
                     ['prt', Constant::$PRT_MAINTENANCE],
-                ])->get(['id','created_at', 'price']);
+                ])->paginate($chunk_count, ['*'], 'page', $page_count);
+                $items = $paginator->map(function($item) {
+                    return [
+                        'id' => $item->id,
+                        'price' => $item->price,
+                        'title' => Constant::$M_BALANCE_INCREASE_DIRECT_PAYMENT,
+                        'created_at' => $item->created_at,
+                    ];
+                });
+                $result = ["total_size" => $paginator->total(), "list" => $items];
                 break;
             case Constant::$RECORDS_FILTER_DECREASE_M_BALANCE:
-                $result = DailyMaintenanceCostReport::all(['id','created_at', 'total_cost']);
+                $paginator = DailyMaintenanceCostReport::paginate($chunk_count, ['*'], 'page', $page_count);
+                $items = $paginator->map(function($item) {
+                    return [
+                        'id' => $item->id,
+                        'total_cost' => $item->total_cost,
+                        'created_at' => $item->created_at,
+                    ];
+                });
+                $result = ["total_size" => $paginator->total(), "list" => $items];
                 break;
         }
     
@@ -90,11 +115,14 @@ class DashboardController extends BaseController
     }
 
 
-    // todo null student
     public function loadStudentTransaction(Request $request)
     {
         $transaction = StudentTransaction::find($request->input('transaction_id'));
         $student = Student::find($transaction->student_id);
+        if(isset($student))
+            $name = $student->first_name . " " . $student->last_name;
+        else
+            $name = "یافت نشد";
 
         $result = [
             'id' => $transaction->id,
@@ -109,7 +137,7 @@ class DashboardController extends BaseController
             'ref_id' => $transaction->ref_id,
             'date' => $transaction->updated_at,
             'error_msg' => $transaction->error_msg,
-            'name' => $student->first_name . " " . $student->last_name
+            'name' => $name
         ];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);

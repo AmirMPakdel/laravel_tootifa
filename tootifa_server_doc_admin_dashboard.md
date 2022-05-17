@@ -104,7 +104,7 @@
 
 **path**
 
-    /dashboard/records/load
+    /dashboard/records/load/{chunk_count}/{page_count}
 
 **format**
 
@@ -114,17 +114,29 @@
 
     filter:enum(rf_sells|rf_increase_m_balacne|rf_decrease_m_balacne)
 
+    chunk_count:string|ui
+    description: by what fraction devide the whole items (at least 1)
+
+    page_count:string|ui
+    description: which fraction of items to return (starts from 1)
+
 **output**
 
-    SUCCESS:array[Record]
+    SUCCESS:Data
 
 **types**
 
 ```javascript
+    def Data = {
+        "total_size":number,
+        "list":Array[Record]
+    }
+
     def Record = { // when filter is rf_increase_m_balacne
         "id": number
         "created_at": date,
         "price": number,
+        "title":string
     }
 
     def Record = { // when filter is rf_decrease_m_balacne
