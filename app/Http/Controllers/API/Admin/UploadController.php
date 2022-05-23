@@ -73,7 +73,8 @@ class UploadController extends BaseController
             'file_type' => $upload_transaction->file_type,
             'file_size' => $upload_transaction->file_size,
             'is_encrypted' => $upload_transaction->is_encrypted,
-            'is_public' => $upload_transaction->is_public
+            'is_public' => $upload_transaction->is_public,
+            'upload_type' => $upload_transaction->upload_type
         ];
 
         return $this->sendResponse(Constant::$SUCCESS, $result);
