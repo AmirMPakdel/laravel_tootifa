@@ -15,7 +15,6 @@ class UploadController extends BaseController
     {
         $upload_transaction = new UploadTransaction();
         $upload_transaction->upload_type = $request->input('upload_type');
-        # $upload_transaction->upload_key = uniqid('', true)."-".$request->input('file_type');
         $upload_transaction->file_type = $request->input('file_type');
         $upload_transaction->file_size = $request->input('file_size');
         $upload_transaction->old_upload_key = $request->input('old_upload_key');
@@ -38,6 +37,7 @@ class UploadController extends BaseController
         $upload_transaction->upload_key = $this->createUniqueUploadKey(
             $upload_transaction->file_type,
             $upload_transaction->is_public,
+            $upload_transaction->upload_type,
             $upload_transaction->is_encrypted,
             $request->user->id
         );
@@ -80,7 +80,7 @@ class UploadController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, $result);
     }
     
-    public function createUniqueUploadKey($type, $is_public, $is_encrypted, $user_id){
+    public function createUniqueUploadKey($type, $is_public, $upload_type, $is_encrypted, $user_id){
 
         if($is_public){
             $is_public = 1;
@@ -91,6 +91,19 @@ class UploadController extends BaseController
             $is_encrypted = 1;
         }else{
             $is_encrypted = 0;
+        }
+        
+        $is_free = 1;
+        if($upload_type){
+            
+            if($upload_type===Constant::$UPLOAD_TYPE_COURSE_VIDEO 
+            || $upload_type===Constant::$UPLOAD_TYPE_COURSE_DOCUMENT
+            || $upload_type===Constant::$UPLOAD_TYPE_COURSE_VOICE){
+                $is_free = 0;
+            }
+            
+        }else{
+            return false;
         }
 
         $random_str = md5(bin2hex(random_bytes(32)));
@@ -124,6 +137,6 @@ class UploadController extends BaseController
             return false;
         }
 
-        return $tenant_part."-".$type_part.strval($is_public).strval($is_encrypted)."-".$random_str;
+        return $tenant_part."-".$type_part.strval($is_public).strval($is_free).strval($is_encrypted)."-".$random_str;
     }
 }
