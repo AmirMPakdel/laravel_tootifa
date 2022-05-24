@@ -89,10 +89,10 @@
 
 ```javascript
     def DeviceInfo = {
-        "imei": string,
-        "model": string,
-        "android_version" : string,
-        "android_api_level" : number,
+        "uid": string,
+        "platform": string,
+        "platform_version" : string,
+        "app_version" : string,
     }
 
     def UserInfo = {
@@ -125,6 +125,7 @@
         "type":enum("ct_video"|"ct_document"|"ct_voice"),
         "is_free":number|b,
         "size":number,
+        "time":null
     }
 
     def HierarchyObj = {
@@ -183,5 +184,63 @@
                  "USER_NOT_FOUND|LISCENSE_KEY_NOT_FOUND|DEVICE_NOT_FOUND|COURSE_NOT_VALID"
 
 ```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+# OTHER SECTION
+
+## CHECK VERSION
+
+**path**
+
+    /version/check
+
+**format**
+
+    P00AA
+
+**input**
+
+    platform:string
+
+    app_version:string
+
+**output**
+
+    SUCCESS:null
+
+    SHOULD_UPDATE:{
+        url:string,
+        must:number|b
+    }
+
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## CREATE APP TICKET
+
+**path**
+
+    /app_ticket/save
+
+**format**
+
+    P00AA
+
+**input**
+
+    platform:string
+
+    title:string
+
+**output**
+
+    SUCCESS:null
+
+    SHOULD_UPDATE:{
+        url:string,
+        must:number|b
+    }
+
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

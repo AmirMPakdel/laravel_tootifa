@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Student\App;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Includes\Helper;
+use App\Models\AppTicket;
 use App\Models\Course;
 use App\Models\LicenseKey;
 use App\Models\Student;
@@ -22,6 +23,8 @@ class CoursesController extends BaseController
     {
         $lk = $request->input('lk');
         $deviceInfo = $request->input('device_info');
+        // device info consists of:
+        // uid, platform (android or windows), platform_version, app_version
         $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
 
         if (!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
@@ -246,10 +249,12 @@ class CoursesController extends BaseController
                     $c['url'] = ($has_access || $content->is_free) ? $content->content_video->url : null;
                     $c['size'] = $content->content_video->size;
                     $c['encoding'] = $content->content_video->encoding;
+                    $c['time'] = null;
                     break;
                 case Constant::$CONTENT_TYPE_VOICE:
                     $c['url'] = ($has_access || $content->is_free) ? $content->content_voice->url : null;
                     $c['size'] = $content->content_voice->size;
+                    $c['time'] = null;
                     break;
                 case Constant::$CONTENT_TYPE_DOCUMENT:
                     $c['url'] = ($has_access || $content->is_free) ? $content->content_document->url : null;

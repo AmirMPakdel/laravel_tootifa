@@ -234,6 +234,9 @@ Route::group([
     Route::post('/courses/load', 'CoursesController@loadCourses');
     Route::post('/course/load', 'CoursesController@loadCourse');
     Route::post('/lks/reset', 'CoursesController@resetUserLks');
+    Route::post('/version/check', 'OthersController@checkVersion');
+    Route::post('/app_ticket/save', 'OthersController@createAppTicket');
+    Route::post('/app_report/set', 'OthersController@setAppReport');
 });
 
 

@@ -58,7 +58,8 @@ class Constant
     public static $COURSE_NOT_VALID = 1156;
     public static $NO_DEFAULT_TYPE = 1157;
     public static $MCL_NOT_FOUND = 1158;
-    
+    public static $SHOULD_UPDATE = 1159;
+
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
     public static $GENDER_FEMALE = 0;
@@ -194,8 +195,17 @@ class Constant
     ];
 
     public static $APP_LINKS = [
-        ["name" => "android", "url" => "/"]
+        ["name" => "android", "url" => "/"],
+        ["name" => "windows", "url" => "/"]
     ];
+
+    public static $APP_VERSIONS = [
+        "android" => "1",
+        "windows" => "1"
+    ];
+
+    public static $MUST_UPDATE = 1;
+
 
     public static $M_BALANCE_INCREASE_DIRECT_PAYMENT = "پرداخت مستقیم";
     public static $M_BALANCE_INCREASE_FROM_INCOME = "پرداخت از صندوق درآمد";
