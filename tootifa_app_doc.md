@@ -231,16 +231,42 @@
 
     platform:string
 
+    platform_version:string
+
     title:string
+
+    phone_number:string
+
+    content:string
 
 **output**
 
     SUCCESS:null
 
-    SHOULD_UPDATE:{
-        url:string,
-        must:number|b
-    }
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## SET APP REPORT
+
+**path**
+
+    /app_report/set
+
+**format**
+
+    P00AA
+
+**input**
+
+    recieved_data:string
+
+    sent_data:string
+
+    message:string
+
+**output**
+
+    SUCCESS:null
 
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

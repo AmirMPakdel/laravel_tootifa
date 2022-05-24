@@ -32,6 +32,7 @@ class OthersController extends BaseController
         $ticket = new AppTicket();
         $ticket->title = $request->input('title');
         $ticket->platform = $request->input('platform');
+        $ticket->platform_version = $request->input('platform_version');
         $ticket->phone_number = $request->input('phone_number');
         $ticket->content = $request->input('content');
         $ticket->save();
