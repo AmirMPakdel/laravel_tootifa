@@ -9,31 +9,41 @@ function get_result($code, $data)
 // Constants
 $SUCCESS = 1000;
 $INVALID_USER_NAME = 1155;
+$INVALID_PHONE_NUMBER = 1101;
+$STUDENT_NOT_FOUND = 1139;
+$COURSE_NOT_FOUND = 1145;
 $INVALID_UPLOAD_KEY = 1142;
 $INVALID_VALUE = 1130;
+$NOT_REGISTERED_IN_COURSE = 1143;
+$NO_ACCESS_TO_COURSE = 1144;
+$INVALID_TOKEN = 1103;
+$INVALID_LICENSE_KEY = 1160;
 
 // fetching inputs
 $username = $_GET['username'];
 $token = $_GET['token'];
+$lk = $_GET['lk'];
+$course_id = $_GET['course_id'];
 $upload_key = $_GET['upload_key'];
 
-
 // checking if inputs are set
-if (!$username || !$token) {
+if (!$username || !$course_id || !$upload_key || (!$token && !$lk)) {
     echo get_result($INVALID_VALUE, null);
     die();
 }
 
 // verifying download
 if ($_GET['dev']) {
-    $url = "http://localhost:8000/api/tenant/user/download/verify";
+    $url = "http://localhost:8000/api/tenant/student/public/download/verify";
 } else {
-    $url = "http://minfo.ir/api/tenant/user/download/verify";
+    $url = "http://minfo.ir/api/tenant/student/public/download/verify";
 }
 
 $postRequest = array(
-    'token' => $token,
-    'upload_key' => $upload_key
+    'course_id' => $course_id,
+    'upload_key' => $upload_key,
+    'lk' => $lk,
+    'token' => $token
 );
 
 $ch = curl_init();

@@ -173,6 +173,8 @@ Route::group([
     Route::post('/main/course_list/load', 'MainPageController@getMainCourseListData');
 
     Route::post('/download/verify', 'DownloadController@verifyStudentForDownloadCourseItem');
+    Route::post('/download/verify/v2', 'DownloadController@verifyStudentForDownloadCourseItem2');
+    Route::post('/student/get', 'DownloadController@getStudent');
     Route::post('/footer/load', 'MainPage\UserMainPageController@loadFooterData');
 
 });

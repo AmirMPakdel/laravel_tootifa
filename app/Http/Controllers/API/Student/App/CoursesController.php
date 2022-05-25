@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API\Student\App;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Includes\Helper;
-use App\Models\AppTicket;
 use App\Models\Course;
 use App\Models\LicenseKey;
 use App\Models\Student;

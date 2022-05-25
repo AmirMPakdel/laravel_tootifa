@@ -59,7 +59,8 @@ class Constant
     public static $NO_DEFAULT_TYPE = 1157;
     public static $MCL_NOT_FOUND = 1158;
     public static $SHOULD_UPDATE = 1159;
-
+    public static $INVALID_LIECENSE_KEY = 1160;
+    
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
     public static $GENDER_FEMALE = 0;

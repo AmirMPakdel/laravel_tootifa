@@ -34,7 +34,7 @@ if (!$username || !$student_id || !$course_id || !$upload_key || !$content_id) {
 if ($_GET['dev']) {
     $url = "http://localhost:8000/api/tenant/student/public/download/verify";
 } else {
-    $url = "http://tootifa.ir/api/tenant/student/public/download/verify";
+    $url = "http://minfo.ir/api/tenant/student/public/download/verify";
 }
 
 $postRequest = array(
