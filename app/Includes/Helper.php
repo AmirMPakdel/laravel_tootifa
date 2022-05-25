@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use PDO;
 
 class Helper
 {
@@ -818,5 +819,18 @@ class Helper
         return env("FTP_SERVER_URL") . "/download_student_course_item.php" . 
                "?username=$username&student_id=$student_id&" . 
                "upload_key=$upload_key&course_id=$course_id&content_id=$content_id";
+    }
+
+    public static function generateStudentDownloadCourseItemFileUrl2($username, $upload_key, $course_id, $content_id, $token=null, $lk=null){
+        $url = env("FTP_SERVER_URL") . "/download_student_course_item2.php" . 
+               "?username=$username&" . 
+               "upload_key=$upload_key&course_id=$course_id&content_id=$content_id";
+
+        if($lk)
+            $url += "&lk=$lk";
+        else
+            $url += "&token=$token";
+        
+        return $url;
     }
 }

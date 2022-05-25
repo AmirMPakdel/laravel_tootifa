@@ -23,11 +23,12 @@ $INVALID_LICENSE_KEY = 1160;
 $username = $_GET['username'];
 $token = $_GET['token'];
 $lk = $_GET['lk'];
+$content_id = $_GET['content_id'];
 $course_id = $_GET['course_id'];
 $upload_key = $_GET['upload_key'];
 
 // checking if inputs are set
-if (!$username || !$course_id || !$upload_key || (!$token && !$lk)) {
+if (!$username || !$course_id || !$upload_key || $content_id || (!$token && !$lk)) {
     echo get_result($INVALID_VALUE, null);
     die();
 }
@@ -43,7 +44,8 @@ $postRequest = array(
     'course_id' => $course_id,
     'upload_key' => $upload_key,
     'lk' => $lk,
-    'token' => $token
+    'token' => $token,
+    'content_id' => $content_id
 );
 
 $ch = curl_init();

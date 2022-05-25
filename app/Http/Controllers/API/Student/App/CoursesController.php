@@ -46,7 +46,8 @@ class CoursesController extends BaseController
             $course = $this->buildCourseObject(
                 Student::find($licenseKey->student_id),
                 $complete_course,
-                $user_info['username']
+                $user_info['username'],
+                $lk
             );
 
             $content = [
@@ -134,7 +135,8 @@ class CoursesController extends BaseController
                 $course = $this->buildCourseObject(
                     Student::find($licenseKey->student_id),
                     $complete_course,
-                    $key->username
+                    $key->username,
+                    $key->lk
                 );
 
                 $d1 = json_decode($licenseKey->device_one, true);
@@ -177,7 +179,8 @@ class CoursesController extends BaseController
             $course = $this->buildCourseObject(
                 Student::find($licenseKey->student_id),
                 $complete_course,
-                $username
+                $username,
+                $lk
             );
 
             $d1 = json_decode($licenseKey->device_one, true);
@@ -223,7 +226,7 @@ class CoursesController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, $results);
     }
 
-    public function buildCourseObject($student, $course, $username)
+    public function buildCourseObject($student, $course, $username, $lk)
     {
         $has_access = DB::table('course_student')
             ->whereCourseId($course->id)
@@ -235,7 +238,7 @@ class CoursesController extends BaseController
             return ['id' => $heading->id, 'title' => $heading->title];
         });
 
-        $contents = $course->course_contents()->get()->map(function ($content) use ($has_access, $student, $course, $username) {
+        $contents = $course->course_contents()->get()->map(function ($content) use ($has_access, $lk, $course, $username) {
             $c = [
                 'id' => $content->id,
                 'title' => $content->title,
@@ -261,12 +264,13 @@ class CoursesController extends BaseController
             }
 
             if ($c['url'] != null) {
-                $c['url'] = Helper::generateStudentDownloadCourseItemFileUrl(
+                $c['url'] = Helper::generateStudentDownloadCourseItemFileUrl2(
                     $username,
-                    $student->id,
                     $c['url'],
-                    $c['id'],
-                    $course->id
+                    $course->id,
+                    $content->id,
+                    null,
+                    $lk
                 );
             }
 
