@@ -822,7 +822,7 @@ class Helper
     }
 
     public static function generateStudentDownloadCourseItemFileUrl2($username, $upload_key, $course_id, $content_id, $token=null, $lk=null){
-        $url = env("FTP_SERVER_URL") . "/download_student_course_item2.php" . 
+        $url = env("FTP_SERVER_URL") . "/download_student_course_item_2.php" . 
                "?username=$username&" . 
                "upload_key=$upload_key&course_id=$course_id&content_id=$content_id";
 
