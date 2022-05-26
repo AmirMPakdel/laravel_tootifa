@@ -827,9 +827,9 @@ class Helper
                "upload_key=$upload_key&course_id=$course_id&content_id=$content_id";
 
         if($lk)
-            $url += "&lk=$lk";
+            $url .= "&lk=$lk";
         else
-            $url += "&token=$token";
+            $url .= "&token=$token";
         
         return $url;
     }
