@@ -59,6 +59,9 @@ class DownloadController extends BaseController
 
     public function verifyStudentForDownloadCourseItem2(Request $request)
     {
+        $upload_transaction = UploadTransaction::where('upload_key', $request->input('upload_key'))->first();
+            if (!$upload_transaction) return $this->sendResponse(Constant::$INVALID_UPLOAD_KEY, null);
+
         $cc = CourseContent::find($request->input('content_id'));
         if (!$cc) return $this->sendResponse(Constant::$CONTENT_NOT_FOUND, null);
 
@@ -85,9 +88,6 @@ class DownloadController extends BaseController
 
             $course = Course::find($request->input('course_id'));
             if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
-
-            $upload_transaction = UploadTransaction::where('upload_key', $request->input('upload_key'))->first();
-            if (!$upload_transaction) return $this->sendResponse(Constant::$INVALID_UPLOAD_KEY, null);
 
             // TODO check the relation between inputs
             

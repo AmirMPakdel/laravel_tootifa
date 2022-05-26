@@ -27,17 +27,24 @@ $content_id = $_GET['content_id'];
 $course_id = $_GET['course_id'];
 $upload_key = $_GET['upload_key'];
 
+// echo $username . "\n";
+// echo $token. "\n";
+// echo $lk. "\n";
+// echo $course_id. "\n";
+// echo $content_id. "\n";
+// echo $upload_key. "\n";
+
 // checking if inputs are set
-if (!$username || !$course_id || !$upload_key || $content_id || (!$token && !$lk)) {
+if (!$username || !$course_id || !$upload_key || !$content_id || (!$token && !$lk)) {
     echo get_result($INVALID_VALUE, null);
     die();
 }
 
 // verifying download
 if ($_GET['dev']) {
-    $url = "http://localhost:8000/api/tenant/student/public/download/verify";
+    $url = "http://localhost:8000/api/tenant/student/public/download/verify/v2";
 } else {
-    $url = "http://minfo.ir/api/tenant/student/public/download/verify";
+    $url = "http://minfo.ir/api/tenant/student/public/download/verify/v2";
 }
 
 $postRequest = array(
