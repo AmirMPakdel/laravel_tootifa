@@ -233,13 +233,6 @@ class Constant
     public static $UPLOAD_TYPE_COURSE_DOCUMENT_FREE = "ut_course_document_free";
     public static $UPLOAD_TYPE_COURSE_VOICE_FREE = "ut_course_voice_free";
 
-
-
-    public static $MAIN_COURSE_LIST_DEFAULT_TYPE_MOST_VISITED = "dt_most_visited";
-    public static $MAIN_COURSE_LIST_DEFAULT_TYPE_MOST_SELL = "dt_most_sell";
-    public static $MAIN_COURSE_LIST_DEFAULT_TYPE_MOST_SCORE = "dt_most_score";
-    public static $MAIN_COURSE_LIST_DEFAULT_TYPE_NEWEST = "dt_most_newest";
-
     public static $ACCESS_TYPE_ONE = "1";
     public static $ACCESS_TYPE_TWO = "2";
     public static $ACCESS_TYPE_THREE = "3";

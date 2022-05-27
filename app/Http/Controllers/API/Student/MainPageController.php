@@ -184,22 +184,15 @@ class MainPageController extends BaseController
                 $order_direction = "desc";
         }
 
-        // which group
-        if ($group && isset($group['level'])) {
-            switch ($group['level']) {
-                case 1:
-                    $group = LevelOneGroup::find($group['id']);
-                    break;
-                case 2:
-                    $group = LevelTwoGroup::find($group['id']);
-                    break;
-                case 3:
-                    $group = LevelThreeGroup::find($group['id']);
-                    break;
-                default:
-                    $group = null;
-            }
-        } else $group = null;
+        if($mcl->level_three_group_id){
+            $group = LevelThreeGroup::find($mcl->level_three_group_id);
+        }else if($mcl->level_two_group_id){
+            $group = LevelTwoGroup::find($mcl->level_two_group_id);
+        }else if($mcl->level_one_group_id){
+            $group = LevelOneGroup::find($mcl->level_one_group_id);
+        }else{
+            $group = null;
+        }
 
 
         if ($group) {
