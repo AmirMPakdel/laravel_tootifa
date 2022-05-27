@@ -206,7 +206,7 @@ class MainPageController extends BaseController
             $courses = Course::where([
                 ['validation_status', 1],
             ])->orderBy($order_by, $order_direction)
-                ->limit(11)->get()->map(function ($course) {
+                ->get()->map(function ($course) {
                     return $this->buildListCourseObject($course);
             });
         }
