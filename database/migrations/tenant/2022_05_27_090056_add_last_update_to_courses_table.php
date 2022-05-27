@@ -26,7 +26,7 @@ class AddLastUpdateToCoursesTable extends Migration
     public function down()
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->dropColumn('last_update');
+            $table->dropColumn('last_update')->default(now());
         });
     }
 }
