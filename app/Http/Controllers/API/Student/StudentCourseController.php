@@ -470,7 +470,7 @@ class StudentCourseController extends BaseController
             "logo" => $course->logo,
             "cover" => $course->cover,
             "is_favorite" => $is_favorite ? 1 : 0,
-            "updated_at" => $course->updated_at
+            "last_update" => $course->last_update,
         ];
     }
 
