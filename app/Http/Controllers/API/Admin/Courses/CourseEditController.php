@@ -489,6 +489,7 @@ class CourseEditController extends BaseController
             $course->course_contents()->save($course_content);
             $course_content->content_video()->save($content_video);
             $course->last_update = Carbon::now();
+            $course->save();
         }
 
         return $this->sendResponse($result, ['content_id' => $course_content->id]);
@@ -543,6 +544,7 @@ class CourseEditController extends BaseController
         if ($result == Constant::$SUCCESS) {
             $content_video->delete();
             $course_content->delete();
+            $course_content->course()->last_update = Carbon::now();
         }
 
         return $this->sendResponse($result, null);
@@ -580,6 +582,8 @@ class CourseEditController extends BaseController
         if ($result == Constant::$SUCCESS) {
             $course->course_contents()->save($course_content);
             $course_content->content_voice()->save($content_voice);
+            $course->last_update = Carbon::now();
+            $course->save();
         }
 
         return $this->sendResponse($result, ['content_id' => $course_content->id]);
@@ -615,7 +619,10 @@ class CourseEditController extends BaseController
             $request->input('upload_key')
         );
 
-        if ($result == Constant::$SUCCESS) $course_content->save();
+        if ($result == Constant::$SUCCESS) {
+            $course_content->save();
+            $course_content->course()->last_update = Carbon::now();
+        }
 
         return $this->sendResponse($result, null);
     }
@@ -631,6 +638,7 @@ class CourseEditController extends BaseController
         if ($result == Constant::$SUCCESS) {
             $content_voice->delete();
             $course_content->delete();
+            $course_content->course()->last_update = Carbon::now();
         }
 
         return $this->sendResponse($result, null);
@@ -668,6 +676,8 @@ class CourseEditController extends BaseController
         if ($result == Constant::$SUCCESS) {
             $course->course_contents()->save($course_content);
             $course_content->content_document()->save($content_document);
+            $course->last_update = Carbon::now();
+            $course->save();
         }
 
         return $this->sendResponse($result, ['content_id' => $course_content->id]);
@@ -703,7 +713,10 @@ class CourseEditController extends BaseController
             $request->input('upload_key')
         );
 
-        if ($result == Constant::$SUCCESS) $course_content->save();
+        if ($result == Constant::$SUCCESS) {
+            $course_content->save();
+            $course_content->course()->last_update = Carbon::now();
+        }
 
         return $this->sendResponse($result, null);
     }
@@ -719,6 +732,7 @@ class CourseEditController extends BaseController
         if ($result == Constant::$SUCCESS) {
             $content_document->delete();
             $course_content->delete();
+            $course_content->course()->last_update = Carbon::now();
         }
 
         return $this->sendResponse($result, null);
