@@ -159,8 +159,6 @@ class MainPageController extends BaseController
         if(!$default_type)
             return $this->sendResponse(Constant::$NO_DEFAULT_TYPE, null);
 
-        $group = $mcl->groups;
-
         // which order
         switch ($default_type) {
             case Constant::$MAIN_LIST_DEFAULT_TYPE_HIGHEST_SCORE:
@@ -197,16 +195,16 @@ class MainPageController extends BaseController
 
         if ($group) {
             $courses = $group->courses()->where([
-                ['validation_status', 1],
+                ['validation_status', 'valid'],
             ])->orderBy($order_by, $order_direction)
                 ->limit(11)->get()->map(function ($course) {
                     return $this->buildListCourseObject($course);
             });
         } else {
             $courses = Course::where([
-                ['validation_status', 1],
+                ['validation_status', 'valid'],
             ])->orderBy($order_by, $order_direction)
-                ->get()->map(function ($course) {
+            ->limit(11)->get()->map(function ($course) {
                     return $this->buildListCourseObject($course);
             });
         }
