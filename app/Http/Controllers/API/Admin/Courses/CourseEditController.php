@@ -33,9 +33,6 @@ class CourseEditController extends BaseController
 
         $course = Course::find($request->input('course_id'));
         if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
-
-        $course->updated_at = Carbon::now();
-        $course->save();
         
         $request->request->add(['course' => $course]);
         
@@ -491,6 +488,7 @@ class CourseEditController extends BaseController
         if ($result == Constant::$SUCCESS) {
             $course->course_contents()->save($course_content);
             $course_content->content_video()->save($content_video);
+            $course->last_update = Carbon::now();
         }
 
         return $this->sendResponse($result, ['content_id' => $course_content->id]);
@@ -526,7 +524,10 @@ class CourseEditController extends BaseController
             $request->input('upload_key')
         );
 
-        if ($result == Constant::$SUCCESS) $course_content->save();
+        if ($result == Constant::$SUCCESS) {
+            $course_content->save();
+            $course_content->course()->last_update = Carbon::now();
+        }
 
         return $this->sendResponse($result, null);
     }

@@ -9,7 +9,6 @@ use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use Exception;
 
 class CourseStudentController extends BaseController
 {

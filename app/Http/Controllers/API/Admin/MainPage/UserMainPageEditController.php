@@ -282,7 +282,6 @@ class UserMainPageEditController extends BaseController
         $main_content->link = $request->input('link');
         $main_content->link_title = $request->input('link_title');
         $main_content->type = $request->input('type');
-        $main_content->visible = $request->input('visible');
 
         $result = Constant::$SUCCESS;
         switch($main_content->type){
@@ -326,7 +325,6 @@ class UserMainPageEditController extends BaseController
         $main_content->link = $request->input('link');
         $main_content->link_title = $request->input('link_title');
         $main_content->type = $request->input('type');
-        $main_content->visible = $request->input('visible');
 
         $result = Constant::$SUCCESS;
         switch($main_content->type){
@@ -828,7 +826,6 @@ class UserMainPageEditController extends BaseController
         $main_course_list->title = $request->input('title');
         $main_course_list->list = $request->input('list');
         $main_course_list->default_type = $request->input('default_type');
-        $main_course_list->visible = $request->input('visible');
 
         $groups = (object)$request->input('groups');
 
@@ -855,7 +852,6 @@ class UserMainPageEditController extends BaseController
         $main_course_list->title = $request->input('title');
         $main_course_list->list = $request->input('list');
         $main_course_list->default_type = $request->input('default_type');
-        $main_course_list->visible = $request->input('visible');
 
         $groups = (object)$request->input('groups');
 
