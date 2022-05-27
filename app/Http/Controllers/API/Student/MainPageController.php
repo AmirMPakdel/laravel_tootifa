@@ -16,7 +16,7 @@ use App\Models\MainPageProperties;
 use App\Models\MainPostList;
 use App\Models\Popup;
 use Illuminate\Http\Request;
-use PDO;
+
 
 class MainPageController extends BaseController
 {
