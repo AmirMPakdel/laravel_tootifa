@@ -175,7 +175,7 @@ Route::group([
     Route::post('/download/verify', 'DownloadController@verifyStudentForDownloadCourseItem');
     Route::post('/download/verify/v2', 'DownloadController@verifyStudentForDownloadCourseItem2');
     Route::post('/student/get', 'DownloadController@getStudent');
-    Route::post('/footer/load', 'MainPage\UserMainPageController@loadFooterData');
+    Route::post('/footer/load', 'MainPageController@loadFooterData');
 
 });
 
