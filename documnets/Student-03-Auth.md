@@ -137,3 +137,79 @@
     description: when user_id not exist or incompatible with inserted phone_number
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+# PASSWORD RESET
+
+## REQUEST PASSWORD REST
+
+**path**
+
+    /passwordreset/request
+
+**format**
+
+    P10PSTA
+
+**input**
+
+    phone_number:string
+
+**output**
+
+    SUCCESS:null
+
+    STUDENT_NOT_FOUND:null
+
+    PASSWORD_RESET_REQUEST_LIMIT_ERROR:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## PASSWORD REST CHECK TOKEN
+
+**path**
+
+    /passwordreset/checktoken
+
+**format**
+
+    P10PSTA
+
+**input**
+
+    token:string
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_TOKEN:null
+
+    PASSWORD_RESET_REQUEST_LIMIT_ERROR:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## RESET PASSWORD
+
+**path**
+
+    /passwordreset/checktoken
+
+**format**
+
+    P10PSTA
+
+**input**
+
+    token:string
+
+    password:string
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_TOKEN:null
+
+    STUDENT_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

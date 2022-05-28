@@ -32,7 +32,8 @@ class UserPasswordResetController extends BaseController
         
         $password_reset = new UserPasswordReset();
         $password_reset->phone_number = $phone_number;
-        $password_reset->token = bin2hex(random_bytes(16));
+        // $password_reset->token = bin2hex(random_bytes(16));
+        $password_reset->token = 1234;
         $password_reset->save();
 
         // TODO Generate a link and send it via sms API

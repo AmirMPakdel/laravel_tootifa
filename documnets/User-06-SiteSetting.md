@@ -16,6 +16,8 @@
 
     title:string
 
+    motto:string
+
 **output**
 
     SUCCESS:null
@@ -69,10 +71,6 @@
     SUCCESS:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-
-
 
 
 # EDUCATOR CRUD

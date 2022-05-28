@@ -227,7 +227,25 @@
         "educators":Array[Educator],
         "logo":string, "decription: upload_key"
         "cover":string, "decription: upload_key"
-        "is_favorite":number|b|n
+        "is_favorite":number|b|n,
+        "liecense_key":LicenseKeyObject|n "decription: could be available in access_type 3 or 4"
+        
+    }
+
+    def LicenseKeyObject = {
+        "key":string
+        "device_one":{
+            "uid": string,
+            "platform": string,
+            "platform_version" : string,
+            "app_version" : string,
+        }|n,
+        "device_two":{
+            "uid": string,
+            "platform": string,
+            "platform_version" : string,
+            "app_version" : string,
+        }|n,
     }
 
     def Tag = {

@@ -166,3 +166,79 @@
     description: when user_id not exist or incompatible with inserted phone_number
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+# PASSWORD RESET
+
+## REQUEST PASSWORD REST
+
+**path**
+
+    /passwordreset/request
+
+**format**
+
+    P00MA
+
+**input**
+
+    phone_number:string
+
+**output**
+
+    SUCCESS:null
+
+    USER_NOT_FOUND:null
+
+    PASSWORD_RESET_REQUEST_LIMIT_ERROR:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## PASSWORD REST CHECK TOKEN
+
+**path**
+
+    /passwordreset/checktoken
+
+**format**
+
+    P00MA
+
+**input**
+
+    token:string
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_TOKEN:null
+
+    PASSWORD_RESET_REQUEST_LIMIT_ERROR:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## RESET PASSWORD
+
+**path**
+
+    /passwordreset/checktoken
+
+**format**
+
+    P00MA
+
+**input**
+
+    token:string
+
+    password:string
+
+**output**
+
+    SUCCESS:null
+
+    INVALID_TOKEN:null
+
+    USER_NOT_FOUND:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

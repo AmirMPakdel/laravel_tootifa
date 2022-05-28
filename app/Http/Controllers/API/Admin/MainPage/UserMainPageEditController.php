@@ -122,6 +122,7 @@ class UserMainPageEditController extends BaseController
     {
         $properties = MainPageProperties::all()[0];
         $properties->page_title = $request->input("title");
+        $properties->motto = $request->input("motto");
         $properties->save();
 
         return $this->sendResponse(Constant::$SUCCESS, null);

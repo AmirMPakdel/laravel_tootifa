@@ -24,6 +24,7 @@
         "page_cover_link_title":string,
         "page_cover_template":number,
         "page_logo":string,
+        "motto":string,
         "store_open":number,
         "page_title":string,
         "content_hierarchy":string,

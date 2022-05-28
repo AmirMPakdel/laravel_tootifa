@@ -111,6 +111,7 @@ class UserMainPageController extends BaseController
             // 'banner_link' => $properties->banner_link,
             // 'banner_text' => $properties->banner_text,
             'page_title' => $properties->page_title,
+            'motto' => $properties->motto,
             'content_hierarchy' => $properties->content_hierarchy,
             'footer_links' => $properties->footer_links,
             'footer_telephones' => $properties->footer_telephones,

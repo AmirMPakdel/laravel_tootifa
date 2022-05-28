@@ -115,6 +115,7 @@ class MainPageController extends BaseController
             'page_cover_template' => $properties->page_cover_template,
             'page_logo' => $properties->page_logo,
             'store_open' => $properties->store_open,
+            'motto' => $properties->motto,
             'banner_link' => $properties->banner_link,
             'banner_text' => $properties->banner_text,
             'page_title' => $properties->page_title,
