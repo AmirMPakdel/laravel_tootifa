@@ -77,7 +77,8 @@ class Constant
     public static $PRT_TEST = "prt_test";
 
 
-    public static $PASSWORD_RESET_REQUEST_LIMIT_MIN = 5;
+    //TODO:: change $PASSWORD_RESET_REQUEST_LIMIT_MIN to 2 min for deployment
+    public static $PASSWORD_RESET_REQUEST_LIMIT_MIN = 0.2;
     public static $PASSWORD_RESET_VALID_LIMIT_MIN = 45;
 
     public static $SATURDAY = "شنبه";

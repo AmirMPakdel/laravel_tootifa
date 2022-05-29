@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Main;
+namespace App\Http\Controllers\API\Student;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Models\Student;
