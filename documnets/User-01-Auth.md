@@ -221,7 +221,7 @@
 
 **path**
 
-    /passwordreset/checktoken
+    /passwordreset/reset
 
 **format**
 
