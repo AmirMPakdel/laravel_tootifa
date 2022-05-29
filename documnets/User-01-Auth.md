@@ -173,7 +173,7 @@
 
 **path**
 
-    /passwordreset/request
+    /user/passwordreset/request
 
 **format**
 
@@ -197,7 +197,7 @@
 
 **path**
 
-    /passwordreset/checktoken
+    /user/passwordreset/checktoken
 
 **format**
 
@@ -221,7 +221,7 @@
 
 **path**
 
-    /passwordreset/reset
+    /user/passwordreset/reset
 
 **format**
 
