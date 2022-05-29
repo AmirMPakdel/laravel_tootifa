@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API\Admin\Courses;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\API\Admin\GroupsController;
 use App\Includes\Constant;
-use App\Includes\Helper;
 use App\Includes\UploadManager;
 use App\Models\ContentDocument;
 use App\Models\ContentVideo;

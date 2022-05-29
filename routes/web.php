@@ -45,6 +45,7 @@ Route::group([
     'middleware' => [ EnsureUserTokenIsValid::class, InitializeTenancyByRequestData::class],
 ], function () {
     Route::post('/profile/update', 'UserProfileController@updateUserProfile');
+    Route::post('/profile/update/bank_info', 'UserProfileController@updateUserBankInfo');
     Route::post('/profile/load', 'UserProfileController@loadUserProfile');
 
     Route::post('/courses/create', 'Courses\CoursesController@createCourse');

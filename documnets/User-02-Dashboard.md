@@ -26,10 +26,85 @@
         bio:string ,
         holdable_test_count:number,
         infinit_test_finish_date:date|f:YYY-MM-DD,
+        total_saved_income:number,
+        account_owner_first_name:string,
+        account_owner_last_name:string,
+        bank:string,
+        account_number:string,
+        shaba_number:string,
+        credit_cart_number:string,
+        national_cart_image:string|upload_key,
     }
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+## UPDATE USER PROFILE
+
+**path**
+
+    /profile/update
+
+**format**
+
+    P11UTA
+
+**input**
+
+    first_name:string
+
+    last_name:string
+
+    email:string
+
+    national_code:string
+
+    bio:string
+
+    state:string
+
+    city:string
+
+    file_state:enum(ufs_no_change|ufs_new|ufs_replace|ufs_delete)
+
+    upload_key:string|nr 
+    description: it is required when file_state is ufs_new or ufs_replace
+    description: it is for national_cart_image
+
+**output**
+
+    SUCCESS:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## UPDATE USER BANK INFO
+
+**path**
+
+    /profile/update/bank_info
+
+**format**
+
+    P11UTA
+
+**input**
+
+    account_owner_first_name:string
+
+    account_owner_last_name:string
+
+    bank:string
+
+    account_number:string
+
+    shaba_number:string
+
+    credit_cart_number:string
+
+**output**
+
+    SUCCESS:null
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 # USER DASHBOARD OVERVIEW
 
