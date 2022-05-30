@@ -191,6 +191,7 @@ Route::group([
     Route::post('/profile/update', 'StudentProfileController@updateStudentProfile');
     Route::post('/courses/fetch/{chunk_count}/{page_count}', 'StudentCourseController@fetchCourses');
     Route::post('/course/load', 'StudentCourseController@loadCourse');
+    Route::post('/course/lk', 'StudentCourseController@getStudentCourseLk');
     Route::post('/course/score/get', 'StudentCourseController@getCourseScore');
     Route::post('/course/score/update', 'StudentCourseController@updateCourseScore');
     Route::post('/courses/favorite/{chunk_count}/{page_count}', 'StudentCourseController@fetchFavoriteCourses');

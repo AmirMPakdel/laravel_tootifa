@@ -238,6 +238,23 @@ class StudentCourseController extends BaseController
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
+    public function getStudentCourseLk(Request $request){
+        $lk = LicenseKey::where([
+            ['course_id', $request->input('course_id')],
+            ['student_id', $request->input('student')->id]
+        ])->first();
+
+        if(!$lk)
+            return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null); 
+     
+        $liecense_key = [
+            'key' => $lk->key,
+            'device_one' => $lk->device_one,
+            'device_two' => $lk->device_two,
+        ];
+
+        return $this->sendResponse(Constant::$SUCCESS, $liecense_key);
+    }
 
     private function buildListCourseObject($course){
         return [
@@ -438,22 +455,6 @@ class StudentCourseController extends BaseController
             return $c;
         });
 
-        if($access_type == Constant::$ACCESS_TYPE_THREE ||
-           $access_type == Constant::$ACCESS_TYPE_FOUR ){
-            $lk = LicenseKey::where([
-                ['course_id', $course->id],
-                ['student_id', $student->id]
-            ])->first();
-
-            $liecense_key = null;
-            if($lk){
-                $liecense_key = [
-                    'key' => $lk->key,
-                    'device_one' => $lk->device_one,
-                    'device_two' => $lk->device_two,
-                ];
-            }     
-        }
 
         return [
             'id' => $course->id,
@@ -489,7 +490,6 @@ class StudentCourseController extends BaseController
             "cover" => $course->cover,
             "is_favorite" => $is_favorite ? 1 : 0,
             "last_update" => $course->last_update,
-            "liecense_key" => $liecense_key
         ];
     }
 

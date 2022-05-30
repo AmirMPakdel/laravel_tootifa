@@ -15,7 +15,6 @@ use App\Models\LevelThreeGroup;
 use App\Models\LevelTwoGroup;
 use App\Models\LicenseKey;
 use App\Models\Tag;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class CoursesController extends BaseController

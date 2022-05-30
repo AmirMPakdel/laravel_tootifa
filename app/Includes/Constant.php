@@ -233,6 +233,7 @@ class Constant
     public static $UPLOAD_TYPE_COURSE_VIDEO_FREE = "ut_course_video_free";
     public static $UPLOAD_TYPE_COURSE_DOCUMENT_FREE = "ut_course_document_free";
     public static $UPLOAD_TYPE_COURSE_VOICE_FREE = "ut_course_voice_free";
+    public static $UPLOAD_TYPE_NATIONAL_CART_IMAGE = "ut_national_cart_image";
 
     public static $ACCESS_TYPE_ONE = "1";
     public static $ACCESS_TYPE_TWO = "2";

@@ -227,25 +227,7 @@
         "educators":Array[Educator],
         "logo":string, "decription: upload_key"
         "cover":string, "decription: upload_key"
-        "is_favorite":number|b|n,
-        "liecense_key":LicenseKeyObject|n "decription: could be available in access_type 3 or 4"
-        
-    }
-
-    def LicenseKeyObject = {
-        "key":string
-        "device_one":{
-            "uid": string,
-            "platform": string,
-            "platform_version" : string,
-            "app_version" : string,
-        }|n,
-        "device_two":{
-            "uid": string,
-            "platform": string,
-            "platform_version" : string,
-            "app_version" : string,
-        }|n,
+        "is_favorite":number|b|n,        
     }
 
     def Tag = {
@@ -491,6 +473,48 @@
     description: "You can't have lower group levels without specializing higher group ids"
     description: "set the g#level to null or empty string if it's not necessary" 
 
+```
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## LOAD STUDENT COURSE LK
+
+**path**
+
+    /course/lk
+
+**format**
+
+    P11STA
+
+**input**
+
+    course_id:number
+
+**output**
+
+    SUCCESS:LicenseKeyObject
+
+    LISCENSE_KEY_NOT_FOUND:null
+
+**types**
+
+```javascript
+    def LicenseKeyObject = {
+        "key":string
+        "device_one":{
+            "uid": string,
+            "platform": string,
+            "platform_version" : string,
+            "app_version" : string,
+        }|n,
+        "device_two":{
+            "uid": string,
+            "platform": string,
+            "platform_version" : string,
+            "app_version" : string,
+        }|n,
+    }
 ```
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
