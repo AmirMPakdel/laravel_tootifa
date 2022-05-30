@@ -78,6 +78,8 @@ class UserProfileController extends BaseController
             'm_balance' => $profile->m_balance,
             's_balance' => $profile->s_balance,
             'bio' => $profile->bio,
+            'state' => $profile->state,
+            'city' => $profile->city,
             'holdable_test_count' => $profile->holdable_test_count,
             'infinit_test_finish_date' => $profile->infinit_test_finish_date,
             'total_saved_income' => 0,
