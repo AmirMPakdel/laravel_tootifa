@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Admin\Courses;
 
+use App\Events\FileContentCrudHappened;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\API\Admin\GroupsController;
 use App\Includes\Constant;
@@ -841,5 +842,10 @@ class CourseEditController extends BaseController
         $heading->delete();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
+    public function callEvent(Request $request){
+        event(new FileContentCrudHappened());
+        return "s";
     }
 }

@@ -53,6 +53,7 @@ Route::group([
     Route::post('/courses/fetch/specific', 'Courses\CoursesController@fetchSpecificCourses');
     Route::post('/course/load', 'Courses\CoursesController@loadCourse');
     Route::post('/course/edit/{ep}', 'Courses\CourseEditController@editCourse');
+    Route::post('/event', 'Courses\CourseEditController@callEvent');
 
     Route::post('/course/students/fetch/{chunk_count}/{page_count}', 'Courses\CourseStudentController@fetchCourseStudents');
     Route::post('/course/students/add', 'Courses\CourseStudentController@addCourseStudent');

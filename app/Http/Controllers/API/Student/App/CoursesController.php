@@ -24,7 +24,9 @@ class CoursesController extends BaseController
         $deviceInfo = $request->input('device_info');
         // device info consists of:
         // uid, platform (android or windows), platform_version, app_version
-        $tenant = Tenant::find(User::where('key', substr($lk, 0, 4))->first()->tenant_id);
+        $user = User::where('key', substr($lk, 0, 4))->first();
+        if(!$user) return $this->sendResponse(Constant::$LISCENSE_KEY_NOT_FOUND, null);
+        $tenant = Tenant::find($user->tenant_id);
 
         if (!$tenant) return $this->sendResponse(Constant::$USER_NOT_FOUND, null);
 
