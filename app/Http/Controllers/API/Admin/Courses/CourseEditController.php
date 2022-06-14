@@ -258,7 +258,7 @@ class CourseEditController extends BaseController
         $course = $request->input('course');
         $price = $request->input('price');
 
-        if (!$price) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$price) $price = 0;
 
         $course->price = $price;
         $course->save();
@@ -271,7 +271,7 @@ class CourseEditController extends BaseController
         $course = $request->input('course');
         $discount_price = $request->input('discount_price');
 
-        if (!$discount_price) return $this->sendResponse(Constant::$INVALID_VALUE, null);
+        if (!$discount_price) $discount_price = null;
 
         $course->discount_price = $discount_price;
         $course->save();
