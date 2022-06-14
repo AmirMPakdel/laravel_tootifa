@@ -31,7 +31,7 @@ class StudentCourseController extends BaseController
     }
 
     public function fetchCourses(Request $request, $chunk_count, $page_count){
-        $paginator = $request->input('student')->orderBy('id', 'DESC')->courses()
+        $paginator = $request->input('student')->courses()->orderBy('id', 'DESC')
                 ->paginate($chunk_count, ['*'], 'page', $page_count);
 
         $courses = $paginator->map(function ($course) {

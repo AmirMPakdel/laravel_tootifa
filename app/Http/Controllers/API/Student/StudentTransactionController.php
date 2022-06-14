@@ -95,8 +95,8 @@ class StudentTransactionController extends BaseController
         $transaction->redirect_url = $request->input('redirect_url');
         
         $course = Course::find($transaction->course_id);
-        if($course->discount != null && $course->price != null)
-            $price = $course->price - $course->discount;
+        if($course->discount_price != null && $course->price != null)
+            $price = $course->price - $course->discount_price;
         else
             $price = $course->price;
 

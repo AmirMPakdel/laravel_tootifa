@@ -71,8 +71,7 @@ class DashboardController extends BaseController
 
         switch($filter){
             case Constant::$RECORDS_FILTER_SELLS:
-                $paginator = StudentTransaction::paginate($chunk_count, ['*'], 'page', $page_count)
-                    ->orderBy('id', 'DESC');
+                $paginator = StudentTransaction::orderBy('id', 'DESC')->paginate($chunk_count, ['*'], 'page', $page_count);
                 $items = $paginator->map(function($item) {
                     return [
                         'id' => $item->id,
@@ -101,8 +100,7 @@ class DashboardController extends BaseController
                 $result = ["total_size" => $paginator->total(), "list" => $items];
                 break;
             case Constant::$RECORDS_FILTER_DECREASE_M_BALANCE:
-                $paginator = DailyMaintenanceCostReport::paginate($chunk_count, ['*'], 'page', $page_count)
-                    ->orderBy('id', 'DESC');
+                $paginator = DailyMaintenanceCostReport::orderBy('id', 'DESC')->paginate($chunk_count, ['*'], 'page', $page_count);
                 $items = $paginator->map(function($item) {
                     return [
                         'id' => $item->id,
