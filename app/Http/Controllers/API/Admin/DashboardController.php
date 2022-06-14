@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class DashboardController extends BaseController
 {
     public function loadDashboardMainInfo(Request $request){
-        $prices = StudentTransaction::where("success",1)->get('price')->toArray();
+        $prices = StudentTransaction::all('price')->toArray();
         $total_courses_count = Course::all()->count();
 
         $balance = $request->user->u_profile->m_balance;
