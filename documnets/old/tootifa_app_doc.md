@@ -109,8 +109,8 @@
         "headings":Array[Heading],
         "contents":Array[Content],
         "content_hierarchy":Array(HierarchyObj),
+        "educators":Array[Educator],
         "logo":string, "decription: upload_key.file_type"
-        "cover":string, "decription: upload_key.file_type"
     }
 
     def Heading = {
@@ -131,6 +131,14 @@
     def HierarchyObj = {
         'heading_id':number
         'content_ids':Array(number)
+    }
+
+    def Educator = {
+        "id":number,
+        "first_name":string,
+        "last_name":string,
+        "bio":string,
+        "image":string,
     }
 ```
 

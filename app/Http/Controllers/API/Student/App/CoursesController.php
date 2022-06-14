@@ -240,6 +240,16 @@ class CoursesController extends BaseController
             return ['id' => $heading->id, 'title' => $heading->title];
         });
 
+        $educators = $course->educators()->get()->map(function ($educator){
+            return [
+                'id' => $educator->id,
+                'first_name' => $educator->first_name,
+                'last_name' => $educator->last_name,
+                'bio' => $educator->bio,
+                'image' => $educator->image,
+            ];
+        });
+
         $contents = $course->course_contents()->get()->map(function ($content) use ($has_access, $lk, $course, $username) {
             $c = [
                 'id' => $content->id,
@@ -294,6 +304,7 @@ class CoursesController extends BaseController
             "headings" => $headings,
             "contents" => $contents,
             "content_hierarchy" => json_decode($course->content_hierarchy),
+            "educators" => $educators,
             "logo" => $logo,
         ];
     }
