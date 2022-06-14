@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 class DashboardController extends BaseController
 {
     public function loadDashboardMainInfo(Request $request){
-        $prices = StudentTransaction::selectRaw('student_transactions.*, COUNT(*) as count, SUM(price) as sum')
+        $prices = StudentTransaction::selectRaw('student_transactions.*, COUNT(*) as count')
             ->where('success', 1)
             ->get();
         $total_courses_count = Course::all()->count();
