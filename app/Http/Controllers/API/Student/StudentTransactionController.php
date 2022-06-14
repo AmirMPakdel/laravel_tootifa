@@ -20,7 +20,7 @@ class StudentTransactionController extends BaseController
     public function getStudentTransactionList(Request $request, $chunk_count, $page_count)
     {
         $paginator = StudentTransaction::where('student_id', $request->input('student')->id)
-            ->paginate($chunk_count, ['*'], 'page', $page_count);
+            ->orderBy('id', 'DESC')->paginate($chunk_count, ['*'], 'page', $page_count);
 
         $transactions = $paginator->map(function($transaction) use ($request){
                 return [

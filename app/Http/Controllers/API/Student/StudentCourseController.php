@@ -31,7 +31,7 @@ class StudentCourseController extends BaseController
     }
 
     public function fetchCourses(Request $request, $chunk_count, $page_count){
-        $paginator = $request->input('student')->courses()
+        $paginator = $request->input('student')->orderBy('id', 'DESC')->courses()
                 ->paginate($chunk_count, ['*'], 'page', $page_count);
 
         $courses = $paginator->map(function ($course) {
@@ -152,6 +152,7 @@ class StudentCourseController extends BaseController
 
     public function fetchFavoriteCourses(Request $request, $chunk_count, $page_count){
         $paginator = $request->input('student')->favorites()
+            ->orderBy('id', 'DESC')
             ->where("favoritable_type", "App\Models\Course")
             ->paginate($chunk_count, ['*'], 'page', $page_count);
 
