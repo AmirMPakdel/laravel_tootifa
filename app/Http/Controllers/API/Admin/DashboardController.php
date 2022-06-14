@@ -15,7 +15,9 @@ use Illuminate\Http\Request;
 class DashboardController extends BaseController
 {
     public function loadDashboardMainInfo(Request $request){
-        $prices = StudentTransaction::where("success",1)->get('price')->toArray();
+        $prices = StudentTransaction::select('*', 'COUNT(*) AS count', 'SUM(price) AS sum')
+            ->where('success', 1)
+            ->get();
         $total_courses_count = Course::all()->count();
 
         $balance = $request->user->u_profile->m_balance;
@@ -23,9 +25,8 @@ class DashboardController extends BaseController
         $remaining_days = ($result['total_cost']) ? floor($balance / $result['total_cost']) : null;
 
         $result = [
-            'prices' => $prices,
-            'total_income' => array_sum($prices),
-            'total_sell_count' => sizeof($prices),
+            'total_income' => $prices['sum'],
+            'total_sell_count' => $prices['count'],
             'total_courses_count' => $total_courses_count,
             'daily_cost' => $result['total_cost'],
             'remaining_days' => $remaining_days, // null means forever
