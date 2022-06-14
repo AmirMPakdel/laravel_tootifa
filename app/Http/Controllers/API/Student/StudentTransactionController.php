@@ -17,6 +17,22 @@ use Shetabit\Payment\Facade\Payment;
 
 class StudentTransactionController extends BaseController
 {
+    public function registerInFreeCourse(Request $request){
+        $course = Course::find($request->input('course_id'));
+        if($course->price != null && $course->price != 0 && !$course->is_free)
+            return $this->sendResponse(Constant::$COURSE_NOT_FREE, null);
+        
+
+        $cc = new CoursesController();
+        $cc->addStudentToCourse(
+            Student::find($request->input('student_id')),
+            Course::find($request->input('course_id')),
+            Constant::$REGISTRATION_TYPE_WEBSITE
+        );    
+        
+        return $this->sendResponse(Constant::$SUCCESS, null);
+    }
+
     public function getStudentTransactionList(Request $request, $chunk_count, $page_count)
     {
         $paginator = StudentTransaction::where('student_id', $request->input('student')->id)

@@ -115,17 +115,42 @@
 
 **format**
 
-    transaction_id:number
-
     G11STA 
 
 **input**
+
+    transaction_id:number
 
     * description: send inputs (tenant and token) as query params
 
 **output**
 
     SUCCESS: redirects to the portal
+
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## REGISTER IN FREE COURSE
+
+**path**
+
+    /free_course/register
+
+**format**
+
+    P11STA 
+
+**input**
+
+    student_id:number
+
+    course_id:number
+
+**output**
+
+    SUCCESS:null
+
+    COURSE_NOT_FREE:null
 
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

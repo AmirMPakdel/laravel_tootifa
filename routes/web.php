@@ -217,6 +217,7 @@ Route::group([
     Route::post('/transaction/get', 'StudentTransactionController@getStudentTransaction');
     Route::post('/transaction/get/list/{chunk_count}/{page_count}', 'StudentTransactionController@getStudentTransactionList');
     Route::post('/transaction/generate', 'StudentTransactionController@generateStudentTransaction');
+    Route::post('/free_course/register', 'StudentTransactionController@registerInFreeCourse');
     Route::get('/course/pay', 'StudentTransactionController@payForCourse');
     Route::get('/course/pay/done', 'StudentTransactionController@payForCourseIsDone')->name('student-course-pay-done');
 });

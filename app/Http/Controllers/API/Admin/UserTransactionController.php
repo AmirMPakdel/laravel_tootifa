@@ -8,7 +8,6 @@ use App\Models\UserTransaction;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Shetabit\Multipay\Invoice;
 use Shetabit\Payment\Facade\Payment;
