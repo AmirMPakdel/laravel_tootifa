@@ -26,8 +26,8 @@ class DashboardController extends BaseController
         $remaining_days = ($result['total_cost']) ? floor($balance / $result['total_cost']) : null;
 
         $result = [
-            'total_income' => $prices['sum'],
-            'total_sell_count' => $prices['count'],
+            'total_income' => $prices,
+            'total_sell_count' => $prices,
             'total_courses_count' => $total_courses_count,
             'daily_cost' => $result['total_cost'],
             'remaining_days' => $remaining_days, // null means forever
