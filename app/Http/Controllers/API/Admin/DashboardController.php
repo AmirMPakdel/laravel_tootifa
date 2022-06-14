@@ -11,11 +11,12 @@ use App\Models\StudentTransaction;
 use App\Models\UserTransaction;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends BaseController
 {
     public function loadDashboardMainInfo(Request $request){
-        $prices = StudentTransaction::select('*', 'COUNT(*) AS count', 'SUM(price) AS sum')
+        $prices = StudentTransaction::select('*', DB::raw('COUNT(*) as count'), DB::raw('SUM(price) as sum'))
             ->where('success', 1)
             ->get();
         $total_courses_count = Course::all()->count();
