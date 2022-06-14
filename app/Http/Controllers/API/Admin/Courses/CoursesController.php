@@ -297,6 +297,10 @@ class CoursesController extends BaseController
     {
         // Register in Course
         $course->students()->attach($student, ['registration_type' => $registration_type]);
+        
+        // setting sells record
+        $course->sells += 1;
+        $course->save();
 
         // Generate License Key
         $lk = new LicenseKey();

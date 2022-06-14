@@ -138,7 +138,7 @@ class StudentTransactionController extends BaseController
                 $transaction->ref_id = $receipt->getReferenceId();
                 $transaction->success = 1;
                 $transaction->save();
-
+                
                 // apply transaction result
                 $cc = new CoursesController();
                 $cc->addStudentToCourse(
