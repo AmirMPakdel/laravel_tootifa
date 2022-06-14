@@ -72,12 +72,19 @@ class StudentTransactionController extends BaseController
         $transaction = new StudentTransaction();
         $transaction->order_no = $this->getOrderNo();
         $transaction->title = $request->input('title'); 
-        $transaction->price = $request->input('price');
         $transaction->course_id = $request->input('course_id');
         $transaction->student_id = $request->student->id;
         $transaction->course_title = $request->input('course_title');
         $transaction->portal = $request->input('portal');
         $transaction->redirect_url = $request->input('redirect_url');
+        
+        $course = Course::find($transaction->course_id);
+        if($course->discount != null && $course->price != null)
+            $price = $course->price - $course->discount;
+        else
+            $price = $course->price;
+
+        $transaction->price =($price == null) ?  0 : $price;
         $transaction->save();
 
         $result = [
