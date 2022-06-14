@@ -16,9 +16,10 @@ use Illuminate\Support\Facades\DB;
 class DashboardController extends BaseController
 {
     public function loadDashboardMainInfo(Request $request){
-        $prices = StudentTransaction::groupBy('id')->selectRaw('student_transactions.*, COUNT(*) as count, SUM(student_transactions.price) as sum')
-            ->where('success', 1)
-            ->get();
+        $prices_count = StudentTransaction::where('success', 1)
+            ->get()->count();
+        $prices_sum = StudentTransaction::where('success', 1)
+            ->get()->sum('price');  
         $total_courses_count = Course::all()->count();
 
         $balance = $request->user->u_profile->m_balance;
@@ -26,8 +27,8 @@ class DashboardController extends BaseController
         $remaining_days = ($result['total_cost']) ? floor($balance / $result['total_cost']) : null;
 
         $result = [
-            'total_income' => $prices,
-            'total_sell_count' => $prices,
+            'total_income' => $prices_sum,
+            'total_sell_count' => $prices_count,
             'total_courses_count' => $total_courses_count,
             'daily_cost' => $result['total_cost'],
             'remaining_days' => $remaining_days, // null means forever
