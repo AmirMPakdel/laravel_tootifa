@@ -78,6 +78,7 @@ class DashboardController extends BaseController
                         'id' => $item->id,
                         'price' => $item->price,
                         'title' => $item->title,
+                        'success' => $item->success,
                         'created_at' => $item->created_at,
                     ];
                 });
@@ -93,6 +94,7 @@ class DashboardController extends BaseController
                         'id' => $item->id,
                         'price' => $item->price,
                         'title' => Constant::$M_BALANCE_INCREASE_DIRECT_PAYMENT,
+                        'success' => $item->success,
                         'created_at' => $item->created_at,
                     ];
                 });

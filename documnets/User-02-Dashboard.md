@@ -193,6 +193,7 @@
         "id": number
         "created_at": date,
         "price": number,
+        "success": number,
         "title":string
     }
 
@@ -206,6 +207,7 @@
         "id": number,
         "created_at": date,
         "price": number,
+        "success": number,
         "title":string
     }
 

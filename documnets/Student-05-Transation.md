@@ -12,8 +12,6 @@
 
     title:string
 
-    price:number
-
     course_id:number
 
     course_title:string
