@@ -25,7 +25,7 @@ class StudentTransactionController extends BaseController
 
         $cc = new CoursesController();
         $cc->addStudentToCourse(
-            Student::find($request->input('student_id')),
+            $request->input('student'),
             Course::find($request->input('course_id')),
             Constant::$REGISTRATION_TYPE_WEBSITE
         );    
@@ -95,12 +95,14 @@ class StudentTransactionController extends BaseController
         $transaction->redirect_url = $request->input('redirect_url');
         
         $course = Course::find($transaction->course_id);
-        if($course->discount_price != null && $course->price != null)
-            $price = $course->price - $course->discount_price;
-        else
+        if($course->discount_price != null)
+            $price = $course->discount_price;
+        else if($course->price != null)
             $price = $course->price;
+        else
+            $price = 0;
 
-        $transaction->price =($price == null) ?  0 : $price;
+        $transaction->price = $price;
         $transaction->save();
 
         $result = [
