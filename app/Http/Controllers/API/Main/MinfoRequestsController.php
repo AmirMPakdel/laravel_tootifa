@@ -17,13 +17,14 @@ class MinfoRequestsController extends BaseController
         $course_id = $request->input('course_id');
         $user = $request->input('user');
 
-        Tenant::find($user->tenant_id)->run(function() use ($course_id){
+        $result = Tenant::find($user->tenant_id)->run(function() use ($course_id){
             $c = Course::find($course_id);
-            $c->validation_status = Constant::$VALIDATION_STATUS_IS_CHECKING;
+            $c->validation_status = Constant::$VALIDATION_STATUS_NOT_VALID;
             $c->save();
         });
 
         //TODO set a requset in minfo database
+        
 
         return $this->sendResponse(Constant::$SUCCESS, null);
     }

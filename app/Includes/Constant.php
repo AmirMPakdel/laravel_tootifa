@@ -203,8 +203,8 @@ class Constant
     ];
 
     public static $APP_VERSIONS = [
-        "android" => "1",
-        "windows" => "1"
+        "android" => "1.0",
+        "windows" => "1.0"
     ];
 
     public static $MUST_UPDATE = 1;
