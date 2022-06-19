@@ -49,6 +49,8 @@ class CoursesController extends BaseController
         $course->title = $title;
         $course->price = $price;
         $course->is_encrypted = $is_encrypted;
+        // todo remove line below
+        $course->validation_status = Constant::$VALIDATION_STATUS_VALID;
         $course->save();
 
         // TODO delete this line (It has to be managed by tootifa admins)
