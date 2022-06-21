@@ -33,7 +33,7 @@ class EnsureStudentTokenIsValid
         }
 
         $student = Student::where('token', $token)->first();
-        if (!$student)
+        if (!$student || $student->token == null)
             return $this->sendResponse(Constant::$INVALID_TOKEN, null);
 
         $request->request->add(['student' => $student]);
