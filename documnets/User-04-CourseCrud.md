@@ -1526,11 +1526,11 @@
 
 **path**
 
-    /user/course/validation/check
+    /course/check_validation
 
 **format**
 
-    P11MA
+    P11UTA
 
 **input**
 

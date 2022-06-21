@@ -54,6 +54,7 @@ Route::group([
     Route::post('/course/load', 'Courses\CoursesController@loadCourse');
     Route::post('/course/edit/{ep}', 'Courses\CourseEditController@editCourse');
     Route::post('/event', 'Courses\CourseEditController@callEvent');
+    Route::get('/course/check_validation', 'Courses\CoursesController@requestForValidationCheck');
 
     Route::post('/course/students/fetch/{chunk_count}/{page_count}', 'Courses\CourseStudentController@fetchCourseStudents');
     Route::post('/course/students/add', 'Courses\CourseStudentController@addCourseStudent');

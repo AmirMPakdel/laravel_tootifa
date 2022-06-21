@@ -49,8 +49,6 @@ class CoursesController extends BaseController
         $course->title = $title;
         $course->price = $price;
         $course->is_encrypted = $is_encrypted;
-        // todo remove line below
-        $course->validation_status = Constant::$VALIDATION_STATUS_VALID;
         $course->save();
 
         // TODO delete this line (It has to be managed by tootifa admins)
@@ -330,5 +328,17 @@ class CoursesController extends BaseController
         $student->courses()->updateExistingPivot($course, ['access' => $access], false);
     }
 
+    public function requestForValidationCheck(Request $request)
+    {
+        $course_id = $request->input('course_id');
+
+        $c = Course::find($course_id);
+        $c->validation_status = Constant::$VALIDATION_STATUS_NOT_VALID;
+        $c->save();
+        //TODO set a requset in minfo database
+        
+
+        return $this->sendResponse(Constant::$SUCCESS, null);
+    }
 
 }
