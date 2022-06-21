@@ -257,12 +257,15 @@ class CoursesController extends BaseController
                 'type' => $content->type,
                 'is_free' => $content->is_free,
             ];
-
+            
             switch ($content->type) {
                 case Constant::$CONTENT_TYPE_VIDEO:
+                    $ut = UploadTransaction::where("upload_key", $content->content_video->url)->first();
                     $c['url'] = ($has_access || $content->is_free) ? $content->content_video->url : null;
                     $c['size'] = $content->content_video->size;
                     $c['encoding'] = $content->content_video->encoding;
+                    $c['enc_key'] = ($content->content_video->encoding) ? $ut->enc_key : null;
+                    $c['iv'] = ($content->content_video->encoding) ? Constant::$IV : null;
                     $c['time'] = null;
                     break;
                 case Constant::$CONTENT_TYPE_VOICE:
