@@ -36,7 +36,7 @@ class OthersController extends BaseController
         $ticket->phone_number = $request->input('phone_number');
         $ticket->content = $request->input('content');
         $ticket->save();
-
+    
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
 
