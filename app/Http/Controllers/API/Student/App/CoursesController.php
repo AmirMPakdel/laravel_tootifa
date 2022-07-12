@@ -255,7 +255,7 @@ class CoursesController extends BaseController
                 'id' => $content->id,
                 'title' => $content->title,
                 'type' => $content->type,
-                'is_free' => $content->is_free,
+                'is_free' => $content->is_free
             ];
             
             switch ($content->type) {
@@ -278,7 +278,9 @@ class CoursesController extends BaseController
                     $c['size'] = $content->content_document->size;
             }
 
+            $c['upload_key'] = null;
             if ($c['url'] != null) {
+                $c['upload_key'] = $c['url'];
                 $c['url'] = Helper::generateStudentDownloadCourseItemFileUrl2(
                     $username,
                     $c['url'],

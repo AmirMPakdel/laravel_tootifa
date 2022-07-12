@@ -241,7 +241,7 @@ class Constant
     public static $ACCESS_TYPE_THREE = "3";
     public static $ACCESS_TYPE_FOUR = "4";
 
-    public static $IV = "kw85Gnj8LdOi92Fn";
+    public static $IV = "ni85Gnj8LdOi92Fn";
     
     public static function getCourseFreeUploadTypes()
     {
