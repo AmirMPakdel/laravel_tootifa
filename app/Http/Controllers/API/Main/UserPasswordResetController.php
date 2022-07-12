@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Main;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
+use App\Includes\HttpRequest;
 use App\Models\User;
 use App\Models\UserPasswordReset;
 use Carbon\Carbon;
@@ -33,10 +34,19 @@ class UserPasswordResetController extends BaseController
         $password_reset = new UserPasswordReset();
         $password_reset->phone_number = $phone_number;
         // $password_reset->token = bin2hex(random_bytes(16));
-        $password_reset->token = 1234;
+        $password_reset->token = mt_rand(10000, 99999);;
         $password_reset->save();
 
-        // TODO Generate a link and send it via sms API
+        $to = array($phone_number);
+        $input_data = array("verification-code" => $password_reset->token);
+        $url = "https://ippanel.com/patterns/pattern?username="
+                . env('FARAZ_USERNAME') . "&password=" . env('FARAZ_PASSWORD')
+                . "&from=". env('FARAZ_SENDER_NUMBER') ."&to=" . json_encode($to)
+                . "&input_data=" . urlencode(json_encode($input_data))
+                . "&pattern_code=" . env('PATTERN_CODE_USER_FORGET_PASSWORD');
+
+        $http = new HttpRequest($url);
+        $http->get();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
     }

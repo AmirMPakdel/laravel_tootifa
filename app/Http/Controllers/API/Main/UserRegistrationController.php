@@ -81,22 +81,21 @@ class UserRegistrationController extends BaseController
         }
 
         //generate and send verification code
-        $code = 1111;
-        // $code = mt_rand(1000, 9999);
+        // $code = 1111;
+        $code = mt_rand(10000, 99999);
         $user->verification_code = $code;
         $user->save();
-        // TODO make it event base
-        // $to = array($user->phone_number);
-        // $input_data = array("verification-code" => $code);
-        // $url = "https://ippanel.com/patterns/pattern?username="
-        //         . env('FARAZ_USERNAME') . "&password=" . env('FARAZ_PASSWORD')
-        //         . "&from=". env('FARAZ_SENDER_NUMBER') ."&to=" . json_encode($to)
-        //         . "&input_data=" . urlencode(json_encode($input_data))
-        //         . "&pattern_code=" . env('PATTERN_CODE_VERIFY_FARAZ');
 
-        // $http = new HttpRequest($url);
-        // $http->get();
-        // TODO send verification code via third party sms platform api
+        $to = array($user->phone_number);
+        $input_data = array("verification-code" => $code);
+        $url = "https://ippanel.com/patterns/pattern?username="
+                . env('FARAZ_USERNAME') . "&password=" . env('FARAZ_PASSWORD')
+                . "&from=". env('FARAZ_SENDER_NUMBER') ."&to=" . json_encode($to)
+                . "&input_data=" . urlencode(json_encode($input_data))
+                . "&pattern_code=" . env('PATTERN_CODE_USER_VERIFY_FARAZ');
+
+        $http = new HttpRequest($url);
+        $http->get();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
     }

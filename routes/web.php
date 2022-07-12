@@ -149,6 +149,7 @@ Route::group([
     Route::get('/groups/fetch/{type}', 'Admin\GroupsController@fetchGroups');
     Route::get('/tags/fetch', 'Admin\TagsController@fetchTags');
     Route::get('/categories/fetch', 'Admin\CategoriesController@fetchCategories');
+    Route::get('/event/test', 'Admin\UserProfileController@testEvent');
 });
 
 // Tenant students' public routes

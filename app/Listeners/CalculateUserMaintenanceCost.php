@@ -9,14 +9,11 @@ use Illuminate\Support\Facades\Log;
 
 class CalculateUserMaintenanceCost implements ShouldQueue
 {
-    public function onFileContentCrudHappened($event){
-        Log::debug("tenant: " + tenant()->id);
+    use InteractsWithQueue;
+
+    public function handle(FileContentCrudHappened $event)
+    {
+        Log::debug("tenant: " . tenant()->id);
     }
 
-    public function subscribe($events){
-        $events->listen(
-            'App\Events\FileContentCrudHappened',
-            'App\Listeners\CalculateUserMaintenanceCost@onFileContentCrudHappened'
-        );
-    }
 }

@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\API\Student;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
+use App\Includes\HttpRequest;
 use App\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -70,12 +71,21 @@ class StudentRegistrationController extends BaseController
         }
 
         //generate and send verification code
-        $code = 1111;
-        // $code = mt_rand(1000, 9999);
+        // $code = 1111;
+        $code = mt_rand(1000, 9999);
         $student->verification_code = $code;
         $student->save();
 
-        // TODO send verification code via third party sms platform api
+        $to = array($student->phone_number);
+        $input_data = array("verification-code" => $code);
+        $url = "https://ippanel.com/patterns/pattern?username="
+                . env('FARAZ_USERNAME') . "&password=" . env('FARAZ_PASSWORD')
+                . "&from=". env('FARAZ_SENDER_NUMBER') ."&to=" . json_encode($to)
+                . "&input_data=" . urlencode(json_encode($input_data))
+                . "&pattern_code=" . env('PATTERN_CODE_STUDENT_VERIFY_FARAZ');
+
+        $http = new HttpRequest($url);
+        $http->get();
 
         return $this->sendResponse(Constant::$SUCCESS, null);
     }

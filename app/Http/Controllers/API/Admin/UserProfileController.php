@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\API\Admin;
+
+use App\Events\FileContentCrudHappened;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Includes\UploadManager;
@@ -94,4 +96,10 @@ class UserProfileController extends BaseController
 
         return $this->sendResponse(Constant::$SUCCESS, $result);
     }
+
+    public function testEvent(Request $request)
+    {
+        FileContentCrudHappened::dispatch();
+    }
+
 }
