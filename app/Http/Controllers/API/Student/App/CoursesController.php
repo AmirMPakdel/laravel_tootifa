@@ -311,6 +311,7 @@ class CoursesController extends BaseController
             "content_hierarchy" => json_decode($course->content_hierarchy),
             "educators" => $educators,
             "logo" => $logo,
+            "last_update" => $course->last_updat,
         ];
     }
 
