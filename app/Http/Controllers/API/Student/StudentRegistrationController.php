@@ -1,6 +1,4 @@
 <?php
-
-
 namespace App\Http\Controllers\API\Student;
 use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
@@ -71,8 +69,8 @@ class StudentRegistrationController extends BaseController
         }
 
         //generate and send verification code
-        // $code = 1111;
-        $code = mt_rand(1000, 9999);
+        $code = 1111;
+        // $code = mt_rand(1000, 9999);
         $student->verification_code = $code;
         $student->save();
 
