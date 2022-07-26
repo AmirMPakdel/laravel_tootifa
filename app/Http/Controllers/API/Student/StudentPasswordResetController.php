@@ -43,7 +43,7 @@ class StudentPasswordResetController extends BaseController
                 . env('FARAZ_USERNAME') . "&password=" . env('FARAZ_PASSWORD')
                 . "&from=". env('FARAZ_SENDER_NUMBER') ."&to=" . json_encode($to)
                 . "&input_data=" . urlencode(json_encode($input_data))
-                . "&pattern_code=" . env('PATTERN_CODE_USER_FORGET_PASSWORD');
+                . "&pattern_code=" . tenant()->faraz_pattern_forget_password;
 
         $http = new HttpRequest($url);
         $http->get();
