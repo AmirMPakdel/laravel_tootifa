@@ -16,20 +16,30 @@ class OthersController extends BaseController
         $username = $request->input('username');
         $platform = $request->input('platform');
         $user_app_version_code = $request->input('app_version');
-        $app_version = AppVersion::where([
+
+        $user_app_version = AppVersion::where([
+            ['platform', $platform],
+            ['username', $username],
+            ['version_code', $user_app_version_code],
+        ])->first();
+
+        if(!$user_app_version)
+            return $this->sendResponse(Constant::$INVALID_VERSION_CODE, null);
+
+        $last_app_version = AppVersion::where([
             ['platform', $platform],
             ['username', $username],
         ])->orderBy('version_code', 'desc')->first();
         
-        if($app_version && ($user_app_version_code < $app_version->version_code)){
+        if($last_app_version && ($user_app_version_code < $last_app_version->version_code)){
             return $this->sendResponse(
                 Constant::$SHOULD_UPDATE,
                 [
-                    "version_name" => $app_version->version_name,
-                    "version_code" => $app_version->version_code,
-                    "last_changes_list" => $app_version->last_changes_list,
-                    "must" => $app_version->must_update,
-                    "url" => $app_version->download_link
+                    "version_name" => $last_app_version->version_name,
+                    "version_code" => $last_app_version->version_code,
+                    "last_changes_list" => $last_app_version->last_changes_list,
+                    "must" => $user_app_version->must_update,
+                    "url" => $last_app_version->download_link
                 ]
             );
         }

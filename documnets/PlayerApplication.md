@@ -204,9 +204,7 @@
 
 **output**
 
-    SUCCESS:{
-        course:null
-    }
+    SUCCESS:null
 
     SHOULD_UPDATE:{
         version_name:string,
@@ -215,5 +213,7 @@
         must:number,
         url:string
     }
+
+    INVALID_VERSION_CODE:null
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

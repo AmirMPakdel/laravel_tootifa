@@ -61,6 +61,7 @@ class Constant
     public static $SHOULD_UPDATE = 1159;
     public static $INVALID_LIECENSE_KEY = 1160;
     public static $COURSE_NOT_FREE = 1161;
+    public static $INVALID_VERSION_CODE = 1162;
     
     public static $GENDER_MALE = 1;
     public static $GENDER_MALE_TITLE = "پسر";
