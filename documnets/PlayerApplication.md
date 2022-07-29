@@ -183,3 +183,37 @@
 ```
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## CHECK VERSION 
+
+**path**
+
+    /courses/load
+
+**format**
+
+    P00AA
+
+**input**
+
+    username:string|nr 
+
+    platform:string
+
+    app_version:number -> it's version-code
+
+**output**
+
+    SUCCESS:{
+        course:null
+    }
+
+    SHOULD_UPDATE:{
+        version_name:string,
+        version_code:number,
+        last_changes_list:Array[string],
+        must:number,
+        url:string
+    }
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

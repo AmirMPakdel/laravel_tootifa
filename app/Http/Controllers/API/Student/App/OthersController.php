@@ -6,23 +6,32 @@ use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Models\AppReport;
 use App\Models\AppTicket;
+use App\Models\AppVersion;
 use Illuminate\Http\Request;
 
 
 class OthersController extends BaseController
 {
     public function checkVersion(Request $request){
+        $username = $request->input('username');
         $platform = $request->input('platform');
-        $app_version = $request->input('app_version');
-
-        if($app_version < Constant::$APP_VERSIONS[$platform]){
-            $url = null;
-            foreach(Constant::$APP_LINKS as $i){
-                if($platform == $i['name']){
-                    $url = $i['url'];
-                }
-            }
-            return $this->sendResponse(Constant::$SHOULD_UPDATE, ["url" => $url, "must" => Constant::$MUST_UPDATE]);
+        $user_app_version_code = $request->input('app_version');
+        $app_version = AppVersion::where([
+            ['platform', $platform],
+            ['username', $username],
+        ])->orderBy('version_code', 'desc')->first();
+        
+        if($app_version && ($user_app_version_code < $app_version->version_code)){
+            return $this->sendResponse(
+                Constant::$SHOULD_UPDATE,
+                [
+                    "version_name" => $app_version->version_name,
+                    "version_code" => $app_version->version_code,
+                    "last_changes_list" => $app_version->last_changes_list,
+                    "must" => $app_version->must_update,
+                    "url" => $app_version->download_link
+                ]
+            );
         }
 
         return $this->sendResponse(Constant::$SUCCESS, null);

@@ -4,7 +4,6 @@ use App\Http\Controllers\API\BaseController;
 use App\Includes\Constant;
 use App\Includes\HttpRequest;
 use App\Models\Student;
-use App\Models\UProfile;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
