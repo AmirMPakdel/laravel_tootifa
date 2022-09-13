@@ -10,7 +10,7 @@
 
 **input**
 
-    course_id:number
+    course_id:number|null (returns all sudents when course_id is null)
 
     chunk_count:string|ui
     description: by what fraction devide the whole items (at least 1)
@@ -23,8 +23,6 @@
     SUCCESS:Data
 
     NO_DATA:null
-
-    COURSE_NOT_FOUND:null
 
 **types**
 
@@ -59,7 +57,7 @@
 
     course_id:number
 
-    student_id:number
+    student_ids:Array[number]
 
 **output**
 
@@ -69,7 +67,7 @@
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-## ADD COURSE STUDENTS
+## REMOVE COURSE STUDENTS
 
 **path**
 

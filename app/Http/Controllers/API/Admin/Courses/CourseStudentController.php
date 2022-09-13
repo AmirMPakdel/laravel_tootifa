@@ -20,19 +20,22 @@ class CourseStudentController extends BaseController
             $paginator = $course->students()
                 ->orderBy('last_name', "asc")->paginate($chunk_count, ['*'], 'page', $page_count);
         }else{
-            $paginator = Course::all()
-                ->orderBy('last_name', "asc")->paginate($chunk_count, ['*'], 'page', $page_count);
+            $paginator = Student::orderBy('last_name', "asc")->paginate($chunk_count, ['*'], 'page', $page_count);
         }
 
-        $students = $paginator->map(function ($student) {
-            return [
+        $students = $paginator->map(function ($student) use ($course) {
+            $record = [
                 'id' => $student->id,
                 'first_name' => $student->first_name,
                 'last_name' => $student->last_name,
                 'phone_number' => $student->phone_number,
-                'national_code' => $student->national_code,
-                'access' => $student->pivot->access
+                'national_code' => $student->national_code
             ];
+
+            if($course){
+                $record['access'] = $student->pivot->access;
+            }
+            return $record;
         });
 
         $result = ["total_size" => $paginator->total(), "list" => $students];
@@ -68,11 +71,13 @@ class CourseStudentController extends BaseController
     public function addCourseStudent(Request $request)
     {
         $course = Course::find($request->input('course_id'));
-        $student = Student::find($request->input('student_id'));
+        $students = Student::find($request->input('student_ids'));
         if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
         $cc = new CoursesController();
-        $cc->addStudentToCourse($student, $course, Constant::$REGISTRATION_TYPE_CUSTOM);
+        foreach($students as $student){
+            $cc->addStudentToCourse($student, $course, Constant::$REGISTRATION_TYPE_CUSTOM);
+        }
 
         return $this->sendResponse(Constant::$SUCCESS, null);
     }
