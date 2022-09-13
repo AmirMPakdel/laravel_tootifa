@@ -15,10 +15,14 @@ class CourseStudentController extends BaseController
     public function fetchCourseStudents(Request $request, $chunk_count, $page_count)
     {
         $course = Course::find($request->input('course_id'));
-        if (!$course) return $this->sendResponse(Constant::$COURSE_NOT_FOUND, null);
 
-        $paginator = $course->students()
-            ->orderBy('last_name', "asc")->paginate($chunk_count, ['*'], 'page', $page_count);
+        if($course){
+            $paginator = $course->students()
+                ->orderBy('last_name', "asc")->paginate($chunk_count, ['*'], 'page', $page_count);
+        }else{
+            $paginator = Course::all()
+                ->orderBy('last_name', "asc")->paginate($chunk_count, ['*'], 'page', $page_count);
+        }
 
         $students = $paginator->map(function ($student) {
             return [
