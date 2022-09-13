@@ -43,7 +43,7 @@
 ```
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-## ADD COURSE STUDENT
+## ADD STUDENTS TO A COURSE
 
 **path**
 
@@ -67,7 +67,7 @@
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-## REMOVE COURSE STUDENTS
+## REMOVE STUDENTS FROM COURSE
 
 **path**
 
