@@ -29,6 +29,10 @@ class Student extends Model
         'city',
     ];
 
+    public function scopeValid($query){
+        return $query->where('phone_verified_at', '<>', null);
+    }
+
     public function courses()
     {
         return $this->belongsToMany(Course::class)->withPivot("access")->withPivot("registration_type");

@@ -20,7 +20,7 @@ class CourseStudentController extends BaseController
             $paginator = $course->students()
                 ->orderBy('last_name', "asc")->paginate($chunk_count, ['*'], 'page', $page_count);
         }else{
-            $paginator = Student::orderBy('last_name', "asc")->paginate($chunk_count, ['*'], 'page', $page_count);
+            $paginator = Student::valid()->orderBy('last_name', "asc")->paginate($chunk_count, ['*'], 'page', $page_count);
         }
 
         $students = $paginator->map(function ($student) use ($course) {
