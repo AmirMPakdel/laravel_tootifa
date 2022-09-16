@@ -126,10 +126,10 @@ class Constant
     public static $SM_LOWEST_PRICE = "sm_lowest_price";
     public static $SM_HIGHEST_PRICE = "sm_highest_price";
 
-    public static $MAIN_LIST_DEFAULT_TYPE_LAST_CREATED = "mldt_last_created";
-    public static $MAIN_LIST_DEFAULT_TYPE_MOST_SELLS = "mldt_most_sells";
-    public static $MAIN_LIST_DEFAULT_TYPE_MOST_VISITED = "mldt_most_visited";
-    public static $MAIN_LIST_DEFAULT_TYPE_HIGHEST_SCORE = "mldt_highest_score";
+    public static $MAIN_LIST_DEFAULT_TYPE_LAST_CREATED = "dt_last_created";
+    public static $MAIN_LIST_DEFAULT_TYPE_MOST_SELLS = "dt_most_sells";
+    public static $MAIN_LIST_DEFAULT_TYPE_MOST_VISITED = "dt_most_visited";
+    public static $MAIN_LIST_DEFAULT_TYPE_HIGHEST_SCORE = "dt_highest_score";
 
     public static $LT_INSTAGRAM = "lt_instagram";
     public static $LT_EMAIL = "lt_email";
