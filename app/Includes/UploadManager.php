@@ -142,7 +142,7 @@ class UploadManager
         $upload_transaction = UploadTransaction::where('upload_key', $upload_key)->first();
         if (!$upload_transaction) return ["result" => null, "url" => null];
 
-        $url = "http://localhost:8020/moveToFtp";
+        $url = "http://localhost:4060/moveToFtp";
 
         $fields = [
             'upload_key'         => $upload_key,
