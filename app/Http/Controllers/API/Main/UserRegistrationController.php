@@ -81,8 +81,8 @@ class UserRegistrationController extends BaseController
         }
 
         //generate and send verification code
-        // $code = 1111;
-        $code = mt_rand(10000, 99999);
+        $code = 12345;
+        //$code = mt_rand(10000, 99999);
         $user->verification_code = $code;
         $user->save();
 
