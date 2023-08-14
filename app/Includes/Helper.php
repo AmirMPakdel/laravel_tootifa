@@ -810,21 +810,35 @@ class Helper
     }
 
     public static function generatePublicDownloadFileUrl($username, $upload_key, $file_type){
-        return env("FTP_SERVER_URL") . "/public_files/" 
+        return "http://dl2.minfo.ir/public_files/" 
                    . $username . "/" 
                    . $upload_key . "." . $file_type;
+        
+        /*return env("FTP_SERVER_URL") . "/public_files/" 
+                   . $username . "/" 
+                   . $upload_key . "." . $file_type;*/
     }
 
     public static function generateStudentDownloadCourseItemFileUrl($username, $student_id, $upload_key, $content_id, $course_id){
-        return env("FTP_SERVER_URL") . "/download_student_course_item.php" . 
+        
+        return "http://dl2.minfo.ir/download_student_course_item.php" . 
                "?username=$username&student_id=$student_id&" . 
                "upload_key=$upload_key&course_id=$course_id&content_id=$content_id";
+        
+        /*return env("FTP_SERVER_URL") . "/download_student_course_item.php" . 
+               "?username=$username&student_id=$student_id&" . 
+               "upload_key=$upload_key&course_id=$course_id&content_id=$content_id";*/
     }
 
     public static function generateStudentDownloadCourseItemFileUrl2($username, $upload_key, $course_id, $content_id, $token=null, $lk=null){
-        $url = env("FTP_SERVER_URL") . "/download_student_course_item_2.php" . 
+
+        $url = "http://dl2.minfo.ir/download_student_course_item_2.php" . 
                "?username=$username&" . 
                "upload_key=$upload_key&course_id=$course_id&content_id=$content_id";
+        
+        /*$url = env("FTP_SERVER_URL") . "/download_student_course_item_2.php" . 
+               "?username=$username&" . 
+               "upload_key=$upload_key&course_id=$course_id&content_id=$content_id";*/
 
         if($lk)
             $url .= "&lk=$lk";
